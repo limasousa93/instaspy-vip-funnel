@@ -14,7 +14,10 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
   return (
     <div className="relative mx-auto flex h-[calc(100vh-56px)] w-full max-w-sm items-center justify-center overflow-hidden rounded-xl bg-black lg:h-[80vh]">
       <Image src={reel.videoThumb} alt={reel.caption} fill sizes="384px" className="object-cover" />
-      <div className="absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 pt-10">
+      <div
+        className="absolute inset-x-0 bottom-0 flex items-end justify-between p-4 pt-10"
+        style={{ backgroundImage: "linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4), transparent)" }}
+      >
         <div className="max-w-[75%] space-y-2">
           <div className="flex items-center gap-2">
             <Image src={avatarUrl(author.id)} alt={author.username} width={28} height={28} className="rounded-full" />
