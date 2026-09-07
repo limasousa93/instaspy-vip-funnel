@@ -2,6 +2,13 @@
   "name": "instagram-ui-clone",
   "version": "0.1.0",
   "private": true,
+  "browserslist": [
+    "chrome 90",
+    "edge 90",
+    "firefox 90",
+    "safari 12",
+    "ios_saf 12"
+  ],
   "scripts": {
     "dev": "next dev",
     "build": "next build",
