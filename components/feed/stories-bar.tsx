@@ -10,13 +10,13 @@ export function StoriesBar() {
       {mockStories.map((story) => {
         const user = getUser(story.authorId);
         return (
-          <button key={story.id} className="flex w-16 shrink-0 flex-col items-center gap-1 active:opacity-60">
+          <button key={story.id} className="flex w-20 shrink-0 flex-col items-center gap-1 active:opacity-60">
             <div
-              className={`rounded-full p-[2px] ${story.seen ? "bg-muted" : ""}`}
+              className={`rounded-full p-[3px] ${story.seen ? "bg-muted" : ""}`}
               style={story.seen ? undefined : { backgroundImage: "linear-gradient(45deg, #fbbf24, #ec4899, #9333ea)" }}
             >
               <div className="rounded-full bg-background p-[2px]">
-                <Image src={avatarUrl(user.id)} alt={user.username} width={56} height={56} className="rounded-full" />
+                <Image src={avatarUrl(user.id)} alt={user.username} width={72} height={72} className="rounded-full" />
               </div>
             </div>
             <span className="w-full truncate text-center text-xs text-muted-foreground">{story.label}</span>
