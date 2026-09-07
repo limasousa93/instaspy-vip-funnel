@@ -15,12 +15,18 @@ export function DebugErrorOverlay() {
     function onRejection(e: PromiseRejectionEvent) {
       add(`Unhandled rejection: ${String(e.reason?.message ?? e.reason)}`);
     }
+    function onRawClick(e: MouseEvent) {
+      const target = e.target as HTMLElement;
+      add(`Raw click reached document: <${target.tagName.toLowerCase()}> "${target.textContent?.slice(0, 30)}"`);
+    }
     window.addEventListener("error", onError);
     window.addEventListener("unhandledrejection", onRejection);
+    document.addEventListener("click", onRawClick, true);
     add(`Boot OK — UA: ${navigator.userAgent}`);
     return () => {
       window.removeEventListener("error", onError);
       window.removeEventListener("unhandledrejection", onRejection);
+      document.removeEventListener("click", onRawClick, true);
     };
   }, []);
 
@@ -28,15 +34,15 @@ export function DebugErrorOverlay() {
     <div
       style={{
         position: "fixed",
-        bottom: 0,
+        top: 0,
         left: 0,
         right: 0,
         zIndex: 999999,
-        maxHeight: "40vh",
+        maxHeight: "50vh",
         overflowY: "auto",
-        background: "rgba(200,0,0,0.95)",
+        background: "rgba(200,0,0,0.97)",
         color: "white",
-        fontSize: 11,
+        fontSize: 12,
         fontFamily: "monospace",
         padding: 8,
         whiteSpace: "pre-wrap",
