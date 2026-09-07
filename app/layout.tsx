@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/context/auth-context";
 import { InteractionsProvider } from "@/lib/context/interactions-context";
+import { DebugErrorOverlay } from "@/components/debug-error-overlay";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -26,6 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`dark ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground">
+        <DebugErrorOverlay />
         <AuthProvider>
           <InteractionsProvider>{children}</InteractionsProvider>
         </AuthProvider>
