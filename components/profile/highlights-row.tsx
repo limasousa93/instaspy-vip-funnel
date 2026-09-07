@@ -9,20 +9,20 @@ const HIGHLIGHTS = [
 
 export function HighlightsRow() {
   return (
-    <div className="flex gap-4 overflow-x-auto px-4 pb-4 lg:px-0">
-      <div className="flex w-16 shrink-0 flex-col items-center gap-1">
-        <div className="flex h-14 w-14 items-center justify-center rounded-full border border-border">
+    <div className="no-scrollbar momentum-scroll flex gap-4 overflow-x-auto px-4 pb-4 lg:px-0">
+      <button className="flex w-16 shrink-0 flex-col items-center gap-1 active:opacity-60">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border">
           <Plus className="h-5 w-5 text-foreground" />
         </div>
-        <span className="text-xs text-muted-foreground">Novo</span>
-      </div>
+        <span className="text-xs text-foreground">Novo</span>
+      </button>
       {HIGHLIGHTS.map((h) => (
-        <div key={h.id} className="flex w-16 shrink-0 flex-col items-center gap-1">
-          <div className="h-14 w-14 overflow-hidden rounded-full border border-border">
-            <Image src={photoUrl(h.id, 100, 100)} alt={h.label} width={56} height={56} className="h-full w-full object-cover" />
+        <button key={h.id} className="flex w-16 shrink-0 flex-col items-center gap-1 active:opacity-60">
+          <div className="h-16 w-16 overflow-hidden rounded-full border border-border">
+            <Image src={photoUrl(h.id, 100, 100)} alt={h.label} width={64} height={64} className="h-full w-full object-cover" />
           </div>
-          <span className="truncate text-xs text-muted-foreground">{h.label}</span>
-        </div>
+          <span className="truncate text-xs text-foreground">{h.label}</span>
+        </button>
       ))}
     </div>
   );

@@ -2,32 +2,51 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, PlaySquare, Search, Heart } from "lucide-react";
+import { Home, PlaySquare, Send, Search } from "lucide-react";
 import Image from "next/image";
 import { avatarUrl } from "@/lib/media";
 import { CURRENT_USER_ID } from "@/lib/mock-data/users";
+import { mockConversations } from "@/lib/mock-data/conversations";
 
 const TAB_ITEMS = [
   { href: "/", icon: Home },
   { href: "/reels", icon: PlaySquare },
-  { href: "/explore", icon: Search },
 ];
 
 export function MobileTabBar() {
   const pathname = usePathname();
+  const unreadMessages = mockConversations.filter((c) => c.unread).length;
+  const profileHref = `/${CURRENT_USER_ID}`;
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 flex h-14 items-center justify-around border-t border-border bg-background lg:hidden">
+    <nav className="fixed inset-x-0 bottom-0 z-40 flex h-14 items-center justify-around border-t border-border bg-background pb-[env(safe-area-inset-bottom)] lg:hidden">
       {TAB_ITEMS.map(({ href, icon: Icon }) => (
-        <Link key={href} href={href} className="flex h-full flex-1 items-center justify-center">
-          <Icon className={`h-6 w-6 ${pathname === href ? "text-foreground" : "text-muted-foreground"}`} strokeWidth={pathname === href ? 2.5 : 2} />
+        <Link
+          key={href}
+          href={href}
+          className="flex h-full flex-1 items-center justify-center active:opacity-40"
+        >
+          <Icon className={`h-6 w-6 ${pathname === href ? "text-foreground" : "text-muted-foreground"}`} strokeWidth={pathname === href ? 2.25 : 1.75} />
         </Link>
       ))}
-      <button className="flex h-full flex-1 items-center justify-center text-muted-foreground">
-        <Heart className="h-6 w-6" />
-      </button>
-      <Link href={`/${CURRENT_USER_ID}`} className="flex h-full flex-1 items-center justify-center">
-        <Image src={avatarUrl(CURRENT_USER_ID)} alt="Perfil" width={26} height={26} className="rounded-full" />
+      <Link href="/direct/inbox" className="relative flex h-full flex-1 items-center justify-center active:opacity-40">
+        <Send className={`h-6 w-6 ${pathname.startsWith("/direct") ? "text-foreground" : "text-muted-foreground"}`} strokeWidth={pathname.startsWith("/direct") ? 2.25 : 1.75} />
+        {unreadMessages > 0 && (
+          <span className="absolute right-[26%] top-[22%] h-2 w-2 rounded-full bg-red-500" />
+        )}
+      </Link>
+      <Link href="/explore" className="flex h-full flex-1 items-center justify-center active:opacity-40">
+        <Search className={`h-6 w-6 ${pathname === "/explore" ? "text-foreground" : "text-muted-foreground"}`} strokeWidth={pathname === "/explore" ? 2.25 : 1.75} />
+      </Link>
+      <Link href={profileHref} className="relative flex h-full flex-1 items-center justify-center active:opacity-40">
+        <Image
+          src={avatarUrl(CURRENT_USER_ID)}
+          alt="Perfil"
+          width={26}
+          height={26}
+          className={`rounded-full ${pathname === profileHref ? "ring-2 ring-foreground" : ""}`}
+        />
+        <span className="absolute right-[26%] top-[18%] h-2 w-2 rounded-full bg-red-500 ring-2 ring-background" />
       </Link>
     </nav>
   );
