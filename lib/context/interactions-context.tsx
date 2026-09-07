@@ -29,6 +29,9 @@ export function InteractionsProvider({ children }: { children: ReactNode }) {
   const [follows, setFollows] = useState<Set<string>>(new Set());
 
   useEffect(() => {
+    // One-time hydration-safe read: localStorage doesn't exist during SSR,
+    // so liked/followed state can only be known once mounted on the client.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setLikes(readSet(LIKES_KEY));
     setFollows(readSet(FOLLOWS_KEY));
   }, []);

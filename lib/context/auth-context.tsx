@@ -8,7 +8,7 @@ const SESSION_KEY = "ig-clone-session";
 interface AuthContextValue {
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (identifier: string) => void;
+  login: () => void;
   logout: () => void;
 }
 
@@ -20,11 +20,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
+    // One-time hydration-safe read: localStorage doesn't exist during SSR,
+    // so the real session state can only be known once mounted on the client.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsAuthenticated(window.localStorage.getItem(SESSION_KEY) === "1");
     setIsLoading(false);
   }, []);
 
-  function login(_identifier: string) {
+  function login() {
     window.localStorage.setItem(SESSION_KEY, "1");
     setIsAuthenticated(true);
     router.push("/");

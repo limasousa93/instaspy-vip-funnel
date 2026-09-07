@@ -11,7 +11,7 @@ export function LoginForm({ onBack }: { onBack: () => void }) {
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    if (identifier.trim() && password.trim()) login(identifier);
+    if (identifier.trim() && password.trim()) login();
   }
 
   return (
