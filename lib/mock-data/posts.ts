@@ -7,4 +7,7 @@ export const mockPosts: Post[] = [
   { id: "p3", authorId: "u10", images: [photoUrl("post-3", 600, 750), photoUrl("post-3b", 600, 750)], caption: "Por onde anda o mercado criativo em 2026?", likes: 1200, comments: 186, shares: 12, timeAgo: "3 sem" },
   { id: "p4", authorId: "u9", images: [photoUrl("post-4", 600, 750)], caption: "Nova coleção de vestidos de festa chegou 💐", likes: 342, comments: 21, shares: 3, timeAgo: "2 d" },
   { id: "p5", authorId: "u7", images: [photoUrl("post-5", 600, 750)], caption: "Antes e depois de hoje ✨", likes: 890, comments: 64, shares: 9, timeAgo: "5 d" },
+  { id: "p6", authorId: "u1", images: [photoUrl("post-6", 600, 750)], caption: "Praia de Jericoacoara 🌊", likes: 512, comments: 34, shares: 2, timeAgo: "3 d" },
+  { id: "p7", authorId: "u1", images: [photoUrl("post-7", 600, 750)], caption: "Pôr do sol em Fortaleza 🌅", likes: 803, comments: 41, shares: 6, timeAgo: "1 sem" },
+  { id: "p8", authorId: "u1", images: [photoUrl("post-8", 600, 750)], caption: "Trilha na Chapada 🥾", likes: 276, comments: 12, shares: 1, timeAgo: "2 sem" },
 ];

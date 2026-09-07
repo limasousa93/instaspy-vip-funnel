@@ -6,4 +6,5 @@ export const mockReels: Reel[] = [
   { id: "r2", authorId: "u10", videoThumb: photoUrl("reel-2", 480, 854), caption: "Passando o meu carro pra frente", likes: 3120, comments: 145, shares: 40 },
   { id: "r3", authorId: "u2", videoThumb: photoUrl("reel-3", 480, 854), caption: "2020 vs 2026: minha stack de ferramentas", likes: 8900, comments: 512, shares: 210 },
   { id: "r4", authorId: "u8", videoThumb: photoUrl("reel-4", 480, 854), caption: "Recuperação tranquila, seguindo em frente", likes: 1220, comments: 88, shares: 15 },
+  { id: "r5", authorId: "u1", videoThumb: photoUrl("reel-5", 480, 854), caption: "Um dia de viagem em 30 segundos", likes: 2310, comments: 96, shares: 22 },
 ];
