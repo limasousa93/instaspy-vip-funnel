@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Heart, MessageCircle, Repeat, Send, MoreHorizontal, BadgeCheck, Music2, Play, Volume2, VolumeX } from "lucide-react";
+import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { useInteractions } from "@/lib/context/interactions-context";
 import { formatCompactCount, formatCount, maskUsername } from "@/lib/format";
@@ -17,6 +18,7 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [paused, setPaused] = useState(true);
   const [muted, setMuted] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
 
   function togglePlay() {
     const video = videoRef.current;
@@ -69,16 +71,32 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
   return (
     <div className="relative h-full w-full shrink-0 overflow-hidden bg-black lg:h-[85vh] lg:max-w-sm lg:rounded-xl">
       {reel.videoSrc ? (
-        <video
-          ref={videoRef}
-          src={reel.videoSrc}
-          poster={reel.videoThumb}
-          preload="metadata"
-          loop
-          playsInline
-          onClick={togglePlay}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        <>
+          <video
+            ref={videoRef}
+            src={reel.videoSrc}
+            poster={reel.videoThumb}
+            preload="metadata"
+            loop
+            playsInline
+            onLoadedData={() => setVideoReady(true)}
+            onClick={togglePlay}
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          {/* Camada própria pro thumbnail em vez do atributo `poster`: no
+              Safari o poster do <video> ignora object-fit e aparece pequeno/
+              descentralizado até o vídeo carregar — a Image cobre com o
+              mesmo object-cover confiável das outras miniaturas. */}
+          {!videoReady && (
+            <Image
+              src={reel.videoThumb}
+              alt={reel.caption}
+              fill
+              sizes="(max-width: 1024px) 100vw, 384px"
+              className="absolute inset-0 object-cover"
+            />
+          )}
+        </>
       ) : (
         <Image src={reel.videoThumb} alt={reel.caption} fill sizes="(max-width: 1024px) 100vw, 384px" className="object-cover" />
       )}
@@ -149,7 +167,7 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
       >
         <div className="flex items-center gap-2 pr-14">
           <div className="shrink-0 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-[2px]">
-            <Image src={avatarUrl(author.id)} alt={displayName} width={30} height={30} className="h-[30px] w-[30px] rounded-full object-cover ring-2 ring-black blur-sm" />
+            <BlurredAvatar src={avatarUrl(author.id)} alt={displayName} size={30} className="ring-2 ring-black" />
           </div>
           <span className="text-sm font-semibold">{displayName}</span>
           {author.verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-blue-500" />}
@@ -168,7 +186,7 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
         <p className="pr-14 text-sm">{reel.caption}</p>
         {followedByUser && (
           <div className="flex items-center gap-2 pt-1 text-xs text-white/80">
-            <Image src={avatarUrl(followedByUser.id)} alt="" width={18} height={18} className="h-[18px] w-[18px] rounded-full object-cover blur-sm" />
+            <BlurredAvatar src={avatarUrl(followedByUser.id)} alt="" size={18} />
             <span>Seguido(a) por {maskUsername(followedByUser.username)}</span>
           </div>
         )}

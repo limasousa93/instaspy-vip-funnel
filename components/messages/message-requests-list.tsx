@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { mockMessageRequests } from "@/lib/mock-data/message-requests";
 import { useInteractions } from "@/lib/context/interactions-context";
@@ -19,7 +19,7 @@ export function MessageRequestsList() {
         const user = getUser(r.userId);
         return (
           <li key={r.id} className="flex items-center gap-3 px-4 py-3">
-            <Image src={avatarUrl(user.id)} alt={maskUsername(user.username)} width={48} height={48} className="h-[48px] w-[48px] rounded-full object-cover blur-sm" />
+            <BlurredAvatar src={avatarUrl(user.id)} alt={maskUsername(user.username)} size={48} />
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-foreground">{maskUsername(user.username)}</p>
               <p className="truncate text-xs text-muted-foreground">{r.preview} · {r.timeAgo}</p>

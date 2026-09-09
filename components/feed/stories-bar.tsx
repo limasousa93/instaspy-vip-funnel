@@ -71,13 +71,16 @@ export function StoriesBar() {
                 : { backgroundImage: "linear-gradient(45deg, #fbbf24, #ec4899, #9333ea)" }
             }
           >
-            <div className="rounded-full bg-background p-[2px]">
+            {/* overflow-hidden aqui (não no <Image>) porque Safari falha ao
+                arredondar um elemento que também tem filter: blur() — o
+                clipe precisa ficar num container sem blur. */}
+            <div className="overflow-hidden rounded-full bg-background p-[2px]">
               <Image
                 src={image ?? photoUrl(`feed-story-${i}`, 150, 150)}
                 alt={name}
                 width={72}
                 height={72}
-                className={`h-[72px] w-[72px] rounded-full object-cover ${live ? "" : "blur-sm"}`}
+                className={`h-[72px] w-[72px] object-cover ${live ? "" : "blur-sm"}`}
               />
             </div>
             {live && (
