@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Heart, MessageCircle, Repeat, Send, Bookmark, MoreHorizontal, Video, EyeOff } from "lucide-react";
-import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { useInteractions } from "@/lib/context/interactions-context";
 import { formatCompactCount, formatCount, formatTimeAgo, maskUsername } from "@/lib/format";
@@ -30,7 +29,7 @@ export function PostCard({ post }: { post: Post }) {
     <article className="border-b border-border pb-4">
       <header className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
-          <BlurredAvatar src={avatarUrl(author.id)} alt={displayName} size={32} />
+          <Image src={avatarUrl(author.id)} alt={displayName} width={32} height={32} className="h-[32px] w-[32px] rounded-full object-cover blur-sm" />
           <span className="text-sm font-semibold text-foreground">{displayName}</span>
         </div>
         <button className="active:opacity-40" aria-label="Mais opções">

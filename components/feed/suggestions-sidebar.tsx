@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { mockUsers, getUser, avatarUrl, CURRENT_USER_ID } from "@/lib/mock-data/users";
 import { useInteractions } from "@/lib/context/interactions-context";
 import { useLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
@@ -42,7 +41,7 @@ export function SuggestionsSidebar() {
         {suggestions.map((user) => (
           <li key={user.id} className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <BlurredAvatar src={avatarUrl(user.id)} alt={maskUsername(user.username)} size={32} />
+              <Image src={avatarUrl(user.id)} alt={maskUsername(user.username)} width={32} height={32} className="h-[32px] w-[32px] rounded-full object-cover blur-sm" />
               <div>
                 <p className="text-sm font-medium text-foreground">{maskUsername(user.username)}</p>
                 <p className="text-xs text-muted-foreground">Sugestões para você</p>

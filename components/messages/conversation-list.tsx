@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Search, UserRound } from "lucide-react";
-import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { mockMessageRequests } from "@/lib/mock-data/message-requests";
 import { maskUsername } from "@/lib/format";
@@ -57,14 +57,14 @@ export function ConversationList({
                 >
                   {c.ring ? (
                     <div className="shrink-0 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-[2px]">
-                      <BlurredAvatar src={avatarSrc} alt={displayName} size={44} className="ring-2 ring-background" />
+                      <Image src={avatarSrc} alt={displayName} width={44} height={44} className="h-[44px] w-[44px] rounded-full object-cover ring-2 ring-background blur-sm" />
                     </div>
                   ) : c.noAvatar ? (
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-muted">
                       <UserRound className="h-7 w-7 text-muted-foreground" />
                     </div>
                   ) : (
-                    <BlurredAvatar src={avatarSrc} alt={displayName} size={48} />
+                    <Image src={avatarSrc} alt={displayName} width={48} height={48} className="h-[48px] w-[48px] rounded-full object-cover blur-sm" />
                   )}
                   <span className="min-w-0 flex-1">
                     <p className={`truncate text-sm ${c.unread ? "font-semibold text-foreground" : "text-foreground"}`}>{maskUsername(displayName)}</p>

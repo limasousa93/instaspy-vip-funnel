@@ -11,23 +11,15 @@ export default function ReelsPage() {
   const [liveReel, setLiveReel] = useState<Reel | null>(null);
 
   useEffect(() => {
-    // iOS Safari doesn't update window.innerHeight in real time as the
-    // address bar collapses/expands during scroll — it can stay pinned to
-    // the initial (largest) value, which is exactly the stale-height bug
-    // --app-vh exists to avoid. visualViewport.height tracks the real
-    // visible viewport live, so it's the source of truth when available.
     function setAppVh() {
-      const height = window.visualViewport?.height ?? window.innerHeight;
-      document.documentElement.style.setProperty("--app-vh", `${height * 0.01}px`);
+      document.documentElement.style.setProperty("--app-vh", `${window.innerHeight * 0.01}px`);
     }
     setAppVh();
     window.addEventListener("resize", setAppVh);
     window.visualViewport?.addEventListener("resize", setAppVh);
-    window.visualViewport?.addEventListener("scroll", setAppVh);
     return () => {
       window.removeEventListener("resize", setAppVh);
       window.visualViewport?.removeEventListener("resize", setAppVh);
-      window.visualViewport?.removeEventListener("scroll", setAppVh);
     };
   }, []);
 

@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import { BlurredAvatar } from "@/components/ui/blurred-avatar";
+import Image from "next/image";
 import { avatarUrl } from "@/lib/media";
 
 const FRIEND_AVATAR_SEEDS = ["reels-friend-1", "reels-friend-2", "reels-friend-3"];
@@ -19,7 +19,7 @@ export function ReelsMobileHeader() {
           <span className="text-base font-semibold text-white/50">Amigos</span>
           <div className="flex -space-x-2">
             {FRIEND_AVATAR_SEEDS.map((seed) => (
-              <BlurredAvatar key={seed} src={avatarUrl(seed)} alt="" size={22} className="ring-2 ring-black" />
+              <Image key={seed} src={avatarUrl(seed)} alt="" width={22} height={22} className="h-[22px] w-[22px] rounded-full object-cover ring-2 ring-black blur-sm" />
             ))}
           </div>
         </div>
