@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Lock } from "lucide-react";
+import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { avatarUrl, photoUrl } from "@/lib/media";
 import { useLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
 import {
@@ -23,14 +24,12 @@ function NotificationAvatar({ avatar }: { avatar: SpyNotification["avatar"] }) {
   if (avatar.kind === "pair") {
     return (
       <div className="relative h-11 w-11 shrink-0">
-        <Image src={avatarUrl(avatar.seeds[1])} alt="" width={30} height={30} className="absolute right-0 top-0 h-[30px] w-[30px] rounded-full object-cover ring-2 ring-background blur-sm" />
-        <Image src={avatarUrl(avatar.seeds[0])} alt="" width={30} height={30} className="absolute bottom-0 left-0 h-[30px] w-[30px] rounded-full object-cover ring-2 ring-background blur-sm" />
+        <BlurredAvatar src={avatarUrl(avatar.seeds[1])} alt="" size={30} className="absolute right-0 top-0 ring-2 ring-background" />
+        <BlurredAvatar src={avatarUrl(avatar.seeds[0])} alt="" size={30} className="absolute bottom-0 left-0 ring-2 ring-background" />
       </div>
     );
   }
-  return (
-    <Image src={avatarUrl(avatar.seed)} alt="" width={44} height={44} className="h-11 w-11 shrink-0 rounded-full object-cover blur-sm" />
-  );
+  return <BlurredAvatar src={avatarUrl(avatar.seed)} alt="" size={44} />;
 }
 
 function NotificationRow({ n }: { n: SpyNotification }) {

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ArrowLeft, Play, Send, Camera, Mic, Image as ImageIcon, MessageCircleMore, CirclePlus, Phone, Video, Tag } from "lucide-react";
+import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { getUser, avatarUrl, CURRENT_USER_ID } from "@/lib/mock-data/users";
 import { maskUsername } from "@/lib/format";
 import type { Conversation } from "@/lib/types";
@@ -127,12 +128,10 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
         <button onClick={onBack} className="lg:hidden" aria-label="Voltar">
           <ArrowLeft className="h-5 w-5 text-foreground" />
         </button>
-        <Image
+        <BlurredAvatar
           src={conversation.avatarOverride ?? avatarUrl(user.id)}
           alt={maskUsername(conversation.displayNameOverride ?? user.username)}
-          width={36}
-          height={36}
-          className="h-[36px] w-[36px] rounded-full object-cover blur-sm"
+          size={36}
         />
         <span className="min-w-0 flex-1">
           <p className="truncate text-sm font-bold text-foreground">{maskUsername(conversation.displayNameOverride ?? user.username)}</p>
@@ -162,13 +161,7 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
               className={`flex items-end gap-1.5 ${outgoing ? "justify-end" : "justify-start"}`}
             >
               {!outgoing && (
-                <Image
-                  src={conversation.avatarOverride ?? avatarUrl(user.id)}
-                  alt=""
-                  width={24}
-                  height={24}
-                  className="h-6 w-6 shrink-0 rounded-full object-cover blur-sm"
-                />
+                <BlurredAvatar src={conversation.avatarOverride ?? avatarUrl(user.id)} alt="" size={24} />
               )}
               {m.kind === "audio" && m.audioDuration ? (
                 <AudioBubble duration={m.audioDuration} outgoing={outgoing} />

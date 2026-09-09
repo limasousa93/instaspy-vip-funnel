@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { photoUrl } from "@/lib/media";
 import { useLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
 import { maskUsername } from "@/lib/format";
@@ -72,13 +73,21 @@ export function StoriesBar() {
             }
           >
             <div className="rounded-full bg-background p-[2px]">
-              <Image
-                src={image ?? photoUrl(`feed-story-${i}`, 150, 150)}
-                alt={name}
-                width={72}
-                height={72}
-                className={`h-[72px] w-[72px] rounded-full object-cover ${live ? "" : "blur-sm"}`}
-              />
+              {/* ana.souza (live) é a referência: sem blur, redonda perfeita
+                  em qualquer navegador — nas demais, o blur fica só na
+                  <Image> filha (ver BlurredAvatar) pra não quebrar o
+                  arredondamento no Safari/Android. */}
+              {live ? (
+                <Image
+                  src={image ?? photoUrl(`feed-story-${i}`, 150, 150)}
+                  alt={name}
+                  width={72}
+                  height={72}
+                  className="h-[72px] w-[72px] rounded-full object-cover"
+                />
+              ) : (
+                <BlurredAvatar src={image ?? photoUrl(`feed-story-${i}`, 150, 150)} alt={name} size={72} />
+              )}
             </div>
             {live && (
               <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-md bg-pink-600 px-1.5 py-[1px] text-[10px] font-semibold text-white">

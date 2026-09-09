@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Heart, MessageCircle, Repeat, Send, MoreHorizontal, BadgeCheck, Music2, Play, Volume2, VolumeX } from "lucide-react";
+import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { useInteractions } from "@/lib/context/interactions-context";
 import { formatCompactCount, formatCount, maskUsername } from "@/lib/format";
@@ -149,7 +150,7 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
       >
         <div className="flex items-center gap-2 pr-14">
           <div className="shrink-0 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-[2px]">
-            <Image src={avatarUrl(author.id)} alt={displayName} width={30} height={30} className="h-[30px] w-[30px] rounded-full object-cover ring-2 ring-black blur-sm" />
+            <BlurredAvatar src={avatarUrl(author.id)} alt={displayName} size={30} className="ring-2 ring-black" />
           </div>
           <span className="text-sm font-semibold">{displayName}</span>
           {author.verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-blue-500" />}
@@ -168,7 +169,7 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
         <p className="pr-14 text-sm">{reel.caption}</p>
         {followedByUser && (
           <div className="flex items-center gap-2 pt-1 text-xs text-white/80">
-            <Image src={avatarUrl(followedByUser.id)} alt="" width={18} height={18} className="h-[18px] w-[18px] rounded-full object-cover blur-sm" />
+            <BlurredAvatar src={avatarUrl(followedByUser.id)} alt="" size={18} />
             <span>Seguido(a) por {maskUsername(followedByUser.username)}</span>
           </div>
         )}

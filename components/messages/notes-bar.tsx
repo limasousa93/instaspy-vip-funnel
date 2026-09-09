@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Music2 } from "lucide-react";
+import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { mockInboxNotes } from "@/lib/mock-data/inbox-notes";
 import { useLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
@@ -57,7 +58,7 @@ export function NotesBar() {
                 note.text
               )}
             </NoteBubble>
-            <Image src={avatarUrl(user.id)} alt={maskUsername(user.username)} width={56} height={56} className="h-[56px] w-[56px] rounded-full object-cover blur-sm" />
+            <BlurredAvatar src={avatarUrl(user.id)} alt={maskUsername(user.username)} size={56} />
             <span className="max-w-16 truncate text-xs text-foreground">{maskUsername(user.username)}</span>
           </div>
         );
