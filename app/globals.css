@@ -150,3 +150,124 @@
     overscroll-behavior-x: contain;
   }
 }
+
+/*
+ * Plain CSS (not a Tailwind max-sm: utility) on purpose: Tailwind v4 compiles
+ * max-sm: to "@media not (min-width: ...)", a Media Queries Level 4 boolean
+ * query that older Safari/iOS silently fails to parse (ignored, not degraded),
+ * leaving the Sheet's default data-[side=left]:w-3/4 in effect. Classic
+ * min-width syntax below works on every Safari version.
+ */
+.notif-sheet {
+  width: 100% !important;
+}
+@media (min-width: 640px) {
+  .notif-sheet {
+    width: 24rem !important;
+  }
+}
+
+/*
+ * Reels feed: each slide must be exactly one screen tall with native CSS
+ * scroll-snap doing the swipe-to-advance (60fps, real touch inertia, no JS
+ * drag loop). height cascades vh -> dvh -> a JS-measured --app-vh custom
+ * property (set in reels/page.tsx from window.innerHeight), each a valid
+ * fallback for the next: iOS Safari has a known bug where 100dvh inside a
+ * scroll-snap container doesn't reflow when the address bar collapses
+ * mid-scroll, leaving a black gap the size of the stale toolbar area
+ * (visible on iPhone, not seen on Android/Chrome). --app-vh sidesteps that
+ * entirely by measuring the real visible height directly. On mobile the
+ * app's fixed bottom tab bar (56px) reserves real layout space via
+ * <main>'s pb-14, so slides must be shorter than the full viewport by
+ * exactly that amount or the page gains its own scroll; the reels-only
+ * mobile header floats above the video instead of consuming height.
+ */
+.reel-feed,
+.reel-slide {
+  height: 100vh;
+  height: 100dvh;
+  height: calc(var(--app-vh, 1vh) * 100);
+}
+@media (max-width: 1023.98px) {
+  .reel-feed,
+  .reel-slide {
+    height: calc(100vh - 56px);
+    height: calc(100dvh - 56px);
+    height: calc(var(--app-vh, 1vh) * 100 - 56px);
+  }
+}
+.reel-feed {
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Direct inbox: full-height page below the fixed bottom tab bar on mobile. */
+.inbox-viewport {
+  height: calc(100vh - 56px);
+  height: calc(100dvh - 56px);
+}
+@media (min-width: 1024px) {
+  .inbox-viewport {
+    height: 100vh;
+    height: 100dvh;
+  }
+}
+
+/*
+ * Login "cracking" screen: progress bar fills over the whole simulated
+ * duration. Duration is set inline (style.animationDuration) from the
+ * CRACK_MS constant in login-form.tsx so the two stay in sync — only the
+ * keyframes/timing/fill-mode live here.
+ */
+@keyframes crack-progress-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+.crack-progress-bar {
+  width: 0%;
+  animation-name: crack-progress-fill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/*
+ * Instagram Spy fetching screen: duration of the real Apify call is
+ * unknown ahead of time, so this is an indeterminate bar (a segment
+ * sliding across the track on a loop) instead of a fake fixed-duration
+ * countdown.
+ */
+@keyframes fetching-progress-slide {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(250%);
+  }
+}
+.fetching-progress-bar {
+  width: 40%;
+  animation: fetching-progress-slide 1.1s ease-in-out infinite;
+}
+
+/*
+ * Barra de stories do feed: a bolinha "Ao vivo" pulsa um glow rosa em loop
+ * pra sinalizar transmissão em andamento, sem depender de JS/interval.
+ */
+@keyframes live-story-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(236, 72, 153, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0);
+  }
+}
+.live-story-ring {
+  animation: live-story-pulse 2s ease-out infinite;
+}

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { PlayCircle, Copy } from "lucide-react";
 import { Grid3x3, PlaySquare, Repeat2, UserSquare2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -45,18 +46,18 @@ export function ProfileTabs({
       </TabsContent>
       <TabsContent value="reels" className="grid grid-cols-3 gap-0.5">
         {reels.map((reel) => (
-          <div key={reel.id} className="relative aspect-square bg-muted active:opacity-80">
+          <Link key={reel.id} href={`/reels?r=${reel.id}`} className="relative aspect-square bg-muted active:opacity-80">
             <Image src={reel.videoThumb} alt={reel.caption} fill sizes="33vw" className="object-cover" />
             <PlayCircle className="absolute right-1.5 top-1.5 h-4 w-4 fill-white text-white drop-shadow" />
-          </div>
+          </Link>
         ))}
       </TabsContent>
       <TabsContent value="reposts" className="grid grid-cols-3 gap-0.5">
         {reposts.map((reel) => (
-          <div key={reel.id} className="relative aspect-square bg-muted active:opacity-80">
+          <Link key={reel.id} href={`/reels?r=${reel.id}`} className="relative aspect-square bg-muted active:opacity-80">
             <Image src={reel.videoThumb} alt={reel.caption} fill sizes="33vw" className="object-cover" />
             <PlayCircle className="absolute right-1.5 top-1.5 h-4 w-4 fill-white text-white drop-shadow" />
-          </div>
+          </Link>
         ))}
         {reposts.length === 0 && (
           <p className="col-span-3 py-10 text-center text-sm text-muted-foreground">Nenhuma repostagem ainda.</p>

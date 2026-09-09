@@ -1,43 +1,87 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
+import { Search, Sparkles, UserRound } from "lucide-react";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
+import { mockMessageRequests } from "@/lib/mock-data/message-requests";
+import { maskUsername } from "@/lib/format";
+import { NotesBar } from "./notes-bar";
+import { MessageRequestsList } from "./message-requests-list";
 import type { Conversation } from "@/lib/types";
 
 export function ConversationList({
   conversations,
   activeId,
   onSelect,
+  onLockedSelect,
 }: {
   conversations: Conversation[];
   activeId: string | null;
   onSelect: (id: string) => void;
+  onLockedSelect?: () => void;
 }) {
+  const [tab, setTab] = useState<"messages" | "requests">("messages");
+
   return (
-    <div className="w-full border-r border-border lg:w-96">
-      <div className="flex items-center justify-between px-4 py-4">
-        <h2 className="text-lg font-semibold text-foreground">Mensagens</h2>
+    <div className="flex w-full flex-col border-r border-border lg:w-96">
+      <div className="px-4 pb-3 pt-1">
+        <div className="flex items-center gap-2 rounded-full bg-secondary px-3 py-2.5">
+          <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <Sparkles className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <span className="truncate text-sm text-muted-foreground">Pesquise ou pergunte à Meta AI</span>
+        </div>
       </div>
-      <ul>
-        {conversations.map((c) => {
-          const user = getUser(c.userId);
-          return (
-            <li key={c.id}>
-              <button
-                onClick={() => onSelect(c.id)}
-                className={`flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-accent ${activeId === c.id ? "bg-accent" : ""}`}
-              >
-                <Image src={avatarUrl(user.id)} alt={user.username} width={48} height={48} className="rounded-full" />
-                <span className="min-w-0 flex-1">
-                  <p className={`truncate text-sm ${c.unread ? "font-semibold text-foreground" : "text-foreground"}`}>{user.username}</p>
-                  <p className="truncate text-xs text-muted-foreground">{c.lastMessage} · {c.timeAgo}</p>
-                </span>
-                {c.unread && <span className="h-2 w-2 shrink-0 rounded-full bg-primary" />}
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      <NotesBar />
+      <div className="flex items-center justify-between px-4 py-3">
+        <button onClick={() => setTab("messages")} className={`text-base font-semibold ${tab === "messages" ? "text-foreground" : "text-muted-foreground"}`}>
+          Mensagens
+        </button>
+        <button onClick={() => setTab("requests")} className="text-base font-semibold text-blue-500">
+          Pedidos ({mockMessageRequests.length})
+        </button>
+      </div>
+      {tab === "requests" ? (
+        <MessageRequestsList />
+      ) : (
+        <ul>
+          {conversations.map((c) => {
+            const user = getUser(c.userId);
+            const displayName = c.displayNameOverride ?? user.username;
+            const preview = c.previewOverride ?? `${c.lastMessage} · ${c.timeAgo}`;
+            const avatarSrc = c.avatarOverride ?? avatarUrl(user.id);
+            return (
+              <li key={c.id}>
+                <button
+                  onClick={() => (c.locked ? onLockedSelect?.() : onSelect(c.id))}
+                  className={`flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-accent ${activeId === c.id ? "bg-accent" : ""}`}
+                >
+                  {c.ring ? (
+                    <div className="shrink-0 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-[2px]">
+                      <Image src={avatarSrc} alt={displayName} width={44} height={44} className="h-[44px] w-[44px] rounded-full object-cover ring-2 ring-background blur-sm" />
+                    </div>
+                  ) : c.noAvatar ? (
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-muted">
+                      <UserRound className="h-7 w-7 text-muted-foreground" />
+                    </div>
+                  ) : (
+                    <Image src={avatarSrc} alt={displayName} width={48} height={48} className="h-[48px] w-[48px] rounded-full object-cover blur-sm" />
+                  )}
+                  <span className="min-w-0 flex-1">
+                    <p className={`truncate text-sm ${c.unread ? "font-semibold text-foreground" : "text-foreground"}`}>{maskUsername(displayName)}</p>
+                    <p className={`truncate text-xs ${c.unread ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{preview}</p>
+                  </span>
+                  {c.pending ? (
+                    <span className="h-4 w-4 shrink-0 rounded-full border-2 border-dashed border-muted-foreground" />
+                  ) : (
+                    c.unread && <span className="h-2 w-2 shrink-0 rounded-full bg-blue-500" />
+                  )}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 }

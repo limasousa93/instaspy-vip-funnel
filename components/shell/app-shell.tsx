@@ -1,21 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { useAuth } from "@/lib/context/auth-context";
 import { DesktopSidebar } from "./desktop-sidebar";
 import { MobileTabBar } from "./mobile-tab-bar";
 
+// O funil real do site começa em "/" (InstagramSpyFlow) e termina em
+// "/[username]" (perfil com dados reais da Apify) — não há mais login.
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const { isAuthenticated, isLoading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) router.replace("/login");
-  }, [isLoading, isAuthenticated, router]);
-
-  if (isLoading || !isAuthenticated) return null;
-
   return (
     <div className="min-h-screen bg-background">
       <DesktopSidebar />

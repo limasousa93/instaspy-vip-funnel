@@ -52,8 +52,11 @@ export interface Reel {
 export interface Message {
   id: string;
   fromUserId: string;
-  text: string;
+  text?: string;
   timeAgo: string;
+  kind?: "text" | "audio" | "photo";
+  audioDuration?: string;
+  photoUrl?: string;
 }
 
 export interface Conversation {
@@ -64,9 +67,11 @@ export interface Conversation {
   unread: boolean;
   previewOverride?: string;
   displayNameOverride?: string;
+  avatarOverride?: string;
   ring?: boolean;
   pending?: boolean;
   noAvatar?: boolean;
+  locked?: boolean;
   messages: Message[];
 }
 

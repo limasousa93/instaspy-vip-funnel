@@ -7,16 +7,19 @@ import Image from "next/image";
 import { avatarUrl } from "@/lib/media";
 import { CURRENT_USER_ID } from "@/lib/mock-data/users";
 import { mockConversations } from "@/lib/mock-data/conversations";
+import { useLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
 
 const TAB_ITEMS = [
-  { href: "/", icon: Home },
+  { href: "/feed", icon: Home },
   { href: "/reels", icon: PlaySquare },
 ];
 
 export function MobileTabBar() {
   const pathname = usePathname();
   const unreadMessages = mockConversations.filter((c) => c.unread).length;
-  const profileHref = `/${CURRENT_USER_ID}`;
+  const lastProfile = useLastSearchedProfile();
+  const profileHref = `/${lastProfile?.username ?? CURRENT_USER_ID}`;
+  const profileAvatar = lastProfile?.avatarUrl ?? avatarUrl(CURRENT_USER_ID);
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 flex h-14 items-center justify-around border-t border-border bg-background pb-[env(safe-area-inset-bottom)] lg:hidden">
@@ -40,11 +43,11 @@ export function MobileTabBar() {
       </Link>
       <Link href={profileHref} className="relative flex h-full flex-1 items-center justify-center active:opacity-40">
         <Image
-          src={avatarUrl(CURRENT_USER_ID)}
+          src={profileAvatar}
           alt="Perfil"
           width={26}
           height={26}
-          className={`rounded-full ${pathname === profileHref ? "ring-2 ring-foreground" : ""}`}
+          className={`h-[26px] w-[26px] rounded-full object-cover ${pathname === profileHref ? "ring-2 ring-foreground" : ""}`}
         />
         <span className="absolute right-[26%] top-[18%] h-2 w-2 rounded-full bg-red-500 ring-2 ring-background" />
       </Link>

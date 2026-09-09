@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Heart, MessageCircle, Send, Bookmark, MoreHorizontal } from "lucide-react";
+import { Heart, MessageCircle, Repeat, Send, Bookmark, MoreHorizontal, Video } from "lucide-react";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { useInteractions } from "@/lib/context/interactions-context";
+import { formatCompactCount, formatCount, formatTimeAgo } from "@/lib/format";
 import type { Post } from "@/lib/types";
 
 export function PostCard({ post }: { post: Post }) {
@@ -24,9 +25,8 @@ export function PostCard({ post }: { post: Post }) {
     <article className="border-b border-border pb-4">
       <header className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
-          <Image src={avatarUrl(author.id)} alt={author.username} width={32} height={32} className="rounded-full" />
+          <Image src={avatarUrl(author.id)} alt={author.username} width={32} height={32} className="h-[32px] w-[32px] rounded-full object-cover" />
           <span className="text-sm font-semibold text-foreground">{author.username}</span>
-          <span className="text-xs text-muted-foreground">· {post.timeAgo}</span>
         </div>
         <button className="active:opacity-40" aria-label="Mais opções">
           <MoreHorizontal className="h-5 w-5 text-foreground" />
@@ -45,25 +45,37 @@ export function PostCard({ post }: { post: Post }) {
       </div>
       <div className="flex items-center justify-between px-4 pt-3">
         <div className="flex items-center gap-4">
-          <button onClick={() => toggleLike(post.id)} aria-label="Curtir" className="active:scale-90 transition-transform">
+          <button onClick={() => toggleLike(post.id)} aria-label="Curtir" className="flex items-center gap-1.5 active:scale-90 transition-transform">
             <Heart className={`h-6 w-6 transition-transform ${liked ? "scale-110 fill-red-500 text-red-500" : "text-foreground"}`} />
+            <span className="text-sm text-foreground">{formatCompactCount(displayedLikes)}</span>
           </button>
-          <button aria-label="Comentar" className="active:scale-90 transition-transform">
+          <button aria-label="Comentar" className="flex items-center gap-1.5 active:scale-90 transition-transform">
             <MessageCircle className="h-6 w-6 -scale-x-100 text-foreground" />
+            <span className="text-sm text-foreground">{formatCount(post.comments)}</span>
           </button>
-          <button aria-label="Compartilhar" className="active:scale-90 transition-transform">
+          <button aria-label="Repostar" className="flex items-center gap-1.5 active:scale-90 transition-transform">
+            <Repeat className="h-6 w-6 text-foreground" />
+            <span className="text-sm text-foreground">{formatCount(post.reposts)}</span>
+          </button>
+          <button aria-label="Compartilhar" className="flex items-center gap-1.5 active:scale-90 transition-transform">
             <Send className="h-6 w-6 text-foreground" />
+            <span className="text-sm text-foreground">{formatCount(post.shares)}</span>
           </button>
         </div>
         <button aria-label="Salvar" className="active:scale-90 transition-transform">
           <Bookmark className="h-6 w-6 text-foreground" />
         </button>
       </div>
-      <p className="px-4 pt-2 text-sm font-semibold text-foreground">{displayedLikes.toLocaleString("pt-BR")} curtidas</p>
-      <p className="px-4 pt-1 text-sm text-foreground">
+      <p className="px-4 pt-2 text-sm text-foreground">
         <span className="font-semibold">{author.username}</span> {post.caption}
       </p>
-      <p className="px-4 pt-1 text-sm text-muted-foreground">Ver todos os {post.comments} comentários</p>
+      {post.credit && (
+        <p className="flex items-center gap-1.5 px-4 pt-1 text-sm text-muted-foreground">
+          <Video className="h-4 w-4 shrink-0" />
+          <span className="text-blue-500">{post.credit}</span>
+        </p>
+      )}
+      <p className="px-4 pt-1.5 text-xs text-muted-foreground">{formatTimeAgo(post.timeAgo)}</p>
     </article>
   );
 }

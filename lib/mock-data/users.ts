@@ -9,7 +9,7 @@ export const mockUsers: User[] = [
   { id: "u3", username: "juliac.foto", fullName: "Julia Castro", bio: "Fotógrafa de casamentos", verified: false, followers: 5210, following: 890, postsCount: 302 },
   { id: "u4", username: "central.negocios", fullName: "Central de Negócios", bio: "Conteúdo sobre empreendedorismo", verified: false, followers: 34200, following: 12, postsCount: 512 },
   { id: "u5", username: "beatriz.moda", fullName: "Beatriz Souza", bio: "Moda e estilo de vida", verified: true, followers: 92100, following: 540, postsCount: 887 },
-  { id: "u6", username: "rafael.tech", fullName: "Rafael Nogueira", bio: "Tech, IA e produtividade", verified: true, followers: 15600, following: 201, postsCount: 98 },
+  { id: "u6", username: "olivia.69", fullName: "Olivia", bio: "Vida real, sem filtro 🌴", verified: true, followers: 15600, following: 201, postsCount: 98 },
   { id: "u7", username: "isabela.beauty", fullName: "Isabela Ferreira", bio: "Maquiadora profissional", verified: false, followers: 4300, following: 610, postsCount: 210 },
   { id: "u8", username: "lucas.finance", fullName: "Lucas Andrade", bio: "Consultor financeiro", verified: false, followers: 2100, following: 340, postsCount: 76 },
   { id: "u9", username: "clara.eventos", fullName: "Clara Mendes", bio: "Vestidos de noiva e festas", verified: false, followers: 7800, following: 120, postsCount: 421 },
@@ -20,8 +20,18 @@ export const mockUsers: User[] = [
 
 export function getUser(id: string): User {
   const user = mockUsers.find((u) => u.id === id);
-  if (!user) throw new Error(`Unknown mock user id: ${id}`);
-  return user;
+  if (user) return user;
+  return {
+    id,
+    username: id,
+    fullName: id,
+    bio: "",
+    verified: false,
+    followers: 0,
+    following: 0,
+    postsCount: 0,
+    source: "live",
+  };
 }
 
 export { avatarUrl };
