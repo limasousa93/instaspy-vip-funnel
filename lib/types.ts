@@ -25,6 +25,7 @@ export interface Post {
   credit?: string;
   videoSrc?: string;
   displayUsername?: string;
+  sensitive?: boolean;
 }
 
 export interface Story {
@@ -47,6 +48,7 @@ export interface Reel {
   audio: string;
   audioThumb: string;
   followedByUserId?: string;
+  displayUsername?: string;
 }
 
 export interface Message {

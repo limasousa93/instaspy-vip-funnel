@@ -1,7 +1,6 @@
-// Mesmo padrão de mascaramento usado nas notificações mock (ver spy-notifications.ts):
-// mantém as 3 primeiras letras e troca o resto por asteriscos, ex.: "jul****".
+// Mantém as 4 primeiras letras e troca o resto por asteriscos, ex.: "juli***".
 export function maskUsername(name: string): string {
-  return `${name.slice(0, 3)}****`;
+  return `${name.slice(0, 4)}***`;
 }
 
 export function formatCount(value: number): string {
