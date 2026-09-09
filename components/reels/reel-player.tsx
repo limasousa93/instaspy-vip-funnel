@@ -5,11 +5,12 @@ import Image from "next/image";
 import { Heart, MessageCircle, Repeat, Send, MoreHorizontal, BadgeCheck, Music2, Play, Volume2, VolumeX } from "lucide-react";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { useInteractions } from "@/lib/context/interactions-context";
-import { formatCompactCount, formatCount } from "@/lib/format";
+import { formatCompactCount, formatCount, maskUsername } from "@/lib/format";
 import type { Reel } from "@/lib/types";
 
 export function ReelPlayer({ reel }: { reel: Reel }) {
   const author = getUser(reel.authorId);
+  const displayName = reel.displayUsername ?? maskUsername(author.username);
   const followedByUser = reel.followedByUserId ? getUser(reel.followedByUserId) : null;
   const { isLiked, toggleLike, isFollowing, toggleFollow } = useInteractions();
   const liked = isLiked(reel.id);
@@ -148,9 +149,9 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
       >
         <div className="flex items-center gap-2 pr-14">
           <div className="shrink-0 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-[2px]">
-            <Image src={avatarUrl(author.id)} alt={author.username} width={30} height={30} className="h-[30px] w-[30px] rounded-full object-cover ring-2 ring-black" />
+            <Image src={avatarUrl(author.id)} alt={displayName} width={30} height={30} className="h-[30px] w-[30px] rounded-full object-cover ring-2 ring-black blur-sm" />
           </div>
-          <span className="text-sm font-semibold">{author.username}</span>
+          <span className="text-sm font-semibold">{displayName}</span>
           {author.verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-blue-500" />}
           <button
             onClick={() => toggleFollow(author.id)}
@@ -167,8 +168,8 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
         <p className="pr-14 text-sm">{reel.caption}</p>
         {followedByUser && (
           <div className="flex items-center gap-2 pt-1 text-xs text-white/80">
-            <Image src={avatarUrl(followedByUser.id)} alt="" width={18} height={18} className="h-[18px] w-[18px] rounded-full object-cover" />
-            <span>Seguido(a) por {followedByUser.username}</span>
+            <Image src={avatarUrl(followedByUser.id)} alt="" width={18} height={18} className="h-[18px] w-[18px] rounded-full object-cover blur-sm" />
+            <span>Seguido(a) por {maskUsername(followedByUser.username)}</span>
           </div>
         )}
       </div>

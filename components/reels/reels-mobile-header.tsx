@@ -19,7 +19,7 @@ export function ReelsMobileHeader() {
           <span className="text-base font-semibold text-white/50">Amigos</span>
           <div className="flex -space-x-2">
             {FRIEND_AVATAR_SEEDS.map((seed) => (
-              <Image key={seed} src={avatarUrl(seed)} alt="" width={22} height={22} className="h-[22px] w-[22px] rounded-full object-cover ring-2 ring-black" />
+              <Image key={seed} src={avatarUrl(seed)} alt="" width={22} height={22} className="h-[22px] w-[22px] rounded-full object-cover ring-2 ring-black blur-sm" />
             ))}
           </div>
         </div>
