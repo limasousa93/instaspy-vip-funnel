@@ -1,5 +1,10 @@
+const AVATAR_OVERRIDES: Record<string, string> = {
+  u2: "/11.png",
+  u6: "/olivia-avatar.png.png",
+};
+
 export function avatarUrl(seed: string): string {
-  return `https://i.pravatar.cc/150?u=${encodeURIComponent(seed)}`;
+  return AVATAR_OVERRIDES[seed] ?? `https://i.pravatar.cc/150?u=${encodeURIComponent(seed)}`;
 }
 
 export function photoUrl(seed: string, width = 600, height = 750): string {

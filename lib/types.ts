@@ -7,6 +7,9 @@ export interface User {
   followers: number;
   following: number;
   postsCount: number;
+  avatarUrl?: string;
+  externalUrl?: string;
+  source?: "mock" | "live";
 }
 
 export interface Post {
@@ -16,8 +19,12 @@ export interface Post {
   caption: string;
   likes: number;
   comments: number;
+  reposts: number;
   shares: number;
   timeAgo: string;
+  credit?: string;
+  videoSrc?: string;
+  displayUsername?: string;
 }
 
 export interface Story {
@@ -31,10 +38,15 @@ export interface Reel {
   id: string;
   authorId: string;
   videoThumb: string;
+  videoSrc?: string;
   caption: string;
   likes: number;
   comments: number;
+  reposts: number;
   shares: number;
+  audio: string;
+  audioThumb: string;
+  followedByUserId?: string;
 }
 
 export interface Message {
@@ -50,14 +62,39 @@ export interface Conversation {
   lastMessage: string;
   timeAgo: string;
   unread: boolean;
+  previewOverride?: string;
+  displayNameOverride?: string;
+  ring?: boolean;
+  pending?: boolean;
+  noAvatar?: boolean;
   messages: Message[];
 }
 
-export interface AppNotification {
+export interface InboxNote {
+  userId: string;
+  text?: string;
+  audioTitle?: string;
+}
+
+export interface MessageRequest {
   id: string;
   userId: string;
-  text: string;
+  preview: string;
   timeAgo: string;
-  group: "today" | "week" | "month";
-  actionable: "follow-back" | "none";
+}
+
+export type NotificationKind = "share-story" | "share-reel" | "share-post" | "follow" | "reply" | "multi-like" | "promo";
+
+export interface AppNotification {
+  id: string;
+  kind: NotificationKind;
+  userIds: string[];
+  extraCount?: number;
+  action: string;
+  timeAgo: string;
+  group: "Hoje" | "Ontem" | "Últimos 7 dias";
+  thumbnail?: string;
+  ring?: boolean;
+  cta?: "follow-back" | "try-ai";
+  reply?: { toUsername: string; quote: string };
 }
