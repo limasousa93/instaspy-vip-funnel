@@ -32,7 +32,7 @@ export function SuggestedPeopleRow({ excludeUserId }: { excludeUserId: string })
               <X className="h-4 w-4" />
             </button>
             <div className="flex flex-col items-center gap-2 text-center">
-              <Image src={avatarUrl(user.id)} alt={user.username} width={64} height={64} className="h-[64px] w-[64px] rounded-full object-cover blur-sm" />
+              <Image src={avatarUrl(user.id)} alt={maskUsername(user.fullName)} width={64} height={64} className="h-[64px] w-[64px] rounded-full object-cover blur-sm" />
               <p className="w-full truncate text-sm font-semibold text-foreground">{maskUsername(user.fullName)}</p>
               <p className="text-xs text-muted-foreground">{(i + 1) * 12} em comum</p>
               <button

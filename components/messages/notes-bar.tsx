@@ -36,7 +36,7 @@ export function NotesBar() {
               alt={myUsername}
               width={56}
               height={56}
-              priority
+              preload
               className="h-full w-full object-cover"
             />
           )}
@@ -57,7 +57,7 @@ export function NotesBar() {
                 note.text
               )}
             </NoteBubble>
-            <Image src={avatarUrl(user.id)} alt={user.username} width={56} height={56} className="h-[56px] w-[56px] rounded-full object-cover blur-sm" />
+            <Image src={avatarUrl(user.id)} alt={maskUsername(user.username)} width={56} height={56} className="h-[56px] w-[56px] rounded-full object-cover blur-sm" />
             <span className="max-w-16 truncate text-xs text-foreground">{maskUsername(user.username)}</span>
           </div>
         );

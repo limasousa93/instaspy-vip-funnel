@@ -29,6 +29,9 @@ export function useLastSearchedProfile(): LastSearchedProfile | null {
   const [profile, setProfile] = useState<LastSearchedProfile | null>(null);
 
   useEffect(() => {
+    // localStorage só existe no client — não dá pra ler no initializer do
+    // useState sem arriscar mismatch de hydration com o HTML do servidor.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProfile(getLastSearchedProfile());
   }, []);
 

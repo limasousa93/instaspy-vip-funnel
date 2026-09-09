@@ -15,7 +15,6 @@ export function FetchingProgressScreen({ username }: { username: string }) {
   const [statusIndex, setStatusIndex] = useState(0);
 
   useEffect(() => {
-    setStatusIndex(0);
     const tick = window.setInterval(() => {
       setStatusIndex((i) => Math.min(i + 1, STATUS_MESSAGES.length - 1));
     }, STATUS_INTERVAL_MS);

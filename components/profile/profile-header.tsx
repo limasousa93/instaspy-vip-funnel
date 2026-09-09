@@ -16,7 +16,7 @@ export function ProfileHeader({ user }: { user: User }) {
             alt={user.username}
             width={88}
             height={88}
-            priority
+            preload
             className="h-[88px] w-[88px] rounded-full object-cover"
           />
           <button

@@ -52,7 +52,7 @@ export function StoriesBar() {
                   alt={yourLabel}
                   width={72}
                   height={72}
-                  priority
+                  preload
                   className="h-full w-full object-cover"
                 />
               )}

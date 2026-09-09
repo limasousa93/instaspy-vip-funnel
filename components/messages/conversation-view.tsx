@@ -127,7 +127,13 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
         <button onClick={onBack} className="lg:hidden" aria-label="Voltar">
           <ArrowLeft className="h-5 w-5 text-foreground" />
         </button>
-        <Image src={conversation.avatarOverride ?? avatarUrl(user.id)} alt={user.username} width={36} height={36} className="h-[36px] w-[36px] rounded-full object-cover blur-sm" />
+        <Image
+          src={conversation.avatarOverride ?? avatarUrl(user.id)}
+          alt={maskUsername(conversation.displayNameOverride ?? user.username)}
+          width={36}
+          height={36}
+          className="h-[36px] w-[36px] rounded-full object-cover blur-sm"
+        />
         <span className="min-w-0 flex-1">
           <p className="truncate text-sm font-bold text-foreground">{maskUsername(conversation.displayNameOverride ?? user.username)}</p>
           <p className="truncate text-xs text-muted-foreground">Online há 47 min</p>

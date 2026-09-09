@@ -23,7 +23,7 @@ export function SuggestionsSidebar() {
             alt={displayName}
             width={44}
             height={44}
-            priority
+            preload
             className="h-[44px] w-[44px] rounded-full object-cover"
           />
           <div>
@@ -41,7 +41,7 @@ export function SuggestionsSidebar() {
         {suggestions.map((user) => (
           <li key={user.id} className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Image src={avatarUrl(user.id)} alt={user.username} width={32} height={32} className="h-[32px] w-[32px] rounded-full object-cover blur-sm" />
+              <Image src={avatarUrl(user.id)} alt={maskUsername(user.username)} width={32} height={32} className="h-[32px] w-[32px] rounded-full object-cover blur-sm" />
               <div>
                 <p className="text-sm font-medium text-foreground">{maskUsername(user.username)}</p>
                 <p className="text-xs text-muted-foreground">Sugestões para você</p>

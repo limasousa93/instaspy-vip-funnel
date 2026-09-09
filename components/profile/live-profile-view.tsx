@@ -15,7 +15,7 @@ export function LiveProfileView({ username }: { username: string }) {
   }, [username, search]);
 
   if (loading || (!data && !error)) {
-    return <FetchingProgressScreen username={username} />;
+    return <FetchingProgressScreen key={username} username={username} />;
   }
 
   if (error || !data) {

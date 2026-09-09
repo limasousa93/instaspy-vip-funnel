@@ -47,7 +47,7 @@ export function MobileTabBar() {
           alt="Perfil"
           width={26}
           height={26}
-          priority
+          preload
           className={`h-[26px] w-[26px] rounded-full object-cover ${pathname === profileHref ? "ring-2 ring-foreground" : ""}`}
         />
         <span className="absolute right-[26%] top-[18%] h-2 w-2 rounded-full bg-red-500 ring-2 ring-background" />

@@ -35,7 +35,7 @@ export function InstagramSpyFlow() {
   }
 
   if (step === "preview" && loading) {
-    return <FetchingProgressScreen username={handle.trim().replace(/^@/, "")} />;
+    return <FetchingProgressScreen key={handle} username={handle.trim().replace(/^@/, "")} />;
   }
 
   if (step === "preview" && (error || !data)) {
@@ -58,7 +58,7 @@ export function InstagramSpyFlow() {
           alt={data.profile.username}
           width={96}
           height={96}
-          priority
+          preload
           className="h-[96px] w-[96px] rounded-full object-cover"
         />
         <div>

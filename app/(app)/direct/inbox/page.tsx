@@ -22,6 +22,10 @@ export default function InboxPage() {
   useLayoutEffect(() => {
     const savedId = localStorage.getItem(ACTIVE_CONVERSATION_KEY);
     if (savedId && mockConversations.some((c) => c.id === savedId)) {
+      // lê localStorage (indisponível no SSR) e precisa aplicar antes do
+      // primeiro paint via useLayoutEffect; sem isso o refresh volta a
+      // piscar lista -> conversa.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveId(savedId);
     }
     setReady(true);

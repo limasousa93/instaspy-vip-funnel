@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ReelPlayer } from "@/components/reels/reel-player";
 import { ReelsMobileHeader } from "@/components/reels/reels-mobile-header";
 import { mockReels } from "@/lib/mock-data/reels";
@@ -37,7 +37,7 @@ export default function ReelsPage() {
       .catch(() => {});
   }, []);
 
-  const reels = liveReel ? [liveReel, ...mockReels] : mockReels;
+  const reels = useMemo(() => (liveReel ? [liveReel, ...mockReels] : mockReels), [liveReel]);
 
   useEffect(() => {
     const targetId = new URLSearchParams(window.location.search).get("r");
