@@ -30,8 +30,18 @@ export function BlurredAvatar({
 
   return (
     <div
-      className={`shrink-0 overflow-hidden rounded-full ${className}`}
-      style={{ width: size, height: size }}
+      className={`isolate shrink-0 overflow-hidden rounded-full ${className}`}
+      style={{
+        width: size,
+        height: size,
+        // Ainda "quadrado" no Safari/iOS mesmo com o blur isolado na
+        // <Image> filha — o WebKit às vezes só respeita o clip de
+        // overflow-hidden + border-radius se o elemento estiver na sua
+        // própria camada de composição. translateZ(0) força essa camada
+        // sem mover nada (Android/Chrome já funcionavam e continuam iguais).
+        transform: "translateZ(0)",
+        WebkitTransform: "translateZ(0)",
+      }}
     >
       <Image
         src={src}
