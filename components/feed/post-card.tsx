@@ -2,20 +2,24 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Heart, MessageCircle, Repeat, Send, Bookmark, MoreHorizontal, Video } from "lucide-react";
+import { Heart, MessageCircle, Repeat, Send, Bookmark, MoreHorizontal, Video, EyeOff } from "lucide-react";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { useInteractions } from "@/lib/context/interactions-context";
-import { formatCompactCount, formatCount, formatTimeAgo } from "@/lib/format";
+import { formatCompactCount, formatCount, formatTimeAgo, maskUsername } from "@/lib/format";
 import type { Post } from "@/lib/types";
 
 export function PostCard({ post }: { post: Post }) {
   const author = getUser(post.authorId);
+  const displayName = post.displayUsername ?? maskUsername(author.username);
   const { isLiked, toggleLike } = useInteractions();
   const liked = isLiked(post.id);
   const displayedLikes = post.likes + (liked ? 1 : 0);
   const [showLikeBurst, setShowLikeBurst] = useState(false);
+  const [revealed, setRevealed] = useState(false);
+  const hidden = Boolean(post.sensitive) && !revealed;
 
   function handleDoubleTapLike() {
+    if (hidden) return;
     if (!liked) toggleLike(post.id);
     setShowLikeBurst(true);
     window.setTimeout(() => setShowLikeBurst(false), 700);
@@ -25,8 +29,8 @@ export function PostCard({ post }: { post: Post }) {
     <article className="border-b border-border pb-4">
       <header className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-3">
-          <Image src={avatarUrl(author.id)} alt={author.username} width={32} height={32} className="h-[32px] w-[32px] rounded-full object-cover" />
-          <span className="text-sm font-semibold text-foreground">{author.username}</span>
+          <Image src={avatarUrl(author.id)} alt={displayName} width={32} height={32} className="h-[32px] w-[32px] rounded-full object-cover blur-sm" />
+          <span className="text-sm font-semibold text-foreground">{displayName}</span>
         </div>
         <button className="active:opacity-40" aria-label="Mais opções">
           <MoreHorizontal className="h-5 w-5 text-foreground" />
@@ -36,7 +40,27 @@ export function PostCard({ post }: { post: Post }) {
         className="relative aspect-[4/5] w-full select-none bg-muted"
         onDoubleClick={handleDoubleTapLike}
       >
-        <Image src={post.images[0]} alt={post.caption} fill sizes="(max-width: 640px) 100vw, 576px" className="object-cover" />
+        <Image
+          src={post.images[0]}
+          alt={post.caption}
+          fill
+          sizes="(max-width: 640px) 100vw, 576px"
+          className="object-cover"
+        />
+        {hidden && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+            <EyeOff className="h-10 w-10 text-white" strokeWidth={1.75} />
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setRevealed(true);
+              }}
+              className="rounded-full border border-white px-6 py-2 text-sm font-semibold text-white active:opacity-70"
+            >
+              Ver
+            </button>
+          </div>
+        )}
         <Heart
           className={`pointer-events-none absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 fill-white text-white drop-shadow-lg transition-all duration-300 ${
             showLikeBurst ? "scale-100 opacity-90" : "scale-50 opacity-0"
@@ -67,7 +91,7 @@ export function PostCard({ post }: { post: Post }) {
         </button>
       </div>
       <p className="px-4 pt-2 text-sm text-foreground">
-        <span className="font-semibold">{author.username}</span> {post.caption}
+        <span className="font-semibold">{displayName}</span> {post.caption}
       </p>
       {post.credit && (
         <p className="flex items-center gap-1.5 px-4 pt-1 text-sm text-muted-foreground">

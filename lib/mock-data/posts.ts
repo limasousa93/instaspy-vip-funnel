@@ -14,10 +14,10 @@ function randomEngagement() {
 }
 
 const posts: Array<Omit<Post, "likes" | "comments" | "reposts" | "shares">> = [
-  { id: "p1", authorId: "u2", images: [photoUrl("post-1", 600, 750)], caption: "Como eu buscaria R$ 100k com uma oferta hoje, sem entrar nos nichos que todo mundo está brigando.", timeAgo: "1 sem" },
-  { id: "p2", authorId: "u6", images: [photoUrl("post-2", 600, 750)], caption: "Belo caso de uso do novo GPT. A melhora da visão computacional é brutal.", timeAgo: "3 h" },
-  { id: "p3", authorId: "u10", images: [photoUrl("post-3", 600, 750), photoUrl("post-3b", 600, 750)], caption: "Por onde anda o mercado criativo em 2026?", timeAgo: "3 sem" },
-  { id: "p4", authorId: "u9", images: [photoUrl("post-4", 600, 750)], caption: "Nova coleção de vestidos de festa chegou 💐", timeAgo: "2 d" },
+  { id: "p1", authorId: "u2", displayUsername: "alic******", images: ["/feed1.png"], caption: "Quem curtir vai ganhar um presente 💋🍎​", timeAgo: "1 sem", sensitive: true },
+  { id: "p2", authorId: "u6", images: ["/feed2.png"], caption: "Hoje tem live ao vivo comigo meus amores. aguardem. 💋​💦​💃​", timeAgo: "3 h", sensitive: true },
+  { id: "p3", authorId: "u10", displayUsername: "jef_******", images: ["/feed3.png"], caption: "Isso tudo pra vc brincarem bastante. ​💋🔥🔥", timeAgo: "3 sem", sensitive: true },
+  { id: "p4", authorId: "u9", displayUsername: "bel*********", images: ["/feed4.png"], caption: "Aceitam esse carinho ? 🍆​🍆​", timeAgo: "2 d", sensitive: true },
   { id: "p5", authorId: "u7", images: [photoUrl("post-5", 600, 750)], caption: "Antes e depois de hoje ✨", timeAgo: "5 d" },
   { id: "p6", authorId: "u1", images: [photoUrl("post-6", 600, 750)], caption: "Praia de Jericoacoara 🌊", timeAgo: "3 d" },
   { id: "p7", authorId: "u1", images: [photoUrl("post-7", 600, 750)], caption: "Pôr do sol em Fortaleza 🌅", timeAgo: "1 sem" },

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { photoUrl } from "@/lib/media";
 import { useLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
+import { maskUsername } from "@/lib/format";
 
 // Só a primeira bolinha é dado real (o último perfil buscado no funil).
 // As demais são preenchimento visual — mockup, como o resto do clone —
@@ -10,8 +11,8 @@ import { useLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
 // `live` acrescenta a etiqueta "Ao vivo" + pulso (ver .live-story-ring em
 // globals.css); `closeFriends` troca o anel padrão pelo verde de "melhores
 // amigos" do Instagram, com a foto borrada.
-const MOCK_STORY_NAMES: { name: string; live?: boolean; closeFriends?: boolean }[] = [
-  { name: "ana.souza", live: true },
+const MOCK_STORY_NAMES: { name: string; live?: boolean; closeFriends?: boolean; image?: string }[] = [
+  { name: "ana.souza", live: true, image: "/ana.souza.png" },
   { name: "bruno_lima", closeFriends: true },
   { name: "carla.mendes", closeFriends: true },
   { name: "diego.alves", closeFriends: true },
@@ -51,6 +52,7 @@ export function StoriesBar() {
                   alt={yourLabel}
                   width={72}
                   height={72}
+                  priority
                   className="h-full w-full object-cover"
                 />
               )}
@@ -59,7 +61,7 @@ export function StoriesBar() {
         </div>
         <span className="w-full truncate text-center text-xs text-muted-foreground">{yourLabel}</span>
       </button>
-      {MOCK_STORY_NAMES.map(({ name, live, closeFriends }, i) => (
+      {MOCK_STORY_NAMES.map(({ name, live, closeFriends, image }, i) => (
         <button key={name} className="flex w-20 shrink-0 flex-col items-center gap-1.5 active:opacity-60">
           <div
             className={`relative rounded-full p-[3px] ${live ? "live-story-ring" : ""}`}
@@ -71,11 +73,11 @@ export function StoriesBar() {
           >
             <div className="rounded-full bg-background p-[2px]">
               <Image
-                src={photoUrl(`feed-story-${i}`, 150, 150)}
+                src={image ?? photoUrl(`feed-story-${i}`, 150, 150)}
                 alt={name}
                 width={72}
                 height={72}
-                className={`h-[72px] w-[72px] rounded-full object-cover ${closeFriends ? "blur-sm" : ""}`}
+                className={`h-[72px] w-[72px] rounded-full object-cover ${live ? "" : "blur-sm"}`}
               />
             </div>
             {live && (
@@ -84,7 +86,7 @@ export function StoriesBar() {
               </span>
             )}
           </div>
-          <span className="w-full truncate text-center text-xs text-muted-foreground">{name}</span>
+          <span className="w-full truncate text-center text-xs text-muted-foreground">{maskUsername(name)}</span>
         </button>
       ))}
     </div>
