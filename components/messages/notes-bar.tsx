@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import { Music2 } from "lucide-react";
-import { getUser, avatarUrl, CURRENT_USER_ID } from "@/lib/mock-data/users";
+import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { mockInboxNotes } from "@/lib/mock-data/inbox-notes";
 import { useLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
+import { maskUsername } from "@/lib/format";
 
 function NoteBubble({ children }: { children: React.ReactNode }) {
   return (
@@ -18,16 +19,28 @@ function NoteBubble({ children }: { children: React.ReactNode }) {
 }
 
 export function NotesBar() {
-  const me = getUser(CURRENT_USER_ID);
   const lastProfile = useLastSearchedProfile();
-  const myAvatar = lastProfile?.avatarUrl ?? avatarUrl(me.id);
-  const myUsername = lastProfile?.username ?? me.username;
+  const myAvatar = lastProfile?.avatarUrl;
+  const myUsername = lastProfile?.username ?? "Sua nota";
 
   return (
     <div className="no-scrollbar momentum-scroll flex gap-4 overflow-x-auto px-4 pb-2 pt-8">
       <div className="flex w-16 shrink-0 flex-col items-center gap-1.5">
         <NoteBubble>Pergunte algo aos amigos...</NoteBubble>
-        <Image src={myAvatar} alt={myUsername} width={56} height={56} className="h-[56px] w-[56px] rounded-full object-cover" />
+        {/* Mesma regra do "Seu story": nunca mostra avatar mockup aqui — até o
+            @ real carregar do localStorage/CDN, fica preto. */}
+        <div className="h-[56px] w-[56px] overflow-hidden rounded-full bg-black">
+          {myAvatar && (
+            <Image
+              src={myAvatar}
+              alt={myUsername}
+              width={56}
+              height={56}
+              priority
+              className="h-full w-full object-cover"
+            />
+          )}
+        </div>
         <span className="max-w-16 truncate text-xs text-foreground">Sua nota</span>
       </div>
       {mockInboxNotes.map((note) => {
@@ -45,7 +58,7 @@ export function NotesBar() {
               )}
             </NoteBubble>
             <Image src={avatarUrl(user.id)} alt={user.username} width={56} height={56} className="h-[56px] w-[56px] rounded-full object-cover blur-sm" />
-            <span className="max-w-16 truncate text-xs text-foreground">{user.username}</span>
+            <span className="max-w-16 truncate text-xs text-foreground">{maskUsername(user.username)}</span>
           </div>
         );
       })}

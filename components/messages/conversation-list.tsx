@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Search, Sparkles, UserRound } from "lucide-react";
+import { Search, UserRound } from "lucide-react";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { mockMessageRequests } from "@/lib/mock-data/message-requests";
 import { maskUsername } from "@/lib/format";
@@ -28,7 +28,6 @@ export function ConversationList({
       <div className="px-4 pb-3 pt-1">
         <div className="flex items-center gap-2 rounded-full bg-secondary px-3 py-2.5">
           <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
-          <Sparkles className="h-4 w-4 shrink-0 text-muted-foreground" />
           <span className="truncate text-sm text-muted-foreground">Pesquise ou pergunte à Meta AI</span>
         </div>
       </div>

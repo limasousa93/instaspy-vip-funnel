@@ -1,22 +1,50 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { InboxMobileHeader } from "@/components/messages/inbox-mobile-header";
 import { ConversationList } from "@/components/messages/conversation-list";
 import { ConversationView } from "@/components/messages/conversation-view";
 import { EmptyInboxState } from "@/components/messages/empty-inbox-state";
 import { mockConversations } from "@/lib/mock-data/conversations";
 
+const ACTIVE_CONVERSATION_KEY = "inbox:activeConversationId";
+
 export default function InboxPage() {
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
   const [showLockedToast, setShowLockedToast] = useState(false);
   const active = mockConversations.find((c) => c.id === activeId) ?? null;
+
+  // Restaura a conversa aberta após um refresh. Usa useLayoutEffect (roda
+  // antes do browser pintar) e só libera o render real depois (`ready`) —
+  // isso evita o flash de "lista -> conversa" que useEffect causaria, já
+  // que ele só roda depois do primeiro paint.
+  useLayoutEffect(() => {
+    const savedId = localStorage.getItem(ACTIVE_CONVERSATION_KEY);
+    if (savedId && mockConversations.some((c) => c.id === savedId)) {
+      setActiveId(savedId);
+    }
+    setReady(true);
+  }, []);
+
+  function selectConversation(id: string | null) {
+    setActiveId(id);
+    if (id) {
+      localStorage.setItem(ACTIVE_CONVERSATION_KEY, id);
+    } else {
+      localStorage.removeItem(ACTIVE_CONVERSATION_KEY);
+    }
+  }
 
   useEffect(() => {
     if (!showLockedToast) return;
     const timer = setTimeout(() => setShowLockedToast(false), 2200);
     return () => clearTimeout(timer);
   }, [showLockedToast]);
+
+  if (!ready) {
+    return <div className="inbox-viewport bg-background" />;
+  }
 
   return (
     <div className="inbox-viewport relative flex flex-col lg:h-screen">
@@ -28,12 +56,12 @@ export default function InboxPage() {
           <ConversationList
             conversations={mockConversations}
             activeId={activeId}
-            onSelect={setActiveId}
+            onSelect={selectConversation}
             onLockedSelect={() => setShowLockedToast(true)}
           />
         </div>
         {active ? (
-          <ConversationView conversation={active} onBack={() => setActiveId(null)} />
+          <ConversationView conversation={active} onBack={() => selectConversation(null)} />
         ) : (
           <EmptyInboxState />
         )}
