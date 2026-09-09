@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 import { mockUsers } from "@/lib/mock-data/users";
 import { avatarUrl } from "@/lib/media";
 import { useInteractions } from "@/lib/context/interactions-context";
+import { maskUsername } from "@/lib/format";
 
 export function SuggestedPeopleRow({ excludeUserId }: { excludeUserId: string }) {
   const { isFollowing, toggleFollow } = useInteractions();
@@ -31,8 +32,8 @@ export function SuggestedPeopleRow({ excludeUserId }: { excludeUserId: string })
               <X className="h-4 w-4" />
             </button>
             <div className="flex flex-col items-center gap-2 text-center">
-              <Image src={avatarUrl(user.id)} alt={user.username} width={64} height={64} className="h-[64px] w-[64px] rounded-full object-cover" />
-              <p className="w-full truncate text-sm font-semibold text-foreground">{user.fullName}</p>
+              <Image src={avatarUrl(user.id)} alt={user.username} width={64} height={64} className="h-[64px] w-[64px] rounded-full object-cover blur-sm" />
+              <p className="w-full truncate text-sm font-semibold text-foreground">{maskUsername(user.fullName)}</p>
               <p className="text-xs text-muted-foreground">{(i + 1) * 12} em comum</p>
               <button
                 onClick={() => toggleFollow(user.id)}

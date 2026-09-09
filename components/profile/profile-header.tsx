@@ -11,7 +11,14 @@ export function ProfileHeader({ user }: { user: User }) {
           <div className="absolute -top-3 left-0 z-10 whitespace-nowrap rounded-2xl border border-border bg-background px-3 py-1.5 text-xs text-muted-foreground shadow-sm">
             O que você está pensando...
           </div>
-          <Image src={user.avatarUrl ?? avatarUrl(user.id)} alt={user.username} width={88} height={88} className="h-[88px] w-[88px] rounded-full object-cover" />
+          <Image
+            src={user.avatarUrl ?? avatarUrl(user.id)}
+            alt={user.username}
+            width={88}
+            height={88}
+            priority
+            className="h-[88px] w-[88px] rounded-full object-cover"
+          />
           <button
             aria-label="Adicionar ao story"
             className="absolute bottom-0 right-0 flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-background ring-2 ring-background active:opacity-70"

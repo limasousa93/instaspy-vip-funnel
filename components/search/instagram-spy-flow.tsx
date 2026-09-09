@@ -58,6 +58,7 @@ export function InstagramSpyFlow() {
           alt={data.profile.username}
           width={96}
           height={96}
+          priority
           className="h-[96px] w-[96px] rounded-full object-cover"
         />
         <div>

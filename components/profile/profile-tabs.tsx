@@ -2,10 +2,19 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { PlayCircle, Copy } from "lucide-react";
-import { Grid3x3, PlaySquare, Repeat2, UserSquare2 } from "lucide-react";
+import { PlayCircle, Copy, SquarePlay, Repeat, SquareUser } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Post, Reel } from "@/lib/types";
+
+function GridDotsIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      {[1, 9, 17].flatMap((y) =>
+        [1, 9, 17].map((x) => <rect key={`${x}-${y}`} x={x} y={y} width={6} height={6} rx={2.25} />)
+      )}
+    </svg>
+  );
+}
 
 export function ProfileTabs({
   posts,
@@ -22,16 +31,16 @@ export function ProfileTabs({
     <Tabs defaultValue="posts">
       <TabsList variant="line" className="h-auto w-full justify-center gap-0 border-t border-border p-0">
         <TabsTrigger value="posts" className="h-auto flex-1 rounded-none py-3 text-foreground/50 data-active:text-foreground">
-          <Grid3x3 className="h-6 w-6" strokeWidth={1.5} />
+          <GridDotsIcon className="h-8 w-8" />
         </TabsTrigger>
         <TabsTrigger value="reels" className="h-auto flex-1 rounded-none py-3 text-foreground/50 data-active:text-foreground">
-          <PlaySquare className="h-6 w-6" strokeWidth={1.5} />
+          <SquarePlay className="h-8 w-8" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         </TabsTrigger>
         <TabsTrigger value="reposts" className="h-auto flex-1 rounded-none py-3 text-foreground/50 data-active:text-foreground">
-          <Repeat2 className="h-6 w-6" strokeWidth={1.5} />
+          <Repeat className="h-8 w-8" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         </TabsTrigger>
         <TabsTrigger value="tagged" className="h-auto flex-1 rounded-none py-3 text-foreground/50 data-active:text-foreground">
-          <UserSquare2 className="h-6 w-6" strokeWidth={1.5} />
+          <SquareUser className="h-8 w-8" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" />
         </TabsTrigger>
       </TabsList>
       <TabsContent value="posts" className="grid grid-cols-3 gap-0.5">
