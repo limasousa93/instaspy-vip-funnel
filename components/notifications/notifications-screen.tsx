@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, Lock } from "lucide-react";
 import { avatarUrl, photoUrl } from "@/lib/media";
-import { getUser, CURRENT_USER_ID } from "@/lib/mock-data/users";
 import { useLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
 import {
   spyNotifications,
@@ -24,13 +23,13 @@ function NotificationAvatar({ avatar }: { avatar: SpyNotification["avatar"] }) {
   if (avatar.kind === "pair") {
     return (
       <div className="relative h-11 w-11 shrink-0">
-        <Image src={avatarUrl(avatar.seeds[1])} alt="" width={30} height={30} className="absolute right-0 top-0 h-[30px] w-[30px] rounded-full object-cover ring-2 ring-background" />
-        <Image src={avatarUrl(avatar.seeds[0])} alt="" width={30} height={30} className="absolute bottom-0 left-0 h-[30px] w-[30px] rounded-full object-cover ring-2 ring-background" />
+        <Image src={avatarUrl(avatar.seeds[1])} alt="" width={30} height={30} className="absolute right-0 top-0 h-[30px] w-[30px] rounded-full object-cover ring-2 ring-background blur-sm" />
+        <Image src={avatarUrl(avatar.seeds[0])} alt="" width={30} height={30} className="absolute bottom-0 left-0 h-[30px] w-[30px] rounded-full object-cover ring-2 ring-background blur-sm" />
       </div>
     );
   }
   return (
-    <Image src={avatarUrl(avatar.seed)} alt="" width={44} height={44} className="h-11 w-11 shrink-0 rounded-full object-cover" />
+    <Image src={avatarUrl(avatar.seed)} alt="" width={44} height={44} className="h-11 w-11 shrink-0 rounded-full object-cover blur-sm" />
   );
 }
 
@@ -82,8 +81,7 @@ function NotificationRow({ n }: { n: SpyNotification }) {
 
 export function NotificationsScreen() {
   const router = useRouter();
-  const me = getUser(CURRENT_USER_ID);
-  const displayName = useLastSearchedProfile()?.username ?? me.username;
+  const lastProfile = useLastSearchedProfile();
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -91,7 +89,13 @@ export function NotificationsScreen() {
         <button onClick={() => router.back()} aria-label="Voltar" className="active:opacity-40">
           <ChevronLeft className="h-6 w-6 text-foreground" />
         </button>
-        <span className="text-xl font-bold text-foreground">{displayName}</span>
+        {/* Mesma regra do "Seu story"/"Sua nota": nunca mostra outro @ aqui —
+            até o perfil real carregar do localStorage, fica só o fundo preto. */}
+        {lastProfile ? (
+          <span className="text-xl font-bold text-foreground">{lastProfile.username}</span>
+        ) : (
+          <span className="h-6 w-40 rounded bg-black" aria-hidden="true" />
+        )}
       </header>
       <div className="px-4 pb-6">
         {SPY_NOTIFICATION_GROUP_ORDER.map((group) => {
