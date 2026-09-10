@@ -7,37 +7,48 @@ import { ChevronLeft, Lock } from "lucide-react";
 import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { avatarUrl, photoUrl } from "@/lib/media";
 import { useLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
+import { useVipModal } from "@/lib/context/vip-modal-context";
+import { FreeAccessWarningBanner } from "@/components/shared/free-access-warning-banner";
 import {
   spyNotifications,
   SPY_NOTIFICATION_GROUP_ORDER,
   type SpyNotification,
 } from "@/lib/mock-data/spy-notifications";
 
-function NotificationAvatar({ avatar }: { avatar: SpyNotification["avatar"] }) {
+function NotificationAvatar({ avatar, onClick }: { avatar: SpyNotification["avatar"]; onClick: () => void }) {
   if (avatar.kind === "locked") {
     return (
-      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-secondary">
+      <button
+        onClick={onClick}
+        aria-label="Ver perfil"
+        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-secondary active:opacity-70"
+      >
         <Lock className="h-4 w-4 text-muted-foreground" strokeWidth={2} />
-      </div>
+      </button>
     );
   }
   if (avatar.kind === "pair") {
     return (
-      <div className="relative h-11 w-11 shrink-0">
+      <button onClick={onClick} aria-label="Ver perfis" className="relative h-11 w-11 shrink-0 active:opacity-70">
         <BlurredAvatar src={avatarUrl(avatar.seeds[1])} alt="" size={30} className="absolute right-0 top-0 ring-2 ring-background" />
         <BlurredAvatar src={avatarUrl(avatar.seeds[0])} alt="" size={30} className="absolute bottom-0 left-0 ring-2 ring-background" />
-      </div>
+      </button>
     );
   }
-  return <BlurredAvatar src={avatarUrl(avatar.seed)} alt="" size={44} />;
+  return (
+    <button onClick={onClick} aria-label="Ver perfil" className="shrink-0 active:opacity-70">
+      <BlurredAvatar src={avatarUrl(avatar.seed)} alt="" size={44} />
+    </button>
+  );
 }
 
 function NotificationRow({ n }: { n: SpyNotification }) {
   const [following, setFollowing] = useState(n.cta === "seguindo");
+  const { openVipModal } = useVipModal();
 
   return (
     <div className="flex items-start gap-3 py-2.5">
-      <NotificationAvatar avatar={n.avatar} />
+      <NotificationAvatar avatar={n.avatar} onClick={openVipModal} />
       <div className="min-w-0 flex-1">
         <p className="text-sm leading-snug text-foreground">
           {n.segments.map((seg, i) => (
@@ -49,7 +60,11 @@ function NotificationRow({ n }: { n: SpyNotification }) {
         </p>
       </div>
       {n.thumbnailSeed && (
-        <div className="h-11 w-11 shrink-0 overflow-hidden rounded-md">
+        <button
+          onClick={openVipModal}
+          aria-label="Ver publicação"
+          className="h-11 w-11 shrink-0 overflow-hidden rounded-md active:opacity-70"
+        >
           <Image
             src={photoUrl(n.thumbnailSeed, 88, 88)}
             alt=""
@@ -57,16 +72,22 @@ function NotificationRow({ n }: { n: SpyNotification }) {
             height={44}
             className="h-full w-full scale-125 object-cover blur-md"
           />
-        </div>
+        </button>
       )}
       {n.cta === "testar" && (
-        <button className="shrink-0 rounded-lg bg-blue-500 px-3.5 py-1.5 text-xs font-semibold text-white active:opacity-70">
+        <button
+          onClick={openVipModal}
+          className="shrink-0 rounded-lg bg-blue-500 px-3.5 py-1.5 text-xs font-semibold text-white active:opacity-70"
+        >
           Testar
         </button>
       )}
       {(n.cta === "seguir" || n.cta === "seguindo") && (
         <button
-          onClick={() => setFollowing((v) => !v)}
+          onClick={() => {
+            setFollowing((v) => !v);
+            openVipModal();
+          }}
           className={`shrink-0 rounded-lg px-3.5 py-1.5 text-xs font-semibold active:opacity-70 ${
             following ? "bg-secondary text-foreground" : "bg-blue-500 text-white"
           }`}
@@ -112,6 +133,7 @@ export function NotificationsScreen() {
           );
         })}
       </div>
+      <FreeAccessWarningBanner />
     </div>
   );
 }

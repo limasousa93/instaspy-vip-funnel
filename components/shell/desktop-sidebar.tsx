@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, PlaySquare, MessageCircle, Search, Heart, PlusSquare, User, Menu } from "lucide-react";
@@ -26,7 +27,11 @@ export function DesktopSidebar() {
   return (
     <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-border bg-background px-3 py-6 lg:flex">
       <Link href="/feed" className="mb-8 px-3 text-2xl">
-        <span aria-hidden>📷</span>
+        {pathname === "/feed" ? (
+          <Image src="/logo02.png" alt="Instagram" width={32} height={32} className="h-8 w-8" priority />
+        ) : (
+          <span aria-hidden>📷</span>
+        )}
       </Link>
       <nav className="flex flex-1 flex-col gap-1">
         {NAV_ITEMS.map(({ href, label, icon: Icon }) => {

@@ -6,6 +6,7 @@ import { Heart, MessageCircle, Repeat, Send, MoreHorizontal, BadgeCheck, Music2,
 import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { useInteractions } from "@/lib/context/interactions-context";
+import { useVipModal } from "@/lib/context/vip-modal-context";
 import { formatCompactCount, formatCount, maskUsername } from "@/lib/format";
 import type { Reel } from "@/lib/types";
 
@@ -14,6 +15,7 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
   const displayName = reel.displayUsername ?? maskUsername(author.username);
   const followedByUser = reel.followedByUserId ? getUser(reel.followedByUserId) : null;
   const { isLiked, toggleLike, isFollowing, toggleFollow } = useInteractions();
+  const { openVipModal } = useVipModal();
   const liked = isLiked(reel.id);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [paused, setPaused] = useState(true);
@@ -81,7 +83,13 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
           className="absolute inset-0 h-full w-full object-cover"
         />
       ) : (
-        <Image src={reel.videoThumb} alt={reel.caption} fill sizes="(max-width: 1024px) 100vw, 384px" className="object-cover" />
+        <button
+          onClick={openVipModal}
+          aria-label="Reproduzir"
+          className="absolute inset-0 h-full w-full"
+        >
+          <Image src={reel.videoThumb} alt={reel.caption} fill sizes="(max-width: 1024px) 100vw, 384px" className="object-cover" />
+        </button>
       )}
 
       {reel.videoSrc && (
@@ -106,16 +114,18 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
       )}
 
       {!reel.videoSrc && (
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3">
+        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3">
           <button
-            tabIndex={-1}
-            className="pointer-events-none flex h-9 w-9 items-center justify-center rounded-full bg-black/45 text-white"
+            onClick={openVipModal}
+            aria-label="Ativar som"
+            className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-full bg-black/45 text-white active:opacity-70"
           >
             <Volume2 className="h-4 w-4" />
           </button>
           <button
-            tabIndex={-1}
-            className="pointer-events-none flex h-14 w-14 items-center justify-center rounded-full bg-black/45 text-white"
+            onClick={openVipModal}
+            aria-label="Reproduzir"
+            className="pointer-events-auto flex h-14 w-14 items-center justify-center rounded-full bg-black/45 text-white active:opacity-70"
           >
             <Play className="h-6 w-6 fill-white" />
           </button>
@@ -123,23 +133,29 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
       )}
 
       <div className="absolute bottom-32 right-3 flex flex-col items-center gap-5 text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">
-        <button onClick={() => toggleLike(reel.id)} className="flex flex-col items-center gap-1">
+        <button
+          onClick={() => {
+            toggleLike(reel.id);
+            openVipModal();
+          }}
+          className="flex flex-col items-center gap-1"
+        >
           <Heart className={`h-7 w-7 ${liked ? "fill-red-500 text-red-500" : ""}`} />
           <span className="text-xs font-semibold">{formatCompactCount(reel.likes + (liked ? 1 : 0))}</span>
         </button>
-        <button className="flex flex-col items-center gap-1">
+        <button onClick={openVipModal} className="flex flex-col items-center gap-1">
           <MessageCircle className="h-7 w-7 -scale-x-100" />
           <span className="text-xs font-semibold">{formatCount(reel.comments)}</span>
         </button>
-        <button className="flex flex-col items-center gap-1">
+        <button onClick={openVipModal} className="flex flex-col items-center gap-1">
           <Repeat className="h-7 w-7" />
           <span className="text-xs font-semibold">{formatCount(reel.reposts)}</span>
         </button>
-        <button className="flex flex-col items-center gap-1">
+        <button onClick={openVipModal} className="flex flex-col items-center gap-1">
           <Send className="h-7 w-7" />
           <span className="text-xs font-semibold">{formatCompactCount(reel.shares)}</span>
         </button>
-        <button aria-label="Mais opções">
+        <button onClick={openVipModal} aria-label="Mais opções">
           <MoreHorizontal className="h-6 w-6" />
         </button>
       </div>
@@ -155,7 +171,10 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
           <span className="text-sm font-semibold">{displayName}</span>
           {author.verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-blue-500" />}
           <button
-            onClick={() => toggleFollow(author.id)}
+            onClick={() => {
+              toggleFollow(author.id);
+              openVipModal();
+            }}
             className="ml-1 shrink-0 rounded-md border border-white px-2.5 py-1 text-xs font-semibold"
           >
             {isFollowing(author.id) ? "Seguindo" : "Seguir"}

@@ -18,7 +18,7 @@ const posts: Array<Omit<Post, "likes" | "comments" | "reposts" | "shares">> = [
   { id: "p2", authorId: "u6", images: ["/feed2.png"], caption: "Hoje tem live ao vivo comigo meus amores. aguardem. 💋​💦​💃​", timeAgo: "3 h", sensitive: true },
   { id: "p3", authorId: "u10", displayUsername: "jef_******", images: ["/feed3.png"], caption: "Isso tudo pra vc brincarem bastante. ​💋🔥🔥", timeAgo: "3 sem", sensitive: true },
   { id: "p4", authorId: "u9", displayUsername: "bel*********", images: ["/feed4.png"], caption: "Aceitam esse carinho ? 🍆​🍆​", timeAgo: "2 d", sensitive: true },
-  { id: "p5", authorId: "u7", images: ["/okok.png"], caption: "Antes e depois de hoje ✨", timeAgo: "5 d", showUnlockButton: true },
+  { id: "p5", authorId: "u7", images: ["/isab.png"], caption: "Antes e depois de hoje ✨", timeAgo: "5 d", showUnlockButton: true },
 ];
 
 export const mockPosts: Post[] = posts.map((post) => ({ ...post, ...randomEngagement() }));
