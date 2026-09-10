@@ -4,8 +4,9 @@ import { DesktopSidebar } from "./desktop-sidebar";
 import { MobileTabBar } from "./mobile-tab-bar";
 import { AccessTimerBanner } from "./access-timer-banner";
 
-// O funil real do site começa em "/" (InstagramSpyFlow) e termina em
-// "/[username]" (perfil com dados reais da Apify) — não há mais login.
+// O funil de entrada ("/" e "/buscar", OnboardingFlow) fica fora deste
+// shell de propósito — termina redirecionando pra "/feed", que é a
+// primeira tela com a navegação real do site (sidebar/tab bar/timer).
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background">
