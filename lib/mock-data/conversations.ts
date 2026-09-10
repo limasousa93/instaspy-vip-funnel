@@ -8,7 +8,7 @@ export const mockConversations: Conversation[] = [
     id: "c1", userId: "u7", lastMessage: "Também te amo ❤️", timeAgo: "2h", unread: true,
     previewOverride: "Enviado há 4 h",
     displayNameOverride: "bianca_diniz",
-    avatarOverride: "https://randomuser.me/api/portraits/women/65.jpg",
+    avatarOverride: "https://randomuser.me/api/portraits/women/79.jpg",
     messages: [
       { id: "m1", fromUserId: "u7", text: "😇😇", timeAgo: "20:04" },
       { id: "m2", fromUserId: "u1", text: "Bom dia meu amor", timeAgo: "20:18" },
