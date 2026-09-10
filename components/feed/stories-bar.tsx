@@ -68,8 +68,8 @@ export function StoriesBar() {
             className={`relative rounded-full p-[3px] ${live ? "live-story-ring" : ""}`}
             style={
               closeFriends
-                ? { backgroundColor: "#3bd16f" }
-                : { backgroundImage: "linear-gradient(45deg, #fbbf24, #ec4899, #9333ea)" }
+                ? { backgroundColor: "#22c55e" }
+                : { backgroundImage: "linear-gradient(45deg, #f58529, #dd2a7b, #8134af)" }
             }
           >
             <div className="rounded-full bg-background p-[2px]">
