@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { Heart, MessageCircle, Repeat, Send, Bookmark, MoreHorizontal, Video, EyeOff } from "lucide-react";
 import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { useInteractions } from "@/lib/context/interactions-context";
+import { useVipModal } from "@/lib/context/vip-modal-context";
 import { formatCompactCount, formatCount, formatTimeAgo, maskUsername } from "@/lib/format";
 import type { Post } from "@/lib/types";
 
@@ -13,18 +13,11 @@ export function PostCard({ post }: { post: Post }) {
   const author = getUser(post.authorId);
   const displayName = post.displayUsername ?? maskUsername(author.username);
   const { isLiked, toggleLike } = useInteractions();
+  const { openVipModal } = useVipModal();
   const liked = isLiked(post.id);
   const displayedLikes = post.likes + (liked ? 1 : 0);
-  const [showLikeBurst, setShowLikeBurst] = useState(false);
-  const [revealed, setRevealed] = useState(false);
-  const hidden = Boolean(post.sensitive) && !revealed;
-
-  function handleDoubleTapLike() {
-    if (hidden) return;
-    if (!liked) toggleLike(post.id);
-    setShowLikeBurst(true);
-    window.setTimeout(() => setShowLikeBurst(false), 700);
-  }
+  const sensitive = Boolean(post.sensitive);
+  const hidden = sensitive;
 
   return (
     <article className="border-b border-border pb-4">
@@ -33,13 +26,13 @@ export function PostCard({ post }: { post: Post }) {
           <BlurredAvatar src={avatarUrl(author.id)} alt={displayName} size={32} />
           <span className="text-sm font-semibold text-foreground">{displayName}</span>
         </div>
-        <button className="active:opacity-40" aria-label="Mais opções">
+        <button onClick={openVipModal} className="active:opacity-40" aria-label="Mais opções">
           <MoreHorizontal className="h-5 w-5 text-foreground" />
         </button>
       </header>
       <div
         className="relative aspect-[4/5] w-full select-none bg-muted"
-        onDoubleClick={handleDoubleTapLike}
+        onDoubleClick={openVipModal}
       >
         <Image
           src={post.images[0]}
@@ -54,7 +47,7 @@ export function PostCard({ post }: { post: Post }) {
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                setRevealed(true);
+                openVipModal();
               }}
               className="rounded-full border border-white px-6 py-2 text-sm font-semibold text-white active:opacity-70"
             >
@@ -62,11 +55,11 @@ export function PostCard({ post }: { post: Post }) {
             </button>
           </div>
         )}
-        <Heart
-          className={`pointer-events-none absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 fill-white text-white drop-shadow-lg transition-all duration-300 ${
-            showLikeBurst ? "scale-100 opacity-90" : "scale-50 opacity-0"
-          }`}
-        />
+        {post.showUnlockButton && (
+          <button className="absolute inset-x-[6%] top-[62%] rounded-lg bg-green-500 py-2.5 text-sm font-bold text-white shadow-lg active:opacity-80">
+            DESBLOQUEAR
+          </button>
+        )}
       </div>
       <div className="flex items-center justify-between px-4 pt-3">
         <div className="flex items-center gap-4">
@@ -74,20 +67,20 @@ export function PostCard({ post }: { post: Post }) {
             <Heart className={`h-6 w-6 transition-transform ${liked ? "scale-110 fill-red-500 text-red-500" : "text-foreground"}`} />
             <span className="text-sm text-foreground">{formatCompactCount(displayedLikes)}</span>
           </button>
-          <button aria-label="Comentar" className="flex items-center gap-1.5 active:scale-90 transition-transform">
+          <button onClick={openVipModal} aria-label="Comentar" className="flex items-center gap-1.5 active:scale-90 transition-transform">
             <MessageCircle className="h-6 w-6 -scale-x-100 text-foreground" />
             <span className="text-sm text-foreground">{formatCount(post.comments)}</span>
           </button>
-          <button aria-label="Repostar" className="flex items-center gap-1.5 active:scale-90 transition-transform">
+          <button onClick={openVipModal} aria-label="Repostar" className="flex items-center gap-1.5 active:scale-90 transition-transform">
             <Repeat className="h-6 w-6 text-foreground" />
             <span className="text-sm text-foreground">{formatCount(post.reposts)}</span>
           </button>
-          <button aria-label="Compartilhar" className="flex items-center gap-1.5 active:scale-90 transition-transform">
+          <button onClick={openVipModal} aria-label="Compartilhar" className="flex items-center gap-1.5 active:scale-90 transition-transform">
             <Send className="h-6 w-6 text-foreground" />
             <span className="text-sm text-foreground">{formatCount(post.shares)}</span>
           </button>
         </div>
-        <button aria-label="Salvar" className="active:scale-90 transition-transform">
+        <button onClick={openVipModal} aria-label="Salvar" className="active:scale-90 transition-transform">
           <Bookmark className="h-6 w-6 text-foreground" />
         </button>
       </div>

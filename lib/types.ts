@@ -26,6 +26,7 @@ export interface Post {
   videoSrc?: string;
   displayUsername?: string;
   sensitive?: boolean;
+  showUnlockButton?: boolean;
 }
 
 export interface Story {

@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/context/auth-context";
 import { InteractionsProvider } from "@/lib/context/interactions-context";
+import { VipModalProvider } from "@/lib/context/vip-modal-context";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -27,7 +28,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full bg-background text-foreground" suppressHydrationWarning>
         <AuthProvider>
-          <InteractionsProvider>{children}</InteractionsProvider>
+          <InteractionsProvider>
+            <VipModalProvider>{children}</VipModalProvider>
+          </InteractionsProvider>
         </AuthProvider>
       </body>
     </html>

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { photoUrl } from "@/lib/media";
 import { useLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
+import { useVipModal } from "@/lib/context/vip-modal-context";
 import { maskUsername } from "@/lib/format";
 
 // Só a primeira bolinha é dado real (o último perfil buscado no funil).
@@ -38,10 +39,11 @@ export function StoriesBar() {
   const lastProfile = useLastSearchedProfile();
   const yourAvatar = lastProfile?.avatarUrl;
   const yourLabel = "Seu story";
+  const { openVipModal } = useVipModal();
 
   return (
     <div className="no-scrollbar momentum-scroll flex gap-4 overflow-x-auto border-b border-border px-4 py-4 lg:px-0">
-      <button className="flex w-20 shrink-0 flex-col items-center gap-1 active:opacity-60">
+      <button onClick={openVipModal} className="flex w-20 shrink-0 flex-col items-center gap-1 active:opacity-60">
         <div className="rounded-full bg-muted p-[3px]">
           <div className="rounded-full bg-background p-[2px]">
             <div className="h-[72px] w-[72px] overflow-hidden rounded-full bg-black">
@@ -63,7 +65,7 @@ export function StoriesBar() {
         <span className="w-full truncate text-center text-xs text-muted-foreground">{yourLabel}</span>
       </button>
       {MOCK_STORY_NAMES.map(({ name, live, closeFriends, image }, i) => (
-        <button key={name} className="flex w-20 shrink-0 flex-col items-center gap-1.5 active:opacity-60">
+        <button key={name} onClick={openVipModal} className="flex w-20 shrink-0 flex-col items-center gap-1.5 active:opacity-60">
           <div
             className={`relative rounded-full p-[3px] ${live ? "live-story-ring" : ""}`}
             style={
