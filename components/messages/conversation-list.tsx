@@ -5,23 +5,25 @@ import { Search, UserRound } from "lucide-react";
 import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { mockMessageRequests } from "@/lib/mock-data/message-requests";
+import { useVipModal } from "@/lib/context/vip-modal-context";
 import { maskUsername } from "@/lib/format";
 import { NotesBar } from "./notes-bar";
 import { MessageRequestsList } from "./message-requests-list";
 import type { Conversation } from "@/lib/types";
 
+const FREE_CONVERSATION_ID = "c1";
+
 export function ConversationList({
   conversations,
   activeId,
   onSelect,
-  onLockedSelect,
 }: {
   conversations: Conversation[];
   activeId: string | null;
   onSelect: (id: string) => void;
-  onLockedSelect?: () => void;
 }) {
   const [tab, setTab] = useState<"messages" | "requests">("messages");
+  const { openVipModal } = useVipModal();
 
   return (
     <div className="flex w-full flex-col border-r border-border lg:w-96">
@@ -52,7 +54,7 @@ export function ConversationList({
             return (
               <li key={c.id}>
                 <button
-                  onClick={() => (c.locked ? onLockedSelect?.() : onSelect(c.id))}
+                  onClick={() => (c.id === FREE_CONVERSATION_ID ? onSelect(c.id) : openVipModal())}
                   className={`flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-accent ${activeId === c.id ? "bg-accent" : ""}`}
                 >
                   {c.ring ? (

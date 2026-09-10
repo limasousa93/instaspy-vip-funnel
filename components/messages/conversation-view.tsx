@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ArrowLeft, Play, Send, Camera, Mic, Image as ImageIcon, MessageCircleMore, CirclePlus, Phone, Video, Tag } from "lucide-react";
 import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { getUser, avatarUrl, CURRENT_USER_ID } from "@/lib/mock-data/users";
+import { useVipModal } from "@/lib/context/vip-modal-context";
 import { maskUsername } from "@/lib/format";
 import type { Conversation } from "@/lib/types";
 
@@ -79,6 +80,7 @@ function AudioBubble({ duration, outgoing }: { duration: string; outgoing: boole
 export function ConversationView({ conversation, onBack }: { conversation: Conversation; onBack: () => void }) {
   const user = getUser(conversation.userId);
   const isBiancaConversation = conversation.id === "c1";
+  const { openVipModal } = useVipModal();
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const fogTriggerRef = useRef<HTMLDivElement>(null);
@@ -138,13 +140,13 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
           <p className="truncate text-xs text-muted-foreground">Online há 47 min</p>
         </span>
         <div className="flex shrink-0 items-center gap-4">
-          <button aria-label="Ligar">
+          <button onClick={openVipModal} aria-label="Ligar">
             <Phone className="h-5 w-5 text-foreground" />
           </button>
-          <button aria-label="Chamada de vídeo">
+          <button onClick={openVipModal} aria-label="Chamada de vídeo">
             <Video className="h-6 w-6 text-foreground" />
           </button>
-          <button aria-label="Etiquetas" className="relative">
+          <button onClick={openVipModal} aria-label="Etiquetas" className="relative">
             <Tag className="h-5 w-5 text-foreground" />
             <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-blue-500" />
           </button>
@@ -208,20 +210,31 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
           />
         )}
       </div>
-      <div className="flex shrink-0 items-center gap-3 border-t border-border p-3">
+      {/* pb extra no mobile: o AccessTimerBanner é fixed logo acima da tab bar
+          e cobriria essa barra de digitação, já que o inbox-viewport termina
+          exatamente onde a tab bar começa. */}
+      <div className="flex shrink-0 items-center gap-3 border-t border-border p-3 pb-12 lg:pb-3">
         <div className="flex flex-1 items-center gap-2 rounded-full bg-secondary py-1 pl-1 pr-4">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-600">
+          <button onClick={openVipModal} aria-label="Câmera" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-600">
             <Camera className="h-4 w-4 text-white" />
-          </span>
+          </button>
           <input
             placeholder="Mensagem..."
             className="w-full min-w-0 flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
           />
         </div>
-        <Mic className="h-6 w-6 shrink-0 text-foreground" />
-        <ImageIcon className="h-6 w-6 shrink-0 text-foreground" />
-        <MessageCircleMore className="h-6 w-6 shrink-0 text-foreground" />
-        <CirclePlus className="h-6 w-6 shrink-0 text-foreground" />
+        <button onClick={openVipModal} aria-label="Áudio">
+          <Mic className="h-6 w-6 shrink-0 text-foreground" />
+        </button>
+        <button onClick={openVipModal} aria-label="Galeria">
+          <ImageIcon className="h-6 w-6 shrink-0 text-foreground" />
+        </button>
+        <button onClick={openVipModal} aria-label="Reações">
+          <MessageCircleMore className="h-6 w-6 shrink-0 text-foreground" />
+        </button>
+        <button onClick={openVipModal} aria-label="Mais">
+          <CirclePlus className="h-6 w-6 shrink-0 text-foreground" />
+        </button>
       </div>
     </div>
   );

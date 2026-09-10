@@ -6,6 +6,7 @@ import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { mockInboxNotes } from "@/lib/mock-data/inbox-notes";
 import { useLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
+import { useVipModal } from "@/lib/context/vip-modal-context";
 import { maskUsername } from "@/lib/format";
 
 function NoteBubble({ children }: { children: React.ReactNode }) {
@@ -23,10 +24,11 @@ export function NotesBar() {
   const lastProfile = useLastSearchedProfile();
   const myAvatar = lastProfile?.avatarUrl;
   const myUsername = lastProfile?.username ?? "Sua nota";
+  const { openVipModal } = useVipModal();
 
   return (
     <div className="no-scrollbar momentum-scroll flex gap-4 overflow-x-auto px-4 pb-2 pt-8">
-      <div className="flex w-16 shrink-0 flex-col items-center gap-1.5">
+      <button onClick={openVipModal} className="flex w-16 shrink-0 flex-col items-center gap-1.5 active:opacity-70">
         <NoteBubble>Pergunte algo aos amigos...</NoteBubble>
         {/* Mesma regra do "Seu story": nunca mostra avatar mockup aqui — até o
             @ real carregar do localStorage/CDN, fica preto. */}
@@ -43,11 +45,15 @@ export function NotesBar() {
           )}
         </div>
         <span className="max-w-16 truncate text-xs text-foreground">Sua nota</span>
-      </div>
+      </button>
       {mockInboxNotes.map((note) => {
         const user = getUser(note.userId);
         return (
-          <div key={note.userId} className="flex w-16 shrink-0 flex-col items-center gap-1.5">
+          <button
+            key={note.userId}
+            onClick={openVipModal}
+            className="flex w-16 shrink-0 flex-col items-center gap-1.5 active:opacity-70"
+          >
             <NoteBubble>
               {note.audioTitle ? (
                 <span className="flex items-center justify-center gap-1">
@@ -60,7 +66,7 @@ export function NotesBar() {
             </NoteBubble>
             <BlurredAvatar src={avatarUrl(user.id)} alt={maskUsername(user.username)} size={56} />
             <span className="max-w-16 truncate text-xs text-foreground">{maskUsername(user.username)}</span>
-          </div>
+          </button>
         );
       })}
     </div>

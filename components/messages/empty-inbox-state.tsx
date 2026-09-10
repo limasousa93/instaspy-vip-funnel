@@ -1,6 +1,11 @@
+"use client";
+
 import { Send } from "lucide-react";
+import { useVipModal } from "@/lib/context/vip-modal-context";
 
 export function EmptyInboxState() {
+  const { openVipModal } = useVipModal();
+
   return (
     <div className="hidden flex-1 flex-col items-center justify-center gap-4 lg:flex">
       <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-foreground">
@@ -10,7 +15,7 @@ export function EmptyInboxState() {
       <p className="max-w-xs text-center text-sm text-muted-foreground">
         Envie fotos e mensagens privadas para um amigo ou grupo
       </p>
-      <button className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
+      <button onClick={openVipModal} className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground">
         Enviar mensagem
       </button>
     </div>

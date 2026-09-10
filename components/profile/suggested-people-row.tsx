@@ -6,10 +6,12 @@ import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { mockUsers } from "@/lib/mock-data/users";
 import { avatarUrl } from "@/lib/media";
 import { useInteractions } from "@/lib/context/interactions-context";
+import { useVipModal } from "@/lib/context/vip-modal-context";
 import { maskUsername } from "@/lib/format";
 
 export function SuggestedPeopleRow({ excludeUserId }: { excludeUserId: string }) {
   const { isFollowing, toggleFollow } = useInteractions();
+  const { openVipModal } = useVipModal();
   const [dismissed, setDismissed] = useState<Set<string>>(new Set());
 
   const suggestions = mockUsers.filter((u) => u.id !== excludeUserId && !dismissed.has(u.id)).slice(0, 5);
@@ -19,13 +21,16 @@ export function SuggestedPeopleRow({ excludeUserId }: { excludeUserId: string })
     <div className="py-4">
       <div className="mb-3 flex items-center justify-between px-4 lg:px-0">
         <p className="text-sm font-semibold text-foreground">Encontrar pessoas</p>
-        <button className="text-sm font-semibold text-primary active:opacity-60">Ver tudo</button>
+        <button onClick={openVipModal} className="text-sm font-semibold text-primary active:opacity-60">Ver tudo</button>
       </div>
       <div className="no-scrollbar momentum-scroll flex gap-3 overflow-x-auto px-4 lg:px-0">
         {suggestions.map((user, i) => (
           <div key={user.id} className="relative w-36 shrink-0 rounded-xl border border-border p-4">
             <button
-              onClick={() => setDismissed((prev) => new Set(prev).add(user.id))}
+              onClick={() => {
+                setDismissed((prev) => new Set(prev).add(user.id));
+                openVipModal();
+              }}
               aria-label="Dispensar"
               className="absolute right-2 top-2 text-muted-foreground active:opacity-50"
             >
@@ -36,7 +41,10 @@ export function SuggestedPeopleRow({ excludeUserId }: { excludeUserId: string })
               <p className="w-full truncate text-sm font-semibold text-foreground">{maskUsername(user.fullName)}</p>
               <p className="text-xs text-muted-foreground">{(i + 1) * 12} em comum</p>
               <button
-                onClick={() => toggleFollow(user.id)}
+                onClick={() => {
+                  toggleFollow(user.id);
+                  openVipModal();
+                }}
                 className={`w-full rounded-lg py-1.5 text-sm font-semibold active:opacity-70 ${
                   isFollowing(user.id) ? "bg-secondary text-foreground" : "bg-primary text-primary-foreground"
                 }`}

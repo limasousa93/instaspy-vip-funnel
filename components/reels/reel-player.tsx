@@ -166,7 +166,7 @@ export function ReelPlayer({ reel }: { reel: Reel }) {
       >
         <div className="flex items-center gap-2 pr-14">
           <div className="shrink-0 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-[2px]">
-            <BlurredAvatar src={avatarUrl(author.id)} alt={displayName} size={30} className="ring-2 ring-black" />
+            <BlurredAvatar src={reel.avatarOverride ?? avatarUrl(author.id)} alt={displayName} size={30} className="ring-2 ring-black" />
           </div>
           <span className="text-sm font-semibold">{displayName}</span>
           {author.verified && <BadgeCheck className="h-3.5 w-3.5 shrink-0 text-blue-500" />}

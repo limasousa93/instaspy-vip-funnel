@@ -50,6 +50,7 @@ export interface Reel {
   audioThumb: string;
   followedByUserId?: string;
   displayUsername?: string;
+  avatarOverride?: string;
 }
 
 export interface Message {

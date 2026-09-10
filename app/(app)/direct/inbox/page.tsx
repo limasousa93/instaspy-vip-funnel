@@ -12,18 +12,11 @@ export default function InboxPage() {
   // sidebar) e voltar, a página remonta do zero, então nunca restaura uma
   // conversa aberta automaticamente. Só entra em uma conversa por clique.
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [showLockedToast, setShowLockedToast] = useState(false);
   const active = mockConversations.find((c) => c.id === activeId) ?? null;
 
   function selectConversation(id: string | null) {
     setActiveId(id);
   }
-
-  useEffect(() => {
-    if (!showLockedToast) return;
-    const timer = setTimeout(() => setShowLockedToast(false), 2200);
-    return () => clearTimeout(timer);
-  }, [showLockedToast]);
 
   // Mesmo fallback usado em reels/page.tsx: no iOS Safari, 100dvh pode ficar
   // um passo atrás enquanto a barra de endereço colapsa durante um scroll
@@ -56,7 +49,6 @@ export default function InboxPage() {
             conversations={mockConversations}
             activeId={activeId}
             onSelect={selectConversation}
-            onLockedSelect={() => setShowLockedToast(true)}
           />
         </div>
         {active ? (
@@ -65,13 +57,6 @@ export default function InboxPage() {
           <EmptyInboxState />
         )}
       </div>
-      {showLockedToast && (
-        <div className="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4">
-          <div className="rounded-full bg-foreground px-4 py-2.5 text-sm font-medium text-background shadow-lg">
-            Não é possível abrir esta conversa
-          </div>
-        </div>
-      )}
     </div>
   );
 }

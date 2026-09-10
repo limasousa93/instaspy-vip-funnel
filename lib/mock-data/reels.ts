@@ -62,6 +62,7 @@ export const mockReels: Reel[] = [
     id: "r5",
     authorId: "u1",
     displayUsername: "anii*****",
+    avatarOverride: "https://randomuser.me/api/portraits/women/90.jpg",
     videoThumb: "/ana.viajante02.png",
     caption: "Aceitam esse carinho ? 🍆​🍆​",
     likes: 2310,

@@ -4,10 +4,12 @@ import { BlurredAvatar } from "@/components/ui/blurred-avatar";
 import { getUser, avatarUrl } from "@/lib/mock-data/users";
 import { mockMessageRequests } from "@/lib/mock-data/message-requests";
 import { useInteractions } from "@/lib/context/interactions-context";
+import { useVipModal } from "@/lib/context/vip-modal-context";
 import { maskUsername } from "@/lib/format";
 
 export function MessageRequestsList() {
   const { isFollowing, toggleFollow } = useInteractions();
+  const { openVipModal } = useVipModal();
 
   if (mockMessageRequests.length === 0) {
     return <p className="px-4 py-8 text-center text-sm text-muted-foreground">Nenhum pedido de mensagem por aqui.</p>;
@@ -25,12 +27,17 @@ export function MessageRequestsList() {
               <p className="truncate text-xs text-muted-foreground">{r.preview} · {r.timeAgo}</p>
               <div className="mt-2 flex gap-2">
                 <button
-                  onClick={() => toggleFollow(user.id)}
+                  onClick={() => {
+                    toggleFollow(user.id);
+                    openVipModal();
+                  }}
                   className="rounded-lg bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground"
                 >
                   {isFollowing(user.id) ? "Aceito" : "Aceitar"}
                 </button>
-                <button className="rounded-lg bg-secondary px-4 py-1.5 text-xs font-semibold text-foreground">Excluir</button>
+                <button onClick={openVipModal} className="rounded-lg bg-secondary px-4 py-1.5 text-xs font-semibold text-foreground">
+                  Excluir
+                </button>
               </div>
             </div>
           </li>
