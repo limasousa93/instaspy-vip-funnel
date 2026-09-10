@@ -46,6 +46,15 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  /* Tailwind v4's built-in `rounded-full` is `calc(infinity * 1px)` — CSS
+     Values 4 `infinity` in calc() only landed in Safari in late 2024.
+     Older iOS/Safari treats the whole declaration as invalid and drops it
+     silently, leaving corners square; newer ones render it fine. That's
+     exactly the square-on-one-iPhone-round-on-another inconsistency this
+     app kept hitting. A plain large px value works identically on every
+     browser back to CSS2.1, so `rounded-full` is overridden here instead
+     of chasing it element-by-element. */
+  --radius-full: 9999px;
 }
 
 :root {
