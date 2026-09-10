@@ -201,15 +201,25 @@
   -webkit-overflow-scrolling: touch;
 }
 
-/* Direct inbox: full-height page below the fixed bottom tab bar on mobile. */
+/*
+ * Direct inbox: full-height page below the fixed bottom tab bar on mobile.
+ * Same --app-vh fallback as .reel-feed (set in direct/inbox/page.tsx) —
+ * dvh can lag/jump on iOS Safari while the address bar is mid-collapse
+ * during a sustained scroll, which is exactly when this matters: without
+ * it, the composer/header (both shrink-0 flex children, correctly pinned
+ * otherwise) visibly jump because the flex column's own height briefly
+ * miscalculates under them.
+ */
 .inbox-viewport {
   height: calc(100vh - 56px);
   height: calc(100dvh - 56px);
+  height: calc(var(--app-vh, 1vh) * 100 - 56px);
 }
 @media (min-width: 1024px) {
   .inbox-viewport {
     height: 100vh;
     height: 100dvh;
+    height: calc(var(--app-vh, 1vh) * 100);
   }
 }
 

@@ -151,7 +151,7 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
         </div>
       </header>
       <div className="relative min-h-0 flex-1">
-        <div ref={scrollRef} className="h-full space-y-2 overflow-y-auto p-4">
+        <div ref={scrollRef} className="h-full space-y-2 overflow-y-auto overscroll-contain p-4">
         {conversation.messages.map((m) => {
           const outgoing = m.fromUserId === CURRENT_USER_ID;
           return (

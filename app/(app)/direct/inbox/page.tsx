@@ -46,6 +46,26 @@ export default function InboxPage() {
     return () => clearTimeout(timer);
   }, [showLockedToast]);
 
+  // Mesmo fallback usado em reels/page.tsx: no iOS Safari, 100dvh pode ficar
+  // um passo atrás enquanto a barra de endereço colapsa durante um scroll
+  // sustentado — visualViewport.height é o que o Safari realmente mantém
+  // atualizado em tempo real (ver .inbox-viewport em globals.css).
+  useEffect(() => {
+    function setAppVh() {
+      const height = window.visualViewport?.height ?? window.innerHeight;
+      document.documentElement.style.setProperty("--app-vh", `${height * 0.01}px`);
+    }
+    setAppVh();
+    window.addEventListener("resize", setAppVh);
+    window.visualViewport?.addEventListener("resize", setAppVh);
+    window.visualViewport?.addEventListener("scroll", setAppVh);
+    return () => {
+      window.removeEventListener("resize", setAppVh);
+      window.visualViewport?.removeEventListener("resize", setAppVh);
+      window.visualViewport?.removeEventListener("scroll", setAppVh);
+    };
+  }, []);
+
   if (!ready) {
     return <div className="inbox-viewport bg-background" />;
   }
