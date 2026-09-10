@@ -61,16 +61,8 @@ function AudioBubble({ duration, outgoing }: { duration: string; outgoing: boole
       }`}
     >
       <div className="flex items-center gap-2">
-        {/* div + isolate/translateZ(0), não <span>: no Safari/iOS esse
-            círculo (rounded-full + fundo translúcido) às vezes renderiza
-            com cantos quadrados, igual ao bug já visto nos avatares —
-            forçar a própria camada de composição resolve, e no
-            Android/Chrome (já corretos) fica idêntico. */}
-        <div
-          className={`isolate flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${outgoing ? "bg-white/20" : "bg-foreground/10"}`}
-          style={{ transform: "translateZ(0)", WebkitTransform: "translateZ(0)" }}
-        >
-          <Play className="h-3.5 w-3.5 fill-current" />
+        <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${outgoing ? "bg-white/20" : "bg-foreground/10"}`}>
+          <Play className="h-3.5 w-3.5 shrink-0 fill-current text-current" />
         </div>
         <span className="flex h-6 flex-1 items-center gap-[2px]">
           {WAVEFORM_BARS.map((h, i) => (
