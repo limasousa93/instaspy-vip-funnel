@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { AlertTriangle, ArrowRight, AtSign, Search } from "lucide-react";
@@ -9,15 +9,14 @@ import { saveLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
 import { avatarUrl } from "@/lib/media";
 import { OnboardingBackdrop, OnboardingBadges, OnboardingCard, OnboardingLogo } from "./onboarding-card";
 import { OnboardingGlyph } from "./onboarding-glyph";
-import { OnboardingLoadingScreen } from "./onboarding-loading-screen";
-import { OnboardingCpuScreen } from "./onboarding-cpu-screen";
+import { OnboardingProcessingScreen } from "./onboarding-processing-screen";
 
 type Step = "intro" | "handle" | "preview" | "redirecting";
 
 const GRADIENT_BUTTON =
   "flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 py-3.5 text-base font-bold text-white active:opacity-90";
 
-const REDIRECT_DELAY_MS = 1400;
+const PROCESSING_DURATION_MS = 5000;
 
 export function OnboardingFlow() {
   const router = useRouter();
@@ -39,16 +38,14 @@ export function OnboardingFlow() {
     setStep("redirecting");
   }
 
-  // Tela após a confirmação do preview — transição curta antes de cair no
-  // feed (não há mais nenhuma busca real pendente nesse ponto).
-  useEffect(() => {
-    if (step !== "redirecting") return;
-    const timeout = window.setTimeout(() => router.push("/feed"), REDIRECT_DELAY_MS);
-    return () => window.clearTimeout(timeout);
-  }, [step, router]);
-
   if (step === "redirecting") {
-    return <OnboardingCpuScreen text="Preparando seu acesso..." />;
+    return (
+      <OnboardingProcessingScreen
+        name="Preparando acesso"
+        durationMs={PROCESSING_DURATION_MS}
+        onDone={() => router.push("/feed")}
+      />
+    );
   }
 
   // Tela 1 — landing.
@@ -107,14 +104,13 @@ export function OnboardingFlow() {
     );
   }
 
-  // Carregamento da busca. A busca real na Apify não tem duração fixa:
-  // enquanto `loading` for true (estado real do hook, não um timer
-  // inventado — ver tela 4.md), mostramos essa tela; ela some sozinha
-  // assim que os dados chegam ou a busca falha.
-  const username = handle.trim().replace(/^@/, "");
-
+  // Carregamento da busca. A busca real na Apify não tem duração fixa, então
+  // essa tela nunca avança sozinha: sem `onDone`, o ciclo de 5s do
+  // ProcessingCard só repete em loop enquanto `loading` for true (estado
+  // real do hook — ver tela 4.md); ela some sozinha assim que os dados
+  // chegam ou a busca falha.
   if (loading || (!data && !error)) {
-    return <OnboardingLoadingScreen key={username} text={`Buscando @${username}`} />;
+    return <OnboardingProcessingScreen name="Buscando perfil" durationMs={PROCESSING_DURATION_MS} />;
   }
 
   if (error || !data) {
