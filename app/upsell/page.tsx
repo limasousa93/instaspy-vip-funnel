@@ -19,17 +19,19 @@ export default async function UpsellPage() {
         <OnboardingLogo />
         <Crown className="mx-auto h-10 w-10 fill-amber-400 text-amber-400" />
         <h1 className="mt-3 text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-          Desbloqueie <span className="text-violet-400">ainda mais</span>
+          Atualize seu acesso para o <span className="text-violet-400">Protocolo MATRIX™</span>
         </h1>
-        <p className="mt-4 text-sm text-white/70">
-          Leve o pacote avançado e tenha acesso completo a recursos extras antes de entrar no app.
-        </p>
+        <div className="mt-4 rounded-2xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-center">
+          <p className="text-xs font-bold text-green-300">
+            O InstaSpy foi atualizado com a tecnologia MATRIX™, um protocolo até 3x mais avançado que a versão anterior. Seu acesso está quase pronto. Atualize para MATRIX™ por R$ 22,90 e tenha acesso completo.
+          </p>
+        </div>
         <div className="mt-7 flex flex-col gap-3">
           <a
             href={upsellCheckoutUrl}
             className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 py-3.5 text-base font-bold text-white active:opacity-90"
           >
-            <Check className="h-5 w-5" /> Quero desbloquear
+            <Check className="h-5 w-5" /> Atualizar e acessar
           </a>
         </div>
         <OnboardingBadges />

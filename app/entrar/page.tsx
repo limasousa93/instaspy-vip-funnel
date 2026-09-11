@@ -7,7 +7,7 @@ export default function EntrarPage() {
       <OnboardingCard>
         <OnboardingLogo />
         <h1 className="text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-          Confirme sua <span className="text-violet-400">compra</span>
+          Confirme seu <span className="text-violet-400">acesso VIP</span>
         </h1>
         <p className="mt-4 text-sm text-white/70">
           Digite o e-mail ou celular que você usou no pagamento para liberar seu acesso VIP.
