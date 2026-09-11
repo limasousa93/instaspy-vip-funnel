@@ -5,6 +5,13 @@ const STORAGE_KEY = "ig-spy-last-profile";
 export interface LastSearchedProfile {
   username: string;
   avatarUrl?: string;
+  // Campos extras usados pela landing dinâmica em /resultado — opcionais
+  // pra não quebrar quem só grava/lê username+avatarUrl (feed mock, etc.).
+  name?: string;
+  followers?: number;
+  following?: number;
+  posts?: number;
+  bio?: string;
 }
 
 export function saveLastSearchedProfile(profile: LastSearchedProfile): void {

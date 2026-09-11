@@ -163,13 +163,22 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
               className={`flex items-end gap-1.5 ${outgoing ? "justify-end" : "justify-start"}`}
             >
               {!outgoing && (
-                <BlurredAvatar src={conversation.avatarOverride ?? avatarUrl(user.id)} alt="" size={24} />
+                <BlurredAvatar
+                  src={conversation.avatarOverride ?? avatarUrl(user.id)}
+                  alt=""
+                  size={24}
+                  onClick={isBiancaConversation ? openVipModal : undefined}
+                  className={isBiancaConversation ? "cursor-pointer" : undefined}
+                />
               )}
               {m.kind === "audio" && m.audioDuration ? (
                 <AudioBubble duration={m.audioDuration} outgoing={outgoing} />
               ) : m.kind === "photo" && m.photoUrl ? (
                 <div className="flex items-center gap-2">
-                  <div className={`relative ${conversation.id === "c1" ? "w-[132px]" : "w-[220px]"}`}>
+                  <div
+                    className={`relative ${conversation.id === "c1" ? "w-[132px] cursor-pointer" : "w-[220px]"}`}
+                    onClick={isBiancaConversation ? openVipModal : undefined}
+                  >
                     <Image
                       src={m.photoUrl}
                       alt=""

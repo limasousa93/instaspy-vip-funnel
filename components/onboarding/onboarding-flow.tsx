@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
-import { AlertTriangle, ArrowRight, AtSign, Search } from "lucide-react";
+import { AlertTriangle, ArrowRight, AtSign, Eye, Search } from "lucide-react";
 import { useInstagram } from "@/hooks/useInstagram";
 import { saveLastSearchedProfile } from "@/lib/instagram/last-searched-profile";
-import { avatarUrl } from "@/lib/media";
+import { ProfileAvatar } from "@/components/profile-result/shared";
 import { OnboardingBackdrop, OnboardingBadges, OnboardingCard, OnboardingLogo } from "./onboarding-card";
-import { OnboardingGlyph } from "./onboarding-glyph";
 import { OnboardingProcessingScreen } from "./onboarding-processing-screen";
 
 type Step = "intro" | "handle" | "preview" | "redirecting";
@@ -16,35 +14,106 @@ type Step = "intro" | "handle" | "preview" | "redirecting";
 const GRADIENT_BUTTON =
   "flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 py-3.5 text-base font-bold text-white active:opacity-90";
 
-const PROCESSING_DURATION_MS = 5000;
+const SEARCH_PROCESSING_DURATION_MS = 8000;
+const REDIRECT_PROCESSING_DURATION_MS = 12000;
+const ACCESS_GRANTED_BANNER_DURATION_MS = 3000;
+
+const REDIRECT_PROCESSING_STAGES = [
+  { key: "decoding", label: "Decodificando...", minProgress: 0 },
+  { key: "extracting", label: "Extraindo Dados", minProgress: 25 },
+  { key: "analyzing", label: "Análise Profunda", minProgress: 50 },
+  { key: "cracking", label: "Quebrando senha", minProgress: 75 },
+];
+
+const ANALYZED_PROFILES_INITIAL_COUNT = 105_505;
+
+// Contador da tela de intro: sobe e desce aleatoriamente pra parecer uma
+// atividade ao vivo, a cada 4-6s (delay e direção sorteados a cada ciclo).
+function useFluctuatingCount(initial: number) {
+  const [count, setCount] = useState(initial);
+
+  useEffect(() => {
+    let timeoutId: number;
+    function scheduleNext() {
+      const delay = 4000 + Math.random() * 2000;
+      timeoutId = window.setTimeout(() => {
+        setCount((prev) => {
+          const direction = Math.random() < 0.5 ? -1 : 1;
+          const delta = Math.floor(Math.random() * 40) + 5;
+          return prev + direction * delta;
+        });
+        scheduleNext();
+      }, delay);
+    }
+    scheduleNext();
+    return () => window.clearTimeout(timeoutId);
+  }, []);
+
+  return count;
+}
 
 export function OnboardingFlow() {
   const router = useRouter();
   const { data, loading, error, search } = useInstagram();
   const [step, setStep] = useState<Step>("intro");
   const [handle, setHandle] = useState("");
+  const [accessGranted, setAccessGranted] = useState(false);
+  const analyzedProfilesCount = useFluctuatingCount(ANALYZED_PROFILES_INITIAL_COUNT);
+  // A busca real na API pode responder antes dos 8s do ciclo do
+  // ProcessingCard; esse flag força a tela de loading a ficar visível pelo
+  // tempo mínimo, mesmo que os dados cheguem antes.
+  const [minSearchDelayDone, setMinSearchDelayDone] = useState(true);
+  const minSearchDelayTimeoutRef = useRef<number | undefined>(undefined);
 
   async function handleSubmitHandle(event: FormEvent) {
     event.preventDefault();
     const username = handle.trim().replace(/^@/, "");
     if (!username) return;
     setStep("preview");
+    setMinSearchDelayDone(false);
+    if (minSearchDelayTimeoutRef.current) window.clearTimeout(minSearchDelayTimeoutRef.current);
+    minSearchDelayTimeoutRef.current = window.setTimeout(
+      () => setMinSearchDelayDone(true),
+      SEARCH_PROCESSING_DURATION_MS,
+    );
     await search(username);
   }
 
   function handleConfirm() {
     if (!data) return;
-    saveLastSearchedProfile({ username: data.profile.username, avatarUrl: data.profile.avatarUrl });
+    saveLastSearchedProfile({
+      username: data.profile.username,
+      avatarUrl: data.profile.avatarUrl,
+      name: data.profile.fullName,
+      followers: data.profile.followers,
+      following: data.profile.following,
+      posts: data.profile.postsCount,
+      bio: data.profile.bio,
+    });
     setStep("redirecting");
   }
 
   if (step === "redirecting") {
     return (
-      <OnboardingProcessingScreen
-        name="Preparando acesso"
-        durationMs={PROCESSING_DURATION_MS}
-        onDone={() => router.push("/feed")}
-      />
+      <div className="relative">
+        {accessGranted && (
+          <div className="fixed inset-x-0 top-0 z-50 flex justify-center pt-8 animate-in fade-in duration-700">
+            <div className="rounded-full border border-green-500/40 bg-green-500/10 px-5 py-2 text-sm font-bold tracking-wide text-green-400 shadow-[0_0_20px_rgba(34,197,94,0.25)]">
+              ACESSO AUTORIZADO
+            </div>
+          </div>
+        )}
+        <OnboardingProcessingScreen
+          name="Preparando acesso"
+          durationMs={REDIRECT_PROCESSING_DURATION_MS}
+          stages={REDIRECT_PROCESSING_STAGES}
+          stickyLastStage
+          onDone={() => {
+            setAccessGranted(true);
+            window.setTimeout(() => router.push("/feed"), ACCESS_GRANTED_BANNER_DURATION_MS);
+          }}
+        />
+      </div>
     );
   }
 
@@ -55,15 +124,21 @@ export function OnboardingFlow() {
         <OnboardingCard>
           <OnboardingLogo />
           <h1 className="text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-            Quer saber quantos seguidores um perfil do <span className="text-violet-400">Instagram</span> tem?
+            O que seu <span className="text-violet-400">Cônjuge</span> faz quando está no Instagram?
           </h1>
           <p className="mt-4 text-sm text-white/70">
-            Descubra o número de seguidores públicos um perfil tem de forma <span className="text-violet-300">ética</span>.
+            Descubra a verdade sobre qualquer pessoa, acessando o <span className="text-violet-300">instagram</span> dela!
           </p>
-          <button onClick={() => setStep("handle")} className={`${GRADIENT_BUTTON} mt-7`}>
-            <Search className="h-5 w-5" /> Buscar Agora
+          <button
+            onClick={() => setStep("handle")}
+            className="spy-cta-button mt-7 flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-base font-bold text-white active:opacity-90"
+          >
+            <Eye className="eye-blink-icon h-5 w-5" /> Espionar Agora
           </button>
           <OnboardingBadges />
+          <p className="mt-4 text-xs text-white/50">
+            +{analyzedProfilesCount.toLocaleString("pt-BR")} perfis sendo analisados
+          </p>
         </OnboardingCard>
       </OnboardingBackdrop>
     );
@@ -76,11 +151,10 @@ export function OnboardingFlow() {
         <OnboardingCard>
           <OnboardingLogo />
           <h1 className="text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-            O que seu perfil no <span className="text-violet-400">Instagram</span> tem?
+            O que seu <span className="text-violet-400">Cônjuge</span> faz quando está no Instagram?
           </h1>
           <p className="mt-4 text-sm text-white/70">
-            Digite o @ do usuário que deseja e descubra quantos seguidores públicos ele tem, de forma{" "}
-            <span className="text-violet-300">rápida e simples</span>.
+            Digite o nome de usuário da pessoa a ser espionada, sem o arroba &quot;@&quot;.
           </p>
           <form onSubmit={handleSubmitHandle} className="mt-7">
             <div className="flex items-center gap-2 rounded-full border border-violet-500/50 bg-white/5 px-5 py-3.5">
@@ -88,14 +162,18 @@ export function OnboardingFlow() {
               <input
                 autoFocus
                 value={handle}
-                onChange={(event) => setHandle(event.target.value)}
-                placeholder="Ex: noticiadodia"
+                onChange={(event) => setHandle(event.target.value.replace(/@/g, ""))}
+                placeholder="Ex: nomedoconjuge_10"
                 aria-label="Username do Instagram"
                 className="w-full min-w-0 bg-transparent text-left text-base text-white placeholder:text-white/40 focus:outline-none"
               />
             </div>
-            <button type="submit" disabled={!handle.trim()} className={`${GRADIENT_BUTTON} mt-4 disabled:opacity-40`}>
-              <Search className="h-5 w-5" /> Buscar Agora
+            <button
+              type="submit"
+              disabled={!handle.trim()}
+              className="spy-cta-button mt-4 flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-base font-bold text-white active:opacity-90 disabled:opacity-40"
+            >
+              <Eye className="h-5 w-5" /> Espionar Agora
             </button>
           </form>
           <OnboardingBadges />
@@ -104,13 +182,12 @@ export function OnboardingFlow() {
     );
   }
 
-  // Carregamento da busca. A busca real na Apify não tem duração fixa, então
-  // essa tela nunca avança sozinha: sem `onDone`, o ciclo de 5s do
-  // ProcessingCard só repete em loop enquanto `loading` for true (estado
-  // real do hook — ver tela 4.md); ela some sozinha assim que os dados
-  // chegam ou a busca falha.
-  if (loading || (!data && !error)) {
-    return <OnboardingProcessingScreen name="Buscando perfil" durationMs={PROCESSING_DURATION_MS} />;
+  // Carregamento da busca. A busca real na Apify pode responder antes de 8s,
+  // então `minSearchDelayDone` garante um piso de 8s nessa tela; se a busca
+  // demorar mais que isso, a tela também continua (via `loading`/`!data`)
+  // até os dados chegarem ou a busca falhar.
+  if (loading || !minSearchDelayDone || (!data && !error)) {
+    return <OnboardingProcessingScreen name="Buscando perfil" durationMs={SEARCH_PROCESSING_DURATION_MS} />;
   }
 
   if (error || !data) {
@@ -134,14 +211,16 @@ export function OnboardingFlow() {
       <OnboardingCard>
         <OnboardingGlyphHeading username={data.profile.username} />
         <div className="mt-5 flex items-center gap-5 text-left">
-          <Image
-            src={data.profile.avatarUrl ?? avatarUrl(data.profile.id)}
-            alt={data.profile.username}
-            width={84}
-            height={84}
-            preload
-            className="h-[84px] w-[84px] shrink-0 rounded-full object-cover ring-2 ring-violet-500/50"
-          />
+          {data.profile.avatarUrl ? (
+            <ProfileAvatar
+              src={data.profile.avatarUrl}
+              alt={data.profile.username}
+              size={84}
+              className="ring-2 ring-violet-500/50"
+            />
+          ) : (
+            <div className="h-[84px] w-[84px] shrink-0 rounded-full bg-black ring-2 ring-violet-500/50" />
+          )}
           <div className="flex flex-1 justify-between text-center">
             <div>
               <p className="text-lg font-bold text-white">{data.profile.postsCount.toLocaleString("pt-BR")}</p>
@@ -160,10 +239,10 @@ export function OnboardingFlow() {
         {data.profile.bio && (
           <p className="mt-4 whitespace-pre-line text-left text-sm text-white/80">{data.profile.bio}</p>
         )}
-        <div className="mt-6 flex items-start gap-2.5 rounded-2xl border border-violet-500/40 bg-violet-500/10 px-4 py-3 text-left">
-          <AlertTriangle className="h-4 w-4 shrink-0 translate-y-0.5 text-violet-300" />
-          <p className="text-xs text-violet-200">
-            Limite de apenas 1 consulta por dispositivo, certifique-se que digitou o usuário corretamente.
+        <div className="mt-6 flex items-start gap-2.5 rounded-2xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-left">
+          <AlertTriangle className="h-4 w-4 shrink-0 translate-y-0.5 text-red-400" />
+          <p className="text-xs text-red-300">
+            Limite de apenas 1 pesquisa por dispositivo, certifique-se que digitou o usuário corretamente.
           </p>
         </div>
         <div className="mt-6 flex gap-3">
@@ -171,16 +250,15 @@ export function OnboardingFlow() {
             onClick={() => setStep("handle")}
             className="flex flex-1 items-center justify-center gap-2 rounded-full border border-violet-500/50 py-3 text-sm font-bold text-white active:opacity-70"
           >
-            <Search className="h-4 w-4" /> Buscar Agora
+            <Search className="h-4 w-4" /> Corrigir @
           </button>
           <button
             onClick={handleConfirm}
-            className="flex flex-1 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 py-3 text-sm font-bold text-white active:opacity-90"
+            className="confirm-cta-button flex flex-1 items-center justify-center gap-2 rounded-full py-3 text-sm font-bold text-white active:opacity-90"
           >
             Confirmar <ArrowRight className="h-4 w-4" />
           </button>
         </div>
-        <OnboardingBadges />
       </OnboardingCard>
     </OnboardingBackdrop>
   );
@@ -189,12 +267,11 @@ export function OnboardingFlow() {
 function OnboardingGlyphHeading({ username }: { username: string }) {
   return (
     <div className="flex flex-col items-center gap-2">
-      <OnboardingGlyph className="h-7 w-7 text-white" />
       <h1 className="text-xl font-extrabold text-white sm:text-2xl">
-        Descubra <span className="text-violet-400">o Perfil do Instagram</span>
+        Confirme <span className="text-violet-400">o Instagram</span>
       </h1>
       <p className="text-sm text-white/70">
-        Você deseja saber mais sobre o perfil <span className="font-semibold text-white">@{username}</span>?
+        Você deseja espionar o perfil <span className="font-semibold text-white">@{username}</span>?
       </p>
     </div>
   );

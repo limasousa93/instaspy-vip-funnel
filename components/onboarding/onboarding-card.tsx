@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { ShieldCheck, Lock, Info } from "lucide-react";
+import Image from "next/image";
+import { ShieldCheck, Lock, CheckCircle2 } from "lucide-react";
 import GatewayFlow from "@/components/ui/gateway-flow";
-import { OnboardingGlyph } from "./onboarding-glyph";
 
 // Fundo + moldura reaproveitados pelas 3 telas do funil de entrada (intro,
 // @ do perfil, preview) — o fundo animado é o GatewayFlow (components/ui),
@@ -28,14 +28,15 @@ export function OnboardingCard({ children }: { children: ReactNode }) {
 
 export function OnboardingLogo() {
   return (
-    <div className="mb-6 flex flex-col items-center gap-2">
-      <OnboardingGlyph className="h-9 w-9 text-white" />
-      <p className="text-2xl font-extrabold text-white">
-        Info <span className="text-violet-400">Perfil</span>
-      </p>
-      <p className="text-[11px] font-semibold tracking-[0.2em] text-white/50">
-        BUSCA &middot; ANALISA &middot; DESCUBRA
-      </p>
+    <div className="mb-6 flex justify-center">
+      <Image
+        src="/logo22.png"
+        alt="InstaSpy"
+        width={230}
+        height={200}
+        priority
+        className="h-16 w-auto sm:h-20"
+      />
     </div>
   );
 }
@@ -44,16 +45,16 @@ export function OnboardingBadges() {
   return (
     <div className="mt-7 flex items-center justify-center gap-3 text-xs text-white/70 sm:gap-4">
       <span className="flex items-center gap-1.5">
-        <ShieldCheck className="h-4 w-4 text-violet-400" /> 100% Ético
+        <ShieldCheck className="h-4 w-4 text-violet-400" /> 100% Anônimo
       </span>
       <span className="h-4 w-px bg-white/15" />
       <span className="flex items-center gap-1.5">
-        <Lock className="h-4 w-4 text-violet-400" /> Seguro
+        <Lock className="h-4 w-4 text-violet-400" /> Sem Senha
       </span>
       <span className="h-4 w-px bg-white/15" />
       <span className="flex items-center gap-1.5 text-left">
-        <Info className="h-4 w-4 shrink-0 text-violet-400" /> Apenas para fins
-        <br className="hidden" /> de informação
+        <CheckCircle2 className="h-4 w-4 shrink-0 text-violet-400" /> Teste
+        <br className="hidden" /> Grátis
       </span>
     </div>
   );

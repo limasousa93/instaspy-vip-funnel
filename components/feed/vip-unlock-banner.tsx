@@ -21,9 +21,12 @@ export function VipUnlockCard() {
           </p>
         </div>
       </div>
-      <button className="w-full rounded-lg bg-green-500 py-2.5 text-sm font-bold text-white shadow-lg active:opacity-80">
+      <a
+        href="/resultado"
+        className="block w-full rounded-lg bg-green-500 py-2.5 text-center text-sm font-bold text-white shadow-lg active:opacity-80"
+      >
         DESBLOQUEAR
-      </button>
+      </a>
     </div>
   );
 }

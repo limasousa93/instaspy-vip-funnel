@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { useVipModal } from "@/lib/context/vip-modal-context";
 
 const START_SECONDS = 10 * 60;
@@ -12,15 +13,23 @@ function formatTime(totalSeconds: number): string {
 }
 
 export function AccessTimerBanner() {
+  const router = useRouter();
   const { openVipModal } = useVipModal();
   const [secondsLeft, setSecondsLeft] = useState(START_SECONDS);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
-      setSecondsLeft((prev) => (prev <= 1 ? START_SECONDS : prev - 1));
+      setSecondsLeft((prev) => {
+        if (prev <= 1) {
+          // Zerou o cronômetro: leva direto pra landing de vendas.
+          router.push("/resultado");
+          return START_SECONDS;
+        }
+        return prev - 1;
+      });
     }, 1000);
     return () => window.clearInterval(interval);
-  }, []);
+  }, [router]);
 
   return (
     <button

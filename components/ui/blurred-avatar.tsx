@@ -19,17 +19,20 @@ export function BlurredAvatar({
   size,
   className = "",
   imgClassName = "",
+  onClick,
 }: {
   src: string;
   alt: string;
   size: number;
   className?: string;
   imgClassName?: string;
+  onClick?: () => void;
 }) {
   const blurPx = Math.round(size * BLUR_RATIO * 10) / 10;
 
   return (
     <div
+      onClick={onClick}
       className={`isolate shrink-0 overflow-hidden rounded-full ${className}`}
       style={{
         width: size,

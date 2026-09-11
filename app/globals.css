@@ -301,3 +301,43 @@
   }
 }
 
+/*
+ * Ícone de olho do CTA "Espionar Agora": pisca (fecha e abre) em loop pra
+ * reforçar a metáfora de espionagem sem precisar trocar Eye/EyeOff via JS.
+ */
+@keyframes eye-blink {
+  0%,
+  88%,
+  100% {
+    transform: scaleY(1);
+  }
+  92% {
+    transform: scaleY(0.4);
+  }
+  96% {
+    transform: scaleY(1);
+  }
+}
+.eye-blink-icon {
+  animation: eye-blink 3s ease-in-out infinite;
+  transform-origin: center;
+}
+
+/*
+ * Botões "Espionar Agora" (telas 1 e 2): cor sólida (sem gradiente) e em
+ * hex puro, não em oklch/oklab. As utilities de gradiente e de cor do
+ * Tailwind v4 (bg-gradient-to-r, bg-violet-600, etc.) resolvem pra
+ * `linear-gradient(... in oklab, ...)` ou pra var(--color-violet-600) em
+ * oklch — ambos inválidos em iOS Safari mais antigo, fazendo o navegador
+ * descartar o background inteiro e sobrar só o texto. Hex puro é suportado
+ * por qualquer versão de Safari.
+ */
+.spy-cta-button {
+  background-color: #7c3aed;
+}
+
+/* Botão "Confirmar" (tela 3, preview): mesma lógica de cor sólida em hex. */
+.confirm-cta-button {
+  background-color: #16a34a;
+}
+

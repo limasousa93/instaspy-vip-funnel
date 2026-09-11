@@ -4,22 +4,28 @@ import { useEffect, useRef, useState } from "react";
 import ProcessingCard from "@/components/ui/processing-card";
 
 type Status = "queued" | "running" | "succeeded" | "failed";
+type ProcessingStage = { key: string; label: string; minProgress: number };
 
 // Tela de transição reaproveitada em dois pontos do funil: entre a tela 2
 // (@ do perfil) e a tela 3 (preview) — aqui SEM `onDone`, então o ciclo de
-// 5s só repete em loop enquanto o componente pai mantiver a tela montada
+// 8s só repete em loop enquanto o componente pai mantiver a tela montada
 // (ou seja, enquanto a busca real na Apify ainda estiver em andamento —
 // nunca avança sozinha antes dos dados chegarem, ver tela 4.md) — e depois
-// da confirmação da tela 3, antes do /feed, onde COM `onDone` ela dura
-// exatamente 5s e então avança.
+// da confirmação da tela 3, antes do /feed (tela 4), onde COM `onDone` ela
+// dura exatamente 12s; ao terminar, o onDone do chamador exibe o banner
+// "ACESSO AUTORIZADO" por mais 3s antes de navegar.
 export function OnboardingProcessingScreen({
   name,
   durationMs = 5000,
   onDone,
+  stages,
+  stickyLastStage,
 }: {
   name: string;
   durationMs?: number;
   onDone?: () => void;
+  stages?: ProcessingStage[];
+  stickyLastStage?: boolean;
 }) {
   const [status, setStatus] = useState<Status>("queued");
   const [progress, setProgress] = useState(0);
@@ -65,7 +71,13 @@ export function OnboardingProcessingScreen({
   return (
     <div className="flex min-h-screen items-center justify-center bg-black px-4 py-10">
       <div className="w-full max-w-lg">
-        <ProcessingCard name={name} status={status} progress={progress} />
+        <ProcessingCard
+          name={name}
+          status={status}
+          progress={progress}
+          stages={stages}
+          stickyLastStage={stickyLastStage}
+        />
       </div>
     </div>
   );

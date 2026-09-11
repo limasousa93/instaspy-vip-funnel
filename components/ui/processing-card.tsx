@@ -3,228 +3,71 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Monitor } from "lucide-react";
+import { LetterGlitch } from "@/components/ui/letter-glitch";
 
 // tiny util
 function cn(...classes: (string | undefined | null | false)[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-/* ────────────── LetterGlitch ────────────── */
-const LetterGlitch: React.FC<{
-  glitchColors?: string[];
-  glitchSpeed?: number;
-  centerVignette?: boolean;
-  outerVignette?: boolean;
-  smooth?: boolean;
-  characters?: string;
-  className?: string;
-}> = ({
-  glitchColors = ["#78b4ff", "#a0c4ff", "#c7d2fe", "#e0e7ff", "#f0f4ff"],
-  glitchSpeed = 50,
-  centerVignette = false,
-  outerVignette = true,
-  smooth = true,
-  characters = ".,:;-*#",
-  className = "",
-}) => {
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const animationRef = React.useRef<number | null>(null);
-  const letters = React.useRef<
-    Array<{ char: string; color: string; targetColor: string; colorProgress: number }>
-  >([]);
-  const grid = React.useRef({ columns: 0, rows: 0 });
-  const context = React.useRef<CanvasRenderingContext2D | null>(null);
-  const lastGlitchTime = React.useRef(Date.now());
+/* ────────────── DecryptingPassword ──────────────
+ * Efeito de "senha sendo descriptografada": digita caracteres aleatórios
+ * rapidamente até um tamanho fixo, apaga tudo de novo e repete em loop,
+ * em verde/monoespaçado — sem depender de nenhuma lib externa. */
+const DECRYPT_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%&*";
+const DECRYPT_LENGTH = 14;
 
-  const lettersAndSymbols = React.useMemo(() => Array.from(characters), [characters]);
-  const fontSize = 16;
-  const charWidth = 10;
-  const charHeight = 20;
+const randomDecryptChar = () => DECRYPT_CHARS[Math.floor(Math.random() * DECRYPT_CHARS.length)];
+const randomDecryptString = (length: number) =>
+  Array.from({ length }, randomDecryptChar).join("");
 
-  const getRandomChar = React.useCallback(
-    () => lettersAndSymbols[Math.floor(Math.random() * lettersAndSymbols.length)],
-    [lettersAndSymbols],
-  );
-  const getRandomColor = React.useCallback(
-    () => glitchColors[Math.floor(Math.random() * glitchColors.length)],
-    [glitchColors],
-  );
-
-  const hexToRgb = (hex: string) => {
-    const shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    const normalized = hex.replace(shorthandRegex, (_m, r, g, b) => r + r + g + g + b + b);
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(normalized);
-    return result
-      ? { r: parseInt(result[1], 16), g: parseInt(result[2], 16), b: parseInt(result[3], 16) }
-      : null;
-  };
-
-  const interpolateColor = (
-    start: { r: number; g: number; b: number },
-    end: { r: number; g: number; b: number },
-    factor: number,
-  ) =>
-    `rgb(${Math.round(start.r + (end.r - start.r) * factor)},${Math.round(
-      start.g + (end.g - start.g) * factor,
-    )},${Math.round(start.b + (end.b - start.b) * factor)})`;
-
-  const calculateGrid = (width: number, height: number) => ({
-    columns: Math.ceil(width / charWidth),
-    rows: Math.ceil(height / charHeight),
-  });
-
-  const initializeLetters = (columns: number, rows: number) => {
-    grid.current = { columns, rows };
-    const total = columns * rows;
-    letters.current = Array.from({ length: total }, () => ({
-      char: getRandomChar(),
-      color: getRandomColor(),
-      targetColor: getRandomColor(),
-      colorProgress: 1,
-    }));
-  };
-
-  const drawLetters = () => {
-    if (!context.current || !canvasRef.current) return;
-    const ctx = context.current;
-    const { width, height } = canvasRef.current.getBoundingClientRect();
-    ctx.clearRect(0, 0, width, height);
-    ctx.font = `${fontSize}px monospace`;
-    ctx.textBaseline = "top";
-    letters.current.forEach((letter, index) => {
-      const x = (index % grid.current.columns) * charWidth;
-      const y = Math.floor(index / grid.current.columns) * charHeight;
-      ctx.fillStyle = letter.color;
-      ctx.fillText(letter.char, x, y);
-    });
-  };
-
-  const updateLetters = () => {
-    const updateCount = Math.max(1, Math.floor(letters.current.length * 0.05));
-    for (let i = 0; i < updateCount; i++) {
-      const idx = Math.floor(Math.random() * letters.current.length);
-      const item = letters.current[idx];
-      item.char = getRandomChar();
-      item.targetColor = getRandomColor();
-      if (!smooth) {
-        item.color = item.targetColor;
-        item.colorProgress = 1;
-      } else {
-        item.colorProgress = 0;
-      }
-    }
-  };
-
-  const handleSmoothTransitions = () => {
-    let needsRedraw = false;
-    letters.current.forEach((letter) => {
-      if (letter.colorProgress < 1) {
-        const startRgb = hexToRgb(letter.color);
-        const endRgb = hexToRgb(letter.targetColor);
-        letter.colorProgress = Math.min(1, letter.colorProgress + 0.05);
-        if (startRgb && endRgb) {
-          letter.color = interpolateColor(startRgb, endRgb, letter.colorProgress);
-          needsRedraw = true;
-        }
-      }
-    });
-    if (needsRedraw) drawLetters();
-  };
-
-  const animate = () => {
-    const now = Date.now();
-    if (now - lastGlitchTime.current >= glitchSpeed) {
-      updateLetters();
-      drawLetters();
-      lastGlitchTime.current = now;
-    }
-    if (smooth) handleSmoothTransitions();
-    animationRef.current = requestAnimationFrame(animate);
-  };
-
-  const resizeCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const parent = canvas.parentElement;
-    if (!parent) return;
-    const dpr = window.devicePixelRatio || 1;
-    const rect = parent.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    canvas.style.width = `${rect.width}px`;
-    canvas.style.height = `${rect.height}px`;
-    if (context.current) context.current.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const { columns, rows } = calculateGrid(rect.width, rect.height);
-    initializeLetters(columns, rows);
-    drawLetters();
-  };
+const DecryptingPassword: React.FC<{ className?: string }> = ({ className }) => {
+  const [display, setDisplay] = React.useState("");
 
   React.useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    context.current = canvas.getContext("2d");
-    resizeCanvas();
-    animate();
+    let cancelled = false;
+    let timeoutId: number;
 
-    let resizeTimeout: number | undefined;
-    const handleResize = () => {
-      if (resizeTimeout) window.clearTimeout(resizeTimeout);
-      resizeTimeout = window.setTimeout(() => {
-        if (animationRef.current) cancelAnimationFrame(animationRef.current);
-        resizeCanvas();
-        animate();
-      }, 100);
-    };
-    window.addEventListener("resize", handleResize);
+    function typeStep(count: number) {
+      if (cancelled) return;
+      if (count <= DECRYPT_LENGTH) {
+        setDisplay(randomDecryptString(count));
+        timeoutId = window.setTimeout(() => typeStep(count + 1), 45);
+      } else {
+        timeoutId = window.setTimeout(() => eraseStep(DECRYPT_LENGTH), 300);
+      }
+    }
+
+    function eraseStep(count: number) {
+      if (cancelled) return;
+      if (count > 0) {
+        setDisplay(randomDecryptString(count));
+        timeoutId = window.setTimeout(() => eraseStep(count - 1), 30);
+      } else {
+        setDisplay("");
+        timeoutId = window.setTimeout(() => typeStep(1), 200);
+      }
+    }
+
+    typeStep(1);
     return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-      window.removeEventListener("resize", handleResize);
+      cancelled = true;
+      window.clearTimeout(timeoutId);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [glitchSpeed, smooth]);
+  }, []);
 
   return (
-    <div className={cn("relative w-full h-full bg-black overflow-hidden", className)}>
-      <canvas ref={canvasRef} className="block w-full h-full" />
-      {outerVignette && (
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle,_rgba(0,0,0,0)_60%,_rgba(0,0,0,1)_100%)]" />
+    <div
+      className={cn(
+        "font-mono text-lg tracking-[0.2em] text-[#22ff88] drop-shadow-[0_0_8px_rgba(34,255,136,0.5)]",
+        className,
       )}
-      {centerVignette && (
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle,_rgba(0,0,0,0.8)_0%,_rgba(0,0,0,0)_60%)]" />
-      )}
+    >
+      {display}
+      <span className="animate-pulse">_</span>
     </div>
   );
 };
-
-/* ────────────── CustomLoader ────────────── */
-const loaderStyle = `
-.custom-loader-5{height:32px;width:32px;position:relative;animation:loader-5-1 2s cubic-bezier(0.770,0.000,0.175,1.000) infinite}
-@keyframes loader-5-1{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
-.custom-loader-5::before,.custom-loader-5::after,.custom-loader-5 span::before,.custom-loader-5 span::after{
-content:"";display:block;position:absolute;margin:auto;background:#78b4ff;border-radius:50%}
-.custom-loader-5::before{top:0;left:0;bottom:0;right:auto;width:8px;height:8px;animation:loader-5-2 2s cubic-bezier(0.770,0.000,0.175,1.000) infinite}
-@keyframes loader-5-2{0%{transform:translate3d(0,0,0)scale(1)}50%{transform:translate3d(24px,0,0)scale(.5)}100%{transform:translate3d(0,0,0)scale(1)}}
-.custom-loader-5::after{top:0;left:auto;bottom:0;right:0;width:8px;height:8px;animation:loader-5-3 2s cubic-bezier(0.770,0.000,0.175,1.000) infinite}
-@keyframes loader-5-3{0%{transform:translate3d(0,0,0)scale(1)}50%{transform:translate3d(-24px,0,0)scale(.5)}100%{transform:translate3d(0,0,0)scale(1)}}
-.custom-loader-5 span{display:block;position:absolute;top:0;left:0;bottom:0;right:0;margin:auto;height:32px;width:32px}
-.custom-loader-5 span::before{top:0;left:0;bottom:auto;right:0;width:8px;height:8px;animation:loader-5-4 2s cubic-bezier(0.770,0.000,0.175,1.000) infinite}
-@keyframes loader-5-4{0%{transform:translate3d(0,0,0)scale(1)}50%{transform:translate3d(0,24px,0)scale(.5)}100%{transform:translate3d(0,0,0)scale(1)}}
-.custom-loader-5 span::after{top:auto;left:0;bottom:0;right:0;width:8px;height:8px;animation:loader-5-5 2s cubic-bezier(0.770,0.000,0.175,1.000) infinite}
-@keyframes loader-5-5{0%{transform:translate3d(0,0,0)scale(1)}50%{transform:translate3d(0,-24px,0)scale(.5)}100%{transform:translate3d(0,0,0)scale(1)}}`;
-if (typeof document !== "undefined" && !document.getElementById("loader-style")) {
-  const styleTag = document.createElement("style");
-  styleTag.id = "loader-style";
-  styleTag.innerHTML = loaderStyle;
-  document.head.appendChild(styleTag);
-}
-const CustomLoader: React.FC<{ className?: string; size?: "sm" | "md" | "lg" }> = ({
-  className,
-  size = "md",
-}) => (
-  <div className={cn(`custom-loader-5 size-${size}`, className)}>
-    <span />
-  </div>
-);
 
 /* ────────────── AsciiProgressBar ────────────── */
 const AsciiProgressBar: React.FC<{ progress: number; className?: string }> = ({
@@ -258,7 +101,7 @@ const AsciiProgressBar: React.FC<{ progress: number; className?: string }> = ({
                 duration: item.isFilled ? 0.3 : 0.1,
                 scale: { repeat: item.isFilled ? 1 : 0, duration: 0.4 },
               }}
-              className={item.isFilled ? "text-[#78b4ff]" : "text-white/30"}
+              className={item.isFilled ? "text-[#22ff88]" : "text-white/30"}
             >
               {item.char}
             </motion.span>
@@ -272,27 +115,35 @@ const AsciiProgressBar: React.FC<{ progress: number; className?: string }> = ({
 };
 
 /* ────────────── ProcessingCard ────────────── */
+interface ProcessingStage {
+  key: string;
+  label: string;
+  minProgress: number;
+}
+
 interface ProcessingCardProps {
   name?: string;
   className?: string;
   status?: "queued" | "running" | "succeeded" | "failed";
   progress?: number;
+  stages?: ProcessingStage[];
+  /** Mantém o texto do último estágio ao concluir, em vez da mensagem padrão de sucesso. */
+  stickyLastStage?: boolean;
+  succeededLabel?: string;
+  failedLabel?: string;
 }
 
-const processingStages = [
-  { key: "initializing", label: "Dali agent processing your leads...", minProgress: 0 },
-  { key: "analyzing", label: "Reading incoming leads...", minProgress: 10 },
-  { key: "generating", label: "Qualifying against your criteria...", minProgress: 30 },
-  { key: "validating", label: "Routing to your pipeline...", minProgress: 70 },
-  { key: "optimizing", label: "Drafting first replies...", minProgress: 85 },
-  { key: "finalizing", label: "Logging every step...", minProgress: 95 },
+const defaultProcessingStages: ProcessingStage[] = [
+  { key: "processing", label: "Processando...", minProgress: 0 },
+  { key: "locating", label: "Localizando Perfil...", minProgress: 34 },
+  { key: "collecting", label: "Coletando Dados...", minProgress: 67 },
 ];
 
-const getCurrentStage = (progress: number) => {
-  for (let i = processingStages.length - 1; i >= 0; i--) {
-    if (progress >= processingStages[i].minProgress) return processingStages[i];
+const getCurrentStage = (stages: ProcessingStage[], progress: number) => {
+  for (let i = stages.length - 1; i >= 0; i--) {
+    if (progress >= stages[i].minProgress) return stages[i];
   }
-  return processingStages[0];
+  return stages[0];
 };
 
 const ProcessingCard: React.FC<ProcessingCardProps> = ({
@@ -300,9 +151,13 @@ const ProcessingCard: React.FC<ProcessingCardProps> = ({
   className,
   status = "queued",
   progress = 0,
+  stages = defaultProcessingStages,
+  stickyLastStage = false,
+  succeededLabel = "Concluído. Dados coletados com sucesso.",
+  failedLabel = "Falha na operação. Tente novamente.",
 }) => {
   const [displayProgress, setDisplayProgress] = React.useState(0);
-  const [currentStage, setCurrentStage] = React.useState(processingStages[0]);
+  const [currentStage, setCurrentStage] = React.useState(stages[0]);
 
   React.useEffect(() => {
     const t = setTimeout(() => setDisplayProgress(progress), 100);
@@ -310,8 +165,8 @@ const ProcessingCard: React.FC<ProcessingCardProps> = ({
   }, [progress]);
 
   React.useEffect(() => {
-    setCurrentStage(getCurrentStage(displayProgress));
-  }, [displayProgress]);
+    setCurrentStage(getCurrentStage(stages, displayProgress));
+  }, [stages, displayProgress]);
 
   React.useEffect(() => {
     if (status === "running" && displayProgress < 95) {
@@ -327,14 +182,16 @@ const ProcessingCard: React.FC<ProcessingCardProps> = ({
   const finalProgress = status === "succeeded" ? 100 : displayProgress;
   const getStatusText = () =>
     status === "queued"
-      ? "Queued for the Dali agent..."
+      ? stages[0].label
       : status === "running"
         ? currentStage.label
         : status === "succeeded"
-          ? "Done. Leads qualified, routed, answered."
+          ? stickyLastStage
+            ? stages[stages.length - 1].label
+            : succeededLabel
           : status === "failed"
-            ? "Run failed - flagged to Agent Care"
-            : "Agent working...";
+            ? failedLabel
+            : stages[0].label;
 
   return (
     <div
@@ -347,7 +204,7 @@ const ProcessingCard: React.FC<ProcessingCardProps> = ({
     >
       {/* Header (dark) */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-        <div className="text-sm font-medium text-white truncate">{name} - Dali agent</div>
+        <div className="text-sm font-medium text-white truncate">{name}</div>
         {(status === "running" || status === "queued" || status === "succeeded") && (
           <div className="text-xs text-white/60">{Math.round(finalProgress)}%</div>
         )}
@@ -366,24 +223,22 @@ const ProcessingCard: React.FC<ProcessingCardProps> = ({
           </div>
         </div>
 
-        {/* Subtle blue radial glow on black */}
+        {/* Subtle green radial glow on black */}
         <div
           className="absolute inset-0 z-0"
           style={{
             background:
-              "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(120,180,255,0.15), transparent 70%), #000",
+              "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(34,255,136,0.15), transparent 70%), #000",
           }}
         />
 
         {/* Foreground content */}
         <div className="relative z-20 flex flex-col items-center justify-center h-full">
           <div className="mb-4">
-            {status === "running" ? (
-              <div className="w-8 h-8 drop-shadow-[0_0_8px_rgba(120,180,255,0.4)]">
-                <CustomLoader size="md" />
-              </div>
+            {status === "running" || status === "queued" ? (
+              <DecryptingPassword />
             ) : (
-              <Monitor className="w-8 h-8 text-white/60 drop-shadow-[0_0_8px_rgba(156,163,175,0.3)]" />
+              <Monitor className="w-8 h-8 text-white/60 drop-shadow-[0_0_8px_rgba(34,255,136,0.3)]" />
             )}
           </div>
 
@@ -404,18 +259,6 @@ const ProcessingCard: React.FC<ProcessingCardProps> = ({
             <AsciiProgressBar progress={finalProgress} />
           )}
         </div>
-      </div>
-
-      {/* Credit line */}
-      <div className="flex justify-center border-t border-white/10 py-2">
-        <a
-          href="https://daliagents.com"
-          target="_blank"
-          rel="noreferrer"
-          className="text-[10px] tracking-wide text-white/40 transition-colors hover:text-white/70"
-        >
-          daliagents.com
-        </a>
       </div>
     </div>
   );
