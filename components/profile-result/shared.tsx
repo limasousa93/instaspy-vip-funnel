@@ -75,14 +75,16 @@ export function LockedTile({
 }
 
 /** Avatar do perfil consultado: fica todo preto enquanto a foto carrega, só
- * pra então aparecer — mesmo comportamento da bolinha "Seu story" no feed. */
+ * pra então aparecer — mesmo comportamento da bolinha "Seu story" no feed.
+ * Sem `src` (avatar real não disponível), fica preto e redondo permanentemente
+ * — nunca busca uma foto de stock genérica como substituta. */
 export function ProfileAvatar({
   src,
   alt,
   size,
   className = "",
 }: {
-  src: string;
+  src: string | null | undefined;
   alt: string;
   size: number;
   className?: string;
@@ -94,14 +96,16 @@ export function ProfileAvatar({
       className={`shrink-0 overflow-hidden rounded-full bg-black ${className}`}
       style={{ width: size, height: size }}
     >
-      <Image
-        src={src}
-        alt={alt}
-        width={size}
-        height={size}
-        onLoad={() => setLoaded(true)}
-        className={`h-full w-full object-cover transition-opacity duration-200 ${loaded ? "opacity-100" : "opacity-0"}`}
-      />
+      {src && (
+        <Image
+          src={src}
+          alt={alt}
+          width={size}
+          height={size}
+          onLoad={() => setLoaded(true)}
+          className={`h-full w-full object-cover transition-opacity duration-200 ${loaded ? "opacity-100" : "opacity-0"}`}
+        />
+      )}
     </div>
   );
 }
