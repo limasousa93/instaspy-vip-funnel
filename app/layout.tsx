@@ -21,6 +21,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Instagram Clone (Study Project)",
   description: "Réplica de estudo da interface do Instagram — projeto educacional.",
+  other: {
+    "facebook-domain-verification": "86miwo7f44cy1c0xak109qnu9h9wi2",
+  },
 };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
