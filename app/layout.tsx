@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   title: "Instagram Clone (Study Project)",
   description: "Réplica de estudo da interface do Instagram — projeto educacional.",
   other: {
-    "facebook-domain-verification": "86miwo7f44cy1c0xak109qnu9h9wi2",
+    "facebook-domain-verification": "86miwo7f44qy1d0xak109qnu9h9wi2",
   },
 };
 
