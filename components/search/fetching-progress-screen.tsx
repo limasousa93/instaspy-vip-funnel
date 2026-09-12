@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 
 const STATUS_MESSAGES = [
-  "Conectando à Apify...",
-  "Buscando perfil público no Instagram...",
-  "Carregando posts e reels...",
-  "Organizando as informações...",
+  "Conexão Estabelecida",
+  "Buscando Perfil",
+  "Organizando informações",
+  "Carregando Posts",
 ];
 
 const STATUS_INTERVAL_MS = 1400;
