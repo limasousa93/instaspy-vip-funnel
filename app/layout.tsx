@@ -7,6 +7,7 @@ import { InteractionsProvider } from "@/lib/context/interactions-context";
 import { VipModalProvider } from "@/lib/context/vip-modal-context";
 import { SessionProvider } from "@/lib/context/session-context";
 import { SESSION_COOKIE_NAME, verifySession } from "@/lib/session/session";
+import { MetaPixel } from "@/components/meta-pixel";
 
 const geistSans = Geist({
   variable: "--font-sans",
@@ -36,6 +37,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`dark ${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-background text-foreground" suppressHydrationWarning>
+        <MetaPixel />
         <SessionProvider value={{ hasVipAccess: session?.vip ?? false, hasUpsellAccess: session?.upsell ?? false }}>
           <AuthProvider>
             <InteractionsProvider>
