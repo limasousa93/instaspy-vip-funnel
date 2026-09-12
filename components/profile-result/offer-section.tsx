@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import type { ProfileResultData } from "@/lib/profile-result/use-profile-result";
+import { trackPixelEvent } from "@/lib/pixel";
 import { BrandMark, ResultCard, VIP_CHECKOUT_URL } from "./shared";
 
 const BENEFITS = (name: string) => [
@@ -48,6 +49,7 @@ export function OfferSection({ profile }: { profile: ProfileResultData }) {
 
       <a
         href={VIP_CHECKOUT_URL()}
+        onClick={() => trackPixelEvent('InitiateCheckout', { currency: 'BRL', value: 27.90 })}
         className="spy-cta-button mt-5 flex w-full flex-col items-center gap-0.5 rounded-full py-3.5 text-sm font-bold text-white active:opacity-90"
       >
         Acessar tudo agora mesmo

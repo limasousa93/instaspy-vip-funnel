@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { Check, Crown } from "lucide-react";
+import { Crown } from "lucide-react";
 import { OnboardingBackdrop, OnboardingBadges, OnboardingCard, OnboardingLogo } from "@/components/onboarding/onboarding-card";
+import { UpsellCheckoutButton } from "@/components/upsell/upsell-checkout-button";
 import { SESSION_COOKIE_NAME, verifySession } from "@/lib/session/session";
 
 export default async function UpsellPage() {
@@ -27,12 +28,7 @@ export default async function UpsellPage() {
           </p>
         </div>
         <div className="mt-7 flex flex-col gap-3">
-          <a
-            href={upsellCheckoutUrl}
-            className="gradient-cta-button flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-base font-bold text-white active:opacity-90"
-          >
-            <Check className="h-5 w-5" /> Atualizar e acessar
-          </a>
+          <UpsellCheckoutButton checkoutUrl={upsellCheckoutUrl} />
         </div>
         <OnboardingBadges />
       </OnboardingCard>
