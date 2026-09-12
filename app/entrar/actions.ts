@@ -46,5 +46,5 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
     maxAge: SESSION_MAX_AGE_SECONDS,
   });
 
-  redirect(hasUpsell ? "/feed" : "/upsell");
+  redirect(hasUpsell ? "/" : "/upsell");
 }
