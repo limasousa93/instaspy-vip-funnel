@@ -23,7 +23,7 @@ export function VerifyAccessForm() {
       <button
         type="submit"
         disabled={pending}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 py-3.5 text-base font-bold text-white active:opacity-90 disabled:opacity-40"
+        className="gradient-cta-button mt-4 flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-base font-bold text-white active:opacity-90 disabled:opacity-40"
       >
         {pending ? "Verificando..." : "Acessar"}
       </button>

@@ -92,11 +92,14 @@
   padding: 14px;
   font-size: 15px;
   font-weight: 700;
+  font-family: inherit;
   margin-top: 8px;
   margin-bottom: 20px;
-  pointer-events: none;
   user-select: none;
   text-align: center;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: not-allowed;
   transition:
     background 0.3s ease,
     color 0.3s ease;
@@ -108,7 +111,6 @@
 }
 
 .clickable {
-  pointer-events: auto;
   cursor: pointer;
 }
 

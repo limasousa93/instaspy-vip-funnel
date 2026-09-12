@@ -341,3 +341,15 @@
   background-color: #16a34a;
 }
 
+/*
+ * Botões roxo->rosa (upsell "Atualizar e acessar", /entrar "Acessar", tela
+ * de erro da busca "Tentar outro @"): mesmo problema de bg-gradient-to-r +
+ * from-violet-600/to-fuchsia-500 acima, mas aqui preservando o gradiente
+ * (em vez de achatar pra cor sólida) via linear-gradient() em hex puro, sem
+ * o "in oklab" que o Tailwind v4 injeta — sintaxe suportada por qualquer
+ * versão de Safari.
+ */
+.gradient-cta-button {
+  background: linear-gradient(to right, #7c3aed, #d946ef);
+}
+

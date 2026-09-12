@@ -29,7 +29,7 @@ export default async function UpsellPage() {
         <div className="mt-7 flex flex-col gap-3">
           <a
             href={upsellCheckoutUrl}
-            className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 py-3.5 text-base font-bold text-white active:opacity-90"
+            className="gradient-cta-button flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-base font-bold text-white active:opacity-90"
           >
             <Check className="h-5 w-5" /> Atualizar e acessar
           </a>

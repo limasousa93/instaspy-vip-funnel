@@ -53,17 +53,17 @@ export default function Tela4Page() {
           </div>
         )}
 
-        <div
+        <button
+          type="button"
           className={`${styles.btnPrimary} ${buttonEnabled ? styles.clickable : styles.disabled} ${
             isEntering ? styles.entering : ""
           }`}
           id="enterBtn"
           onClick={handleEnterClick}
-          role="button"
-          tabIndex={buttonEnabled ? 0 : -1}
+          disabled={!buttonEnabled || isEntering}
         >
           {isEntering ? <span className={styles.spinner} /> : "Entrar"}
-        </div>
+        </button>
 
         <a href="#" className={styles.link} onClick={preventDefault}>
           Esqueceu a senha?

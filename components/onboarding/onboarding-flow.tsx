@@ -12,7 +12,7 @@ import { OnboardingProcessingScreen } from "./onboarding-processing-screen";
 type Step = "intro" | "handle" | "preview";
 
 const GRADIENT_BUTTON =
-  "flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 py-3.5 text-base font-bold text-white active:opacity-90";
+  "gradient-cta-button flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-base font-bold text-white active:opacity-90";
 
 const SEARCH_PROCESSING_DURATION_MS = 8000;
 
