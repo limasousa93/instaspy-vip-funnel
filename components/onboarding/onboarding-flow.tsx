@@ -9,21 +9,12 @@ import { ProfileAvatar } from "@/components/profile-result/shared";
 import { OnboardingBackdrop, OnboardingBadges, OnboardingCard, OnboardingLogo } from "./onboarding-card";
 import { OnboardingProcessingScreen } from "./onboarding-processing-screen";
 
-type Step = "intro" | "handle" | "preview" | "redirecting";
+type Step = "intro" | "handle" | "preview";
 
 const GRADIENT_BUTTON =
   "flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-fuchsia-500 py-3.5 text-base font-bold text-white active:opacity-90";
 
 const SEARCH_PROCESSING_DURATION_MS = 8000;
-const REDIRECT_PROCESSING_DURATION_MS = 12000;
-const ACCESS_GRANTED_BANNER_DURATION_MS = 3000;
-
-const REDIRECT_PROCESSING_STAGES = [
-  { key: "decoding", label: "Decodificando...", minProgress: 0 },
-  { key: "extracting", label: "Extraindo Dados", minProgress: 25 },
-  { key: "analyzing", label: "Análise Profunda", minProgress: 50 },
-  { key: "cracking", label: "Quebrando senha", minProgress: 75 },
-];
 
 const ANALYZED_PROFILES_INITIAL_COUNT = 105_505;
 
@@ -57,7 +48,6 @@ export function OnboardingFlow() {
   const { data, loading, error, search } = useInstagram();
   const [step, setStep] = useState<Step>("intro");
   const [handle, setHandle] = useState("");
-  const [accessGranted, setAccessGranted] = useState(false);
   const analyzedProfilesCount = useFluctuatingCount(ANALYZED_PROFILES_INITIAL_COUNT);
   // A busca real na API pode responder antes dos 8s do ciclo do
   // ProcessingCard; esse flag força a tela de loading a ficar visível pelo
@@ -90,31 +80,7 @@ export function OnboardingFlow() {
       posts: data.profile.postsCount,
       bio: data.profile.bio,
     });
-    setStep("redirecting");
-  }
-
-  if (step === "redirecting") {
-    return (
-      <div className="relative">
-        {accessGranted && (
-          <div className="fixed inset-x-0 top-0 z-50 flex justify-center pt-8 animate-in fade-in duration-700">
-            <div className="rounded-full border border-green-500/40 bg-green-500/10 px-5 py-2 text-sm font-bold tracking-wide text-green-400 shadow-[0_0_20px_rgba(34,197,94,0.25)]">
-              ACESSO AUTORIZADO
-            </div>
-          </div>
-        )}
-        <OnboardingProcessingScreen
-          name="Preparando acesso"
-          durationMs={REDIRECT_PROCESSING_DURATION_MS}
-          stages={REDIRECT_PROCESSING_STAGES}
-          stickyLastStage
-          onDone={() => {
-            setAccessGranted(true);
-            window.setTimeout(() => router.push("/feed"), ACCESS_GRANTED_BANNER_DURATION_MS);
-          }}
-        />
-      </div>
-    );
+    router.push("/tela4");
   }
 
   // Tela 1 — landing.

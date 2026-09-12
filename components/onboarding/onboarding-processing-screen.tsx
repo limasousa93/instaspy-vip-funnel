@@ -6,14 +6,10 @@ import ProcessingCard from "@/components/ui/processing-card";
 type Status = "queued" | "running" | "succeeded" | "failed";
 type ProcessingStage = { key: string; label: string; minProgress: number };
 
-// Tela de transição reaproveitada em dois pontos do funil: entre a tela 2
-// (@ do perfil) e a tela 3 (preview) — aqui SEM `onDone`, então o ciclo de
-// 8s só repete em loop enquanto o componente pai mantiver a tela montada
-// (ou seja, enquanto a busca real na Apify ainda estiver em andamento —
-// nunca avança sozinha antes dos dados chegarem, ver tela 4.md) — e depois
-// da confirmação da tela 3, antes do /feed (tela 4), onde COM `onDone` ela
-// dura exatamente 12s; ao terminar, o onDone do chamador exibe o banner
-// "ACESSO AUTORIZADO" por mais 3s antes de navegar.
+// Tela de transição usada entre a tela 2 (@ do perfil) e a tela 3 (preview),
+// sem `onDone` — o ciclo de 8s só repete em loop enquanto o componente pai
+// mantiver a tela montada (ou seja, enquanto a busca real na Apify ainda
+// estiver em andamento — nunca avança sozinha antes dos dados chegarem).
 export function OnboardingProcessingScreen({
   name,
   durationMs = 5000,
