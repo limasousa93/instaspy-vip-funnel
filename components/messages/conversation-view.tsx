@@ -228,10 +228,10 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
           />
         )}
       </div>
-      {/* pb extra no mobile: o AccessTimerBanner é fixed logo acima da tab bar
-          e cobriria essa barra de digitação, já que o inbox-viewport termina
-          exatamente onde a tab bar começa. */}
-      <div className="flex shrink-0 items-center gap-3 border-t border-border p-3 pb-12 lg:pb-3">
+      {/* pb extra no mobile: só o suficiente pra não colar no AccessTimerBanner
+          fixed logo acima — o inbox-viewport já termina exatamente onde o
+          banner começa, então essa folga é puramente estética. */}
+      <div className="flex shrink-0 items-center gap-3 border-t border-border p-3 pb-4 lg:pb-3">
         <div className="flex flex-1 items-center gap-2 rounded-full bg-secondary py-1 pl-1 pr-4">
           <button onClick={openVipModal} aria-label="Câmera" className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-violet-600">
             <Camera className="h-4 w-4 text-white" />
