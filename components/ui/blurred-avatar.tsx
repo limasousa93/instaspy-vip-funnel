@@ -20,6 +20,7 @@ export function BlurredAvatar({
   className = "",
   imgClassName = "",
   onClick,
+  blurMultiplier = 1,
 }: {
   src: string;
   alt: string;
@@ -27,8 +28,9 @@ export function BlurredAvatar({
   className?: string;
   imgClassName?: string;
   onClick?: () => void;
+  blurMultiplier?: number;
 }) {
-  const blurPx = Math.round(size * BLUR_RATIO * 10) / 10;
+  const blurPx = Math.round(size * BLUR_RATIO * blurMultiplier * 10) / 10;
 
   return (
     <div

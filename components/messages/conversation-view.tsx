@@ -20,11 +20,16 @@ const OUTGOING_BUBBLE = "bg-violet-600 text-white";
 // Trechos sensíveis da conversa da bianca_diniz que devem aparecer
 // embaçados dentro da bolha de texto, sem tocar no resto da frase.
 const BLUR_PHRASES = [
+  "conseguiu pegar?",
   "ja tava em casa qndo cheguei",
-  "ei quer ver nosso",
-  "que tinha gravado.",
-  "estiver longe de mim",
-  "não posso ta perto",
+  "sabia que tinha gravado.",
+  "vou te mandar dps",
+  "tinha te falado",
+  "era nesse nível kkkkk",
+  "pessoal",
+  "comprou quando??",
+  "mostrei logo p te perguntar kkkkkkk",
+  "gostei demais tem mais ?? kkkkkk",
 ];
 
 function escapeRegExp(value: string): string {
@@ -134,6 +139,7 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
           src={conversation.avatarOverride ?? avatarUrl(user.id)}
           alt={maskUsername(conversation.displayNameOverride ?? user.username)}
           size={36}
+          blurMultiplier={isBiancaConversation ? 2.5 : 1}
         />
         <span className="min-w-0 flex-1">
           <p className="truncate text-sm font-bold text-foreground">{maskUsername(conversation.displayNameOverride ?? user.username)}</p>
@@ -169,6 +175,7 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
                   size={24}
                   onClick={isBiancaConversation ? openVipModal : undefined}
                   className={isBiancaConversation ? "cursor-pointer" : undefined}
+                  blurMultiplier={isBiancaConversation ? 2.5 : 1}
                 />
               )}
               {m.kind === "audio" && m.audioDuration ? (
@@ -185,8 +192,8 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
                       width={240}
                       height={300}
                       className={`h-auto w-full rounded-2xl object-cover ${
-                        conversation.id === "c1" ? "blur-md" : ""
-                      }`}
+                        m.id === "m22" ? "aspect-[9/16]" : ""
+                      } ${conversation.id === "c1" ? "blur-md" : ""}`}
                     />
                     {conversation.id === "c1" && (
                       <Play

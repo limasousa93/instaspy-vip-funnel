@@ -1,6 +1,17 @@
-// Mantém as 4 primeiras letras e troca o resto por asteriscos, ex.: "juli***".
+// Mantém as 4 primeiras letras e troca o resto por asteriscos, ex.: "juli****".
+// Nomes que já vêm pré-mascarados (contêm "*") são exibidos como estão, sem
+// mascarar de novo — permite overrides com um padrão de asteriscos específico.
+// A quantidade de asteriscos varia entre 4 e 7, definida de forma determinística
+// a partir do próprio nome (mesmo nome sempre gera a mesma quantidade, evitando
+// mismatch entre servidor e cliente).
 export function maskUsername(name: string): string {
-  return `${name.slice(0, 4)}***`;
+  if (name.includes("*")) return name;
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash * 31 + name.charCodeAt(i)) | 0;
+  }
+  const starCount = 4 + (Math.abs(hash) % 4);
+  return `${name.slice(0, 4)}${"*".repeat(starCount)}`;
 }
 
 export function formatCount(value: number): string {

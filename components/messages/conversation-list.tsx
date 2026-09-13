@@ -11,7 +11,7 @@ import { NotesBar } from "./notes-bar";
 import { MessageRequestsList } from "./message-requests-list";
 import type { Conversation } from "@/lib/types";
 
-const FREE_CONVERSATION_ID = "c1";
+const FREE_CONVERSATION_IDS = new Set(["c1", "c2"]);
 
 export function ConversationList({
   conversations,
@@ -54,19 +54,19 @@ export function ConversationList({
             return (
               <li key={c.id}>
                 <button
-                  onClick={() => (c.id === FREE_CONVERSATION_ID ? onSelect(c.id) : openVipModal())}
+                  onClick={() => (FREE_CONVERSATION_IDS.has(c.id) ? onSelect(c.id) : openVipModal())}
                   className={`flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-accent ${activeId === c.id ? "bg-accent" : ""}`}
                 >
                   {c.ring ? (
                     <div className="shrink-0 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 p-[2px]">
-                      <BlurredAvatar src={avatarSrc} alt={displayName} size={44} className="ring-2 ring-background" />
+                      <BlurredAvatar src={avatarSrc} alt={displayName} size={44} className="ring-2 ring-background" blurMultiplier={c.id === "c1" ? 2.5 : 1} />
                     </div>
                   ) : c.noAvatar ? (
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-muted">
                       <UserRound className="h-7 w-7 text-muted-foreground" />
                     </div>
                   ) : (
-                    <BlurredAvatar src={avatarSrc} alt={displayName} size={48} />
+                    <BlurredAvatar src={avatarSrc} alt={displayName} size={48} blurMultiplier={c.id === "c1" ? 2.5 : 1} />
                   )}
                   <span className="min-w-0 flex-1">
                     <p className={`truncate text-sm ${c.unread ? "font-semibold text-foreground" : "text-foreground"}`}>{maskUsername(displayName)}</p>
