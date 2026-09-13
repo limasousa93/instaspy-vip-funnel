@@ -184,7 +184,9 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
                       alt=""
                       width={240}
                       height={300}
-                      className="h-auto w-full rounded-2xl object-cover"
+                      className={`h-auto w-full rounded-2xl object-cover ${
+                        conversation.id === "c1" ? "blur-md" : ""
+                      }`}
                     />
                     {conversation.id === "c1" && (
                       <Play
