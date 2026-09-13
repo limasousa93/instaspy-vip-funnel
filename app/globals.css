@@ -218,11 +218,19 @@
  * it, the composer/header (both shrink-0 flex children, correctly pinned
  * otherwise) visibly jump because the flex column's own height briefly
  * miscalculates under them.
+ *
+ * The 92px (5.75rem) subtracted here must match <main>'s pb-[5.75rem] in
+ * app-shell.tsx exactly — that padding reserves space for both the fixed
+ * tab bar (56px) and the AccessTimerBanner above it (36px). Using only the
+ * tab bar's 56px left 36px of unaccounted height, so <main> (which has no
+ * height of its own) grew taller than the viewport and the whole page
+ * scrolled — dragging the composer along with it instead of keeping it
+ * pinned above the tab bar.
  */
 .inbox-viewport {
-  height: calc(100vh - 56px);
-  height: calc(100dvh - 56px);
-  height: calc(var(--app-vh, 1vh) * 100 - 56px);
+  height: calc(100vh - 92px);
+  height: calc(100dvh - 92px);
+  height: calc(var(--app-vh, 1vh) * 100 - 92px);
 }
 @media (min-width: 1024px) {
   .inbox-viewport {
