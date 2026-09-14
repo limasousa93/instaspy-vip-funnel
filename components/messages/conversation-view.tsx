@@ -68,6 +68,9 @@ function AudioBubble({ duration, outgoing }: { duration: string; outgoing: boole
 export function ConversationView({ conversation, onBack }: { conversation: Conversation; onBack: () => void }) {
   const user = getUser(conversation.userId);
   const isBiancaConversation = conversation.id === "c1";
+  // André segue o mesmo padrão de texto borrado da Fer**** (c1), mas sem as
+  // exceções de frase legível — só a Fer**** tem trechos liberados.
+  const shouldBlurText = conversation.id === "c1" || conversation.id === "c2";
   const { openVipModal } = useVipModal();
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -194,7 +197,7 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
                   }`}
                 >
                   {m.text ? (
-                    isBiancaConversation && !isReadableMessage(m.text) ? (
+                    shouldBlurText && !(isBiancaConversation && isReadableMessage(m.text)) ? (
                       <span className="rounded-sm blur-[3px] select-none">{m.text}</span>
                     ) : (
                       m.text
