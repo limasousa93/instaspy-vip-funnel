@@ -23,7 +23,7 @@ export function OfferSection({ profile }: { profile: ProfileResultData }) {
       <div className="mt-4 w-full rounded-2xl border border-white/10 bg-black/40 p-4">
         <p className="text-xs text-white/40 line-through">De R$ 197,00</p>
         <p className="text-3xl font-extrabold text-violet-400 sm:text-4xl">
-          R$ 27<span className="text-lg">,00</span>
+          R$ 27<span className="text-lg">,90</span>
         </p>
         <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[10px] text-white/50">
           <span className="flex items-center gap-1">

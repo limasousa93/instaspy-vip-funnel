@@ -24,7 +24,7 @@ export default async function UpsellPage() {
         </h1>
         <div className="mt-4 rounded-2xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-center">
           <p className="text-xs font-bold text-green-300">
-            O InstaSpy foi atualizado com a tecnologia MATRIX™, um protocolo até 3x mais avançado que a versão anterior. Seu acesso está quase pronto. Atualize para MATRIX™ por R$ 22,90 e tenha acesso completo.
+            O InstaSpy foi atualizado com a tecnologia MATRIX™, um protocolo até 3x mais avançado que a versão anterior. Seu acesso está quase pronto. Atualize para MATRIX™ por R$ 19,90 e tenha acesso completo.
           </p>
         </div>
         <div className="mt-7 flex flex-col gap-3">
