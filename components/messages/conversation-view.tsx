@@ -42,7 +42,15 @@ function isReadableMessage(text: string): boolean {
   return READABLE_PHRASES.some((phrase) => lower.includes(phrase));
 }
 
-function AudioBubble({ duration, outgoing }: { duration: string; outgoing: boolean }) {
+function AudioBubble({
+  duration,
+  outgoing,
+  onPlayClick,
+}: {
+  duration: string;
+  outgoing: boolean;
+  onPlayClick: () => void;
+}) {
   return (
     <div
       className={`flex max-w-[75%] flex-col gap-1 rounded-2xl px-3 py-2 ${
@@ -50,9 +58,14 @@ function AudioBubble({ duration, outgoing }: { duration: string; outgoing: boole
       }`}
     >
       <div className="flex items-center gap-2">
-        <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${outgoing ? "bg-white/20" : "bg-foreground/10"}`}>
+        <button
+          type="button"
+          onClick={onPlayClick}
+          aria-label="Reproduzir áudio"
+          className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${outgoing ? "bg-white/20" : "bg-foreground/10"}`}
+        >
           <Play className="h-3.5 w-3.5 shrink-0 fill-current text-current" />
-        </div>
+        </button>
         <span className="flex h-6 flex-1 items-center gap-[2px]">
           {WAVEFORM_BARS.map((h, i) => (
             <span key={i} className="w-[2px] shrink-0 rounded-full bg-current opacity-70" style={{ height: `${h}px` }} />
@@ -167,7 +180,7 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
                 />
               )}
               {m.kind === "audio" && m.audioDuration ? (
-                <AudioBubble duration={m.audioDuration} outgoing={outgoing} />
+                <AudioBubble duration={m.audioDuration} outgoing={outgoing} onPlayClick={openVipModal} />
               ) : m.kind === "photo" && m.photoUrl ? (
                 <div className="flex items-center gap-2">
                   <div
