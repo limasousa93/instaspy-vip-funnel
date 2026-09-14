@@ -129,7 +129,9 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
         />
         <span className="min-w-0 flex-1">
           <p className="truncate text-sm font-bold text-foreground">{maskUsername(conversation.displayNameOverride ?? user.username)}</p>
-          <p className="truncate text-xs text-muted-foreground">Online há 47 min</p>
+          <p className="truncate text-xs text-muted-foreground">
+            Online há {conversation.id === "c2" ? "52" : "47"} min
+          </p>
         </span>
         <div className="flex shrink-0 items-center gap-4">
           <button onClick={openVipModal} aria-label="Ligar">
