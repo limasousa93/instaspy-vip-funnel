@@ -17,27 +17,6 @@ const WAVEFORM_BARS = Array.from({ length: 24 }, (_, i) => 4 + Math.round(Math.a
 // token `primary` do tema, que aqui é cinza claro e serve pra outra coisa.
 const OUTGOING_BUBBLE = "bg-violet-600 text-white";
 
-// Trechos sensíveis da conversa da bianca_diniz que devem aparecer
-// embaçados dentro da bolha de texto, sem tocar no resto da frase.
-const BLUR_PHRASES = [
-  "conseguiu pegar?",
-  "ja tava em casa qndo cheguei",
-  "sabia que tinha gravado.",
-  "vou te mandar dps",
-  "tinha te falado",
-  "era nesse nível kkkkk",
-  "pessoal",
-  "comprou quando??",
-  "mostrei logo p te perguntar kkkkkkk",
-  "gostei demais tem mais ?? kkkkkk",
-];
-
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
-
-const BLUR_REGEX = new RegExp(`(${BLUR_PHRASES.map(escapeRegExp).join("|")})`, "g");
-
 // Ponto a partir do qual a "sombra" embaçada progressiva começa a aparecer
 // sobre a conversa da bianca_diniz: o áudio de 0:09 enviado por "você".
 const FOG_TRIGGER_MESSAGE_ID = "m12";
@@ -46,17 +25,21 @@ const FOG_MAX_BLUR = 22;
 const FOG_MIN_OPACITY = 0.25;
 const FOG_MAX_OPACITY = 0.6;
 
-function renderMessageText(text: string) {
-  const parts = text.split(BLUR_REGEX);
-  return parts.map((part, i) =>
-    BLUR_PHRASES.includes(part) ? (
-      <span key={i} className="rounded-sm blur-[3px] select-none">
-        {part}
-      </span>
-    ) : (
-      <span key={i}>{part}</span>
-    )
-  );
+// Únicas mensagens de texto da conversa da bianca_diniz que ficam legíveis:
+// as puramente emoji e as três frases pedidas explicitamente. Todo o resto
+// do texto escrito aparece embaçado.
+const READABLE_PHRASES = ["muito amor", "olha isso", "quer ver o vídeo de ontem"];
+
+function isEmojiOnly(text: string): boolean {
+  const stripped = text.replace(/\s+/g, "");
+  if (!stripped) return false;
+  return /^[\p{Extended_Pictographic}\p{Emoji_Presentation}‍️]+$/u.test(stripped);
+}
+
+function isReadableMessage(text: string): boolean {
+  if (isEmojiOnly(text)) return true;
+  const lower = text.toLowerCase();
+  return READABLE_PHRASES.some((phrase) => lower.includes(phrase));
 }
 
 function AudioBubble({ duration, outgoing }: { duration: string; outgoing: boolean }) {
@@ -210,7 +193,15 @@ export function ConversationView({ conversation, onBack }: { conversation: Conve
                     outgoing ? OUTGOING_BUBBLE : "bg-secondary text-foreground"
                   }`}
                 >
-                  {m.text ? renderMessageText(m.text) : m.text}
+                  {m.text ? (
+                    isBiancaConversation && !isReadableMessage(m.text) ? (
+                      <span className="rounded-sm blur-[3px] select-none">{m.text}</span>
+                    ) : (
+                      m.text
+                    )
+                  ) : (
+                    m.text
+                  )}
                 </span>
               )}
             </div>
