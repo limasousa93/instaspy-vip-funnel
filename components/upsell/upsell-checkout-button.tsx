@@ -1,11 +1,11 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { trackPixelEvent } from "@/lib/pixel";
+import { trackEvent } from "@/lib/tracking/track-event";
 
 export function UpsellCheckoutButton({ checkoutUrl }: { checkoutUrl: string }) {
   function handleClick() {
-    trackPixelEvent('InitiateCheckout', { currency: 'BRL', value: 19.90 });
+    trackEvent('InitiateCheckout', { currency: 'BRL', value: 19.90 });
     window.location.href = checkoutUrl;
   }
 

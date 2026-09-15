@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { ProfileResultData } from "@/lib/profile-result/use-profile-result";
-import { trackPixelEvent } from "@/lib/pixel";
+import { trackEvent } from "@/lib/tracking/track-event";
 import { BrandMark, ResultCard, CHECKOUT_URL_MAIN, PREMIUM_BENEFITS, BASIC_BENEFITS } from "./shared";
 import { PlanBanner } from "./plan-banner";
 import { UpgradeModal } from "./upgrade-modal";
@@ -29,7 +29,7 @@ export function OfferSection({ profile }: { profile: ProfileResultData }) {
           ctaHref={CHECKOUT_URL_MAIN}
           ctaText="Acessar tudo agora mesmo"
           ctaSubtext="Compra 100% segura"
-          onCtaClick={() => trackPixelEvent("InitiateCheckout", { currency: "BRL", value: 37.9 })}
+          onCtaClick={() => trackEvent("InitiateCheckout", { currency: "BRL", value: 37.9 })}
         />
       </div>
 

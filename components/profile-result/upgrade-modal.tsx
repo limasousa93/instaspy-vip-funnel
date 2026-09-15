@@ -3,7 +3,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ArrowRight, X } from "lucide-react";
-import { trackPixelEvent } from "@/lib/pixel";
+import { trackEvent } from "@/lib/tracking/track-event";
 import { CHECKOUT_URL_BASIC, CHECKOUT_URL_UPSELL, PREMIUM_BENEFITS } from "./shared";
 import { PlanBanner } from "./plan-banner";
 
@@ -104,12 +104,12 @@ export function UpgradeModal({ open, onClose }: { open: boolean; onClose: () => 
             items={PREMIUM_BENEFITS}
             ctaHref={CHECKOUT_URL_UPSELL}
             ctaText="Quero desbloquear tudo"
-            onCtaClick={() => trackPixelEvent("InitiateCheckout", { currency: "BRL", value: 27.9 })}
+            onCtaClick={() => trackEvent("InitiateCheckout", { currency: "BRL", value: 27.9 })}
           />
 
           <a
             href={CHECKOUT_URL_BASIC}
-            onClick={() => trackPixelEvent("InitiateCheckout", { currency: "BRL", value: 17.9 })}
+            onClick={() => trackEvent("InitiateCheckout", { currency: "BRL", value: 17.9 })}
             className="flex w-full flex-col items-center gap-0.5 rounded-full py-3.5 text-sm font-bold text-white shadow-[0_12px_28px_-8px_rgba(15,23,42,0.6)] active:opacity-90"
             style={{ background: "linear-gradient(to right, #475569, #1e293b)" }}
           >
