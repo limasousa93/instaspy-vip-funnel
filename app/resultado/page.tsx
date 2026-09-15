@@ -3,7 +3,6 @@
 import dynamic from "next/dynamic";
 import { LetterGlitch } from "@/components/ui/letter-glitch";
 import { useProfileResult } from "@/lib/profile-result/use-profile-result";
-import { CountdownBar } from "@/components/profile-result/countdown-bar";
 import { HeroSection } from "@/components/profile-result/hero-section";
 import { ProfileCard } from "@/components/profile-result/profile-card";
 import { DownArrowDivider } from "@/components/profile-result/shared";
@@ -33,9 +32,7 @@ export default function ResultadoPage() {
         <LetterGlitch glitchSpeed={80} outerVignette smooth characters=". " />
       </div>
 
-      <CountdownBar />
-
-      <div className="relative mx-auto flex w-full max-w-md flex-col gap-5 px-4 pb-16 pt-16">
+      <div className="relative mx-auto flex w-full max-w-md flex-col gap-5 px-4 pb-16 pt-6">
         <HeroSection />
         <ProfileCard profile={profile} />
         <MediaGallery profile={profile} />

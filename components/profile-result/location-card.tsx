@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { MapPin } from "lucide-react";
 import type { ProfileResultData } from "@/lib/profile-result/use-profile-result";
 import { ProfileAvatar, ResultCard, SectionHeading, VIP_CHECKOUT_URL } from "./shared";
@@ -10,15 +11,10 @@ export function LocationCard({ profile }: { profile: ProfileResultData }) {
         title="Localização em tempo real"
         subtitle={`Veja onde ${profile.name} está agora, e os últimos locais por onde passou.`}
       />
-      <div
-        className="relative flex h-40 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-[#111216]"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(139,92,246,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(139,92,246,0.15) 1px, transparent 1px)",
-          backgroundSize: "20px 20px",
-        }}
-      >
-        <div className="flex flex-col items-center gap-1">
+      <div className="relative flex h-40 items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-[#111216]">
+        <Image src="/mapa.png" alt="" fill sizes="(min-width: 640px) 400px, 100vw" className="object-cover" />
+        <div className="absolute inset-0 bg-black/25" />
+        <div className="relative flex flex-col items-center gap-1">
           <div className="relative">
             <span className="absolute inset-0 -m-2 animate-ping rounded-full bg-violet-500/30" />
             <ProfileAvatar
