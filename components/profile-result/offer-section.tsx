@@ -1,15 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import type { ProfileResultData } from "@/lib/profile-result/use-profile-result";
 import { trackEvent } from "@/lib/tracking/track-event";
-import { BrandMark, ResultCard, CHECKOUT_URL_MAIN, PREMIUM_BENEFITS, BASIC_BENEFITS } from "./shared";
+import { BrandMark, ResultCard, CHECKOUT_URL_MAIN, PREMIUM_BENEFITS } from "./shared";
 import { PlanBanner } from "./plan-banner";
-import { UpgradeModal } from "./upgrade-modal";
 
 export function OfferSection({ profile }: { profile: ProfileResultData }) {
-  const [upgradeOpen, setUpgradeOpen] = useState(false);
-
   return (
     <ResultCard className="flex flex-col items-center text-center">
       <BrandMark />
@@ -32,24 +28,6 @@ export function OfferSection({ profile }: { profile: ProfileResultData }) {
           onCtaClick={() => trackEvent("InitiateCheckout", { currency: "BRL", value: 37.9 })}
         />
       </div>
-
-      <div className="mt-4 w-full">
-        <PlanBanner
-          variant="basic"
-          title="Básico"
-          originalPrice="De R$ 97,00"
-          price="17,90"
-          items={BASIC_BENEFITS}
-          ctaHref="#"
-          ctaText="Quero começar"
-          onCtaClick={(e) => {
-            e.preventDefault();
-            setUpgradeOpen(true);
-          }}
-        />
-      </div>
-
-      <UpgradeModal open={upgradeOpen} onClose={() => setUpgradeOpen(false)} />
     </ResultCard>
   );
 }

@@ -25,13 +25,6 @@ export const PREMIUM_BENEFITS = [
   "Acesso vitalício",
 ];
 
-/** Itens do plano Básico (17,90). */
-export const BASIC_BENEFITS = [
-  "Acesso a 2 Perfis",
-  "Apenas 3 mensagens desbloqueadas",
-  "Apenas fotos",
-  "Acesso Imediato",
-];
 
 /** Card escuro padrão usado em todas as seções da landing. */
 export function ResultCard({
