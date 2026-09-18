@@ -22,10 +22,11 @@ interface WhatsAppBulkResultItem {
   message?: string;
   data?: {
     numberExists?: boolean;
-    picture?: string;
+    picture_url?: string;
     base64_image?: string;
-    isBusiness?: boolean;
+    is_business?: boolean;
     download_success?: boolean;
+    about?: string;
   };
 }
 
@@ -38,11 +39,12 @@ function toWhatsAppData(raw: WhatsAppBulkResultItem, number: string): WhatsAppLo
   return {
     number,
     displayName: "",
-    about: "",
-    // `picture` é a URL direta; só cai pro base64 (data URI) quando a URL não vem.
-    profilePicture: raw.data?.picture || (raw.data?.base64_image ? `data:image/jpeg;base64,${raw.data.base64_image}` : ""),
-    isActive: raw.data?.numberExists ?? false,
-    isBusiness: raw.data?.isBusiness ?? false,
+    about: raw.data?.about ?? "",
+    // `picture_url` é a URL direta; só cai pro base64 (data URI) quando a URL não vem.
+    profilePicture: raw.data?.picture_url ?? (raw.data?.base64_image ? `data:image/jpeg;base64,${raw.data.base64_image}` : ""),
+    // `numberExists` nem sempre vem no payload — usa `download_success` como sinal de fallback.
+    isActive: raw.data?.numberExists ?? raw.data?.download_success ?? false,
+    isBusiness: raw.data?.is_business ?? false,
   };
 }
 
@@ -71,7 +73,7 @@ export async function fetchWhatsAppData(number: string): Promise<WhatsAppLookupD
   const { items } = await client.dataset(run.defaultDatasetId).listItems();
   const raw = items[0] as unknown as WhatsAppBulkResultItem | undefined;
 
-  if (!raw || !raw.data?.numberExists) return null;
+  if (!raw || !(raw.data?.numberExists ?? raw.data?.download_success)) return null;
 
   return toWhatsAppData(raw, sanitizedNumber);
 }
