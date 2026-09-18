@@ -1,3 +1,6 @@
+"use client";
+
+import { buildCheckoutUrl } from "@/lib/tracking/checkout-url";
 import { ArrowRight, Check, Crown } from "lucide-react";
 
 /**
@@ -97,7 +100,11 @@ export function PlanBanner({
       <div className="px-5 pb-5">
         <a
           href={ctaHref}
-          onClick={onCtaClick}
+          onClick={(e) => {
+            e.preventDefault();
+            onCtaClick?.(e);
+            window.location.href = buildCheckoutUrl(ctaHref);
+          }}
           className="flex w-full flex-col items-center gap-0.5 rounded-full py-3.5 text-sm font-bold text-white active:opacity-90"
           style={{
             background: ctaGradient,

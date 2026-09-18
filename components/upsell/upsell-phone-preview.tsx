@@ -22,6 +22,7 @@ import {
   X,
 } from "lucide-react";
 import { photoUrl } from "@/lib/media";
+import { buildCheckoutUrl } from "@/lib/tracking/checkout-url";
 import { trackEvent } from "@/lib/tracking/track-event";
 
 interface ChatMessage {
@@ -198,7 +199,7 @@ function WhatsAppRoundIcon({ size = 19 }: { size?: number }) {
 function VipUpgradeBanner({ checkoutUrl, onClose }: { checkoutUrl: string; onClose: () => void }) {
   function handleUnlock() {
     trackEvent("InitiateCheckout", { currency: "BRL", value: 19.9 });
-    window.location.href = checkoutUrl;
+    window.location.href = buildCheckoutUrl(checkoutUrl);
   }
 
   return (

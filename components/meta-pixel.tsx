@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect } from "react";
-import { captureFbclid } from "@/lib/tracking/fbc";
+import { capture } from "@/lib/tracking/utm";
 
 export function MetaPixel() {
   useEffect(() => {
-    captureFbclid();
+    capture();
 
     const f = window as any;
     if (f.fbq) return;

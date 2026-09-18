@@ -1,6 +1,7 @@
 "use client";
 
 import { Check } from "lucide-react";
+import { buildCheckoutUrl } from "@/lib/tracking/checkout-url";
 import { trackEvent } from "@/lib/tracking/track-event";
 
 /**
@@ -12,7 +13,7 @@ import { trackEvent } from "@/lib/tracking/track-event";
 export function UpsellUnlockButton({ checkoutUrl }: { checkoutUrl: string }) {
   function handleClick() {
     trackEvent("InitiateCheckout", { currency: "BRL", value: 19.9 });
-    window.location.href = checkoutUrl;
+    window.location.href = buildCheckoutUrl(checkoutUrl);
   }
 
   return (

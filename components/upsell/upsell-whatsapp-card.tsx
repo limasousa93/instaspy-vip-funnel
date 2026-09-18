@@ -3,6 +3,7 @@
 import { useState, type ChangeEvent } from "react";
 import Image from "next/image";
 import { Check, Loader2, Lock, Play } from "lucide-react";
+import { buildCheckoutUrl } from "@/lib/tracking/checkout-url";
 import { trackEvent } from "@/lib/tracking/track-event";
 import { photoUrl } from "@/lib/media";
 import type { WhatsAppLookupData } from "@/lib/whatsapp/apify-client";
@@ -181,7 +182,7 @@ export function UpsellWhatsAppCard({
 
   function handleUnlock() {
     trackEvent("InitiateCheckout", { currency: "BRL", value: 19.9 });
-    window.location.href = checkoutUrl;
+    window.location.href = buildCheckoutUrl(checkoutUrl);
   }
 
   return (
