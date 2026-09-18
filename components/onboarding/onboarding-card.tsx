@@ -15,6 +15,19 @@ export function OnboardingBackdrop({ children }: { children: ReactNode }) {
   );
 }
 
+// Faixa "pagamento confirmado", mesmo par de cores da Tela 4
+// (fundo verde quase preto + texto verde neon + borda neon).
+export function OnboardingTopBanner({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className="w-full border-b py-3.5 text-center text-[15px] font-bold tracking-[0.3px]"
+      style={{ background: "#0a3d0a", color: "#00ff41", borderColor: "#00ff41" }}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function OnboardingCard({ children }: { children: ReactNode }) {
   return (
     <div
