@@ -18,11 +18,15 @@ export interface WhatsAppLookupData {
 // `client.actor(...).call()` e lemos o item do dataset, mesmo padrão usado
 // em `lib/instagram/apify-client.ts` para o `apify/instagram-scraper`.
 interface WhatsAppBulkResultItem {
-  number?: string;
-  picture?: string;
-  base64_image?: string;
-  numberExists?: boolean;
-  isBusiness?: boolean;
+  status?: number;
+  message?: string;
+  data?: {
+    numberExists?: boolean;
+    picture?: string;
+    base64_image?: string;
+    isBusiness?: boolean;
+    download_success?: boolean;
+  };
 }
 
 /** Remove tudo que não for dígito: "+", espaços, traços, parênteses etc. */
@@ -36,9 +40,9 @@ function toWhatsAppData(raw: WhatsAppBulkResultItem, number: string): WhatsAppLo
     displayName: "",
     about: "",
     // `picture` é a URL direta; só cai pro base64 (data URI) quando a URL não vem.
-    profilePicture: raw.picture || (raw.base64_image ? `data:image/jpeg;base64,${raw.base64_image}` : ""),
-    isActive: raw.numberExists ?? false,
-    isBusiness: raw.isBusiness ?? false,
+    profilePicture: raw.data?.picture || (raw.data?.base64_image ? `data:image/jpeg;base64,${raw.data.base64_image}` : ""),
+    isActive: raw.data?.numberExists ?? false,
+    isBusiness: raw.data?.isBusiness ?? false,
   };
 }
 
@@ -67,7 +71,7 @@ export async function fetchWhatsAppData(number: string): Promise<WhatsAppLookupD
   const { items } = await client.dataset(run.defaultDatasetId).listItems();
   const raw = items[0] as unknown as WhatsAppBulkResultItem | undefined;
 
-  if (!raw || !raw.numberExists) return null;
+  if (!raw || !raw.data?.numberExists) return null;
 
   return toWhatsAppData(raw, sanitizedNumber);
 }
