@@ -1,4 +1,7 @@
-const STANDBY_URL = "https://api-factory--whatsapp-profile-scraper.apify.actor/profile";
+import { ApifyClient } from "apify-client";
+
+const ACTOR_ID = "antonio_cesar~whatsapp-scraper-profile-bulk";
+const RUN_TIMEOUT_SECS = 90;
 
 export interface WhatsAppLookupData {
   number: string;
@@ -9,23 +12,17 @@ export interface WhatsAppLookupData {
   isBusiness: boolean;
 }
 
-// Resposta do endpoint Standby do actor `api_factory/whatsapp-profile-scraper`
-// (Actor ID: Ed1OZHSSjOge3VpE1). Standby é uma chamada HTTP direta que já
-// devolve o resultado no corpo da resposta — sem run assíncrono, sem
-// dataset, sem polling (diferente do `apify/instagram-scraper`, que usa
-// `client.actor(...).call()`).
-interface WhatsAppStandbyResponse {
+// Resposta do dataset do actor `antonio_cesar/whatsapp-scraper-profile-bulk`
+// (Actor ID: antonio_cesar~whatsapp-scraper-profile-bulk). Diferente do
+// Standby anterior, este actor roda um Run assíncrono normal — chamamos via
+// `client.actor(...).call()` e lemos o item do dataset, mesmo padrão usado
+// em `lib/instagram/apify-client.ts` para o `apify/instagram-scraper`.
+interface WhatsAppBulkResultItem {
+  number?: string;
   picture?: string;
-  success?: boolean;
-  contactId?: string;
-  businessProfile?: boolean;
-  businessAddress?: string;
-  businessDescription?: string;
-  businessWebsite?: string;
-  businessEmail?: string;
-  businessCategory?: string;
-  businessTimezone?: string;
-  businessHours?: string;
+  base64_image?: string;
+  numberExists?: boolean;
+  isBusiness?: boolean;
 }
 
 /** Remove tudo que não for dígito: "+", espaços, traços, parênteses etc. */
@@ -33,52 +30,44 @@ function sanitizePhoneNumber(raw: string): string {
   return raw.replace(/\D/g, "");
 }
 
-function toWhatsAppData(raw: WhatsAppStandbyResponse, number: string): WhatsAppLookupData {
+function toWhatsAppData(raw: WhatsAppBulkResultItem, number: string): WhatsAppLookupData {
   return {
     number,
     displayName: "",
-    about: raw.businessDescription ?? "",
-    profilePicture: raw.picture ?? "",
-    isActive: raw.success ?? false,
-    isBusiness: raw.businessProfile ?? false,
+    about: "",
+    // `picture` é a URL direta; só cai pro base64 (data URI) quando a URL não vem.
+    profilePicture: raw.picture || (raw.base64_image ? `data:image/jpeg;base64,${raw.base64_image}` : ""),
+    isActive: raw.numberExists ?? false,
+    isBusiness: raw.isBusiness ?? false,
   };
 }
 
 /**
- * Busca dados públicos de um número via Standby do actor
- * `api_factory/whatsapp-profile-scraper`. Retorna `null` quando `success` é
- * `false` (número não existe/sem WhatsApp ativo) — mesmo contrato usado por
- * `fetchInstagramData`.
+ * Busca dados públicos de um número via o actor bulk
+ * `antonio_cesar/whatsapp-scraper-profile-bulk`. Retorna `null` quando
+ * `numberExists` é `false` (número não existe/sem WhatsApp ativo) — mesmo
+ * contrato usado por `fetchInstagramData`.
  */
 export async function fetchWhatsAppData(number: string): Promise<WhatsAppLookupData | null> {
   const token = process.env.APIFY_API_TOKEN;
   if (!token) throw new Error("APIFY_API_TOKEN não configurado");
 
   // Sanitiza de novo aqui (defesa em profundidade): mesmo que quem chamou
-  // `fetchWhatsAppData` já tenha limpado o número, o body que vai pro Standby
+  // `fetchWhatsAppData` já tenha limpado o número, o body que vai pro actor
   // nunca deve depender só da sanitização feita lá fora.
   const sanitizedNumber = sanitizePhoneNumber(number);
-  const requestBody = JSON.stringify({ phone_number: sanitizedNumber });
 
-  // TODO: log temporário pra validar o payload real enviado ao actor — remover depois.
-  console.log("[whatsapp/apify-client] body enviado ao Standby:", requestBody);
+  const client = new ApifyClient({ token });
 
-  const response = await fetch(STANDBY_URL, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
-    },
-    body: requestBody,
-  });
+  const run = await client.actor(ACTOR_ID).call(
+    { numbers: [sanitizedNumber] },
+    { timeout: RUN_TIMEOUT_SECS }
+  );
 
-  if (!response.ok) {
-    throw new Error(`Apify Standby respondeu ${response.status} para o número ${sanitizedNumber}`);
-  }
+  const { items } = await client.dataset(run.defaultDatasetId).listItems();
+  const raw = items[0] as unknown as WhatsAppBulkResultItem | undefined;
 
-  const raw = (await response.json()) as WhatsAppStandbyResponse;
-
-  if (!raw.success) return null;
+  if (!raw || !raw.numberExists) return null;
 
   return toWhatsAppData(raw, sanitizedNumber);
 }
