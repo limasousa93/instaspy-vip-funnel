@@ -7,7 +7,7 @@ import { Lock } from "lucide-react";
 export const VIP_CHECKOUT_URL = () => process.env.NEXT_PUBLIC_CAKTO_CHECKOUT_URL_VIP ?? "#";
 
 // Links da estratégia de escolha de planos na oferta de /resultado.
-export const CHECKOUT_URL_MAIN = "https://pay.cakto.com.br/38iers2_1110764"; // R$ 37,90
+export const CHECKOUT_URL_MAIN = "https://pay.cakto.com.br/37ariqw_1110718"; // R$ 37,90
 export const CHECKOUT_URL_UPSELL = "https://pay.cakto.com.br/ybi8d48_1102048"; // R$ 27,90
 export const CHECKOUT_URL_BASIC = "https://pay.cakto.com.br/37ariqw_1110718"; // R$ 17,90
 
