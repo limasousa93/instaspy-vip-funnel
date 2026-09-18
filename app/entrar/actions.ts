@@ -7,7 +7,7 @@ import { signSession, SESSION_COOKIE_NAME, SESSION_MAX_AGE_SECONDS } from "@/lib
 export async function verifyAccessAction(_prevState: unknown, formData: FormData) {
   const contact = String(formData.get("contact") ?? "").trim();
   if (!contact) {
-    return { error: "Digite o e-mail ou celular usado na compra." };
+    return { error: "Digite o e-mail usado na compra." };
   }
 
   const n8nUrl = process.env.N8N_VERIFY_ACCESS_URL;
@@ -24,7 +24,7 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
     });
     const data = await response.json();
     if (!data.ok) {
-      return { error: "Não encontramos nenhuma compra aprovada para esse contato. Confira o e-mail/celular e tente de novo." };
+      return { error: "Não encontramos nenhuma compra aprovada para esse contato. Confira o e-mail e tente de novo." };
     }
     hasVip = data.hasVip ?? false;
     hasUpsell = data.hasUpsell ?? false;
@@ -33,7 +33,7 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
   }
 
   if (!hasVip) {
-    return { error: "Não encontramos nenhuma compra aprovada para esse contato. Confira o e-mail/celular e tente de novo." };
+    return { error: "Não encontramos nenhuma compra aprovada para esse contato. Confira o e-mail e tente de novo." };
   }
 
   const token = await signSession({ contact, vip: true, upsell: hasUpsell });

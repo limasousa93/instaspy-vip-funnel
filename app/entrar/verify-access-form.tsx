@@ -14,8 +14,8 @@ export function VerifyAccessForm() {
         <input
           name="contact"
           autoFocus
-          placeholder="E-mail ou celular usado na compra"
-          aria-label="E-mail ou celular usado na compra"
+          placeholder="E-mail usado na compra"
+          aria-label="E-mail usado na compra"
           className="w-full min-w-0 bg-transparent text-left text-base text-white placeholder:text-white/40 focus:outline-none"
         />
       </div>
