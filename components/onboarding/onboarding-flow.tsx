@@ -90,7 +90,7 @@ export function OnboardingFlow() {
         <OnboardingCard>
           <OnboardingLogo />
           <h1 className="text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-            O que seu <span className="text-violet-400">Cônjuge</span> faz quando está no Instagram?
+            Descubra o que seu <span className="text-violet-400">Parceiro</span> faz quando está no Instagram
           </h1>
           <p className="mt-4 text-sm text-white/70">
             Descubra a verdade sobre qualquer pessoa, acessando o <span className="text-violet-300">instagram</span> dela!
@@ -117,7 +117,7 @@ export function OnboardingFlow() {
         <OnboardingCard>
           <OnboardingLogo />
           <h1 className="text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-            O que seu <span className="text-violet-400">Cônjuge</span> faz quando está no Instagram?
+            Descubra o que seu <span className="text-violet-400">Parceiro</span> faz quando está no Instagram
           </h1>
           <p className="mt-4 text-sm text-white/70">
             Digite o nome de usuário da pessoa a ser espionada, sem o arroba &quot;@&quot;.
