@@ -2,6 +2,8 @@
 
 import { buildCheckoutUrl } from "@/lib/tracking/checkout-url";
 import { ArrowRight, Check, Crown } from "lucide-react";
+import type { ReactNode } from "react";
+import Link from "next/link";
 
 /**
  * Banner de plano no estilo "modelo banner" (cartão claro, cabeçalho em
@@ -25,9 +27,13 @@ export function PlanBanner({
   ctaSubtext,
   onCtaClick,
   variant = "premium",
+  ctaTone,
+  bonus,
+  declineHref,
+  declineText,
 }: {
   badge?: string;
-  title: string;
+  title: ReactNode;
   price: string;
   originalPrice?: string;
   items: string[];
@@ -36,22 +42,32 @@ export function PlanBanner({
   ctaSubtext?: string;
   onCtaClick?: (e: React.MouseEvent<HTMLAnchorElement>) => void;
   variant?: "premium" | "basic";
+  /** "green" = botão verde (mesmo do upsell); omitido = cor da variant. */
+  ctaTone?: "green";
+  /** Conteúdo extra centralizado logo abaixo do preço, dentro do cabeçalho. */
+  bonus?: ReactNode;
+  /** Botão cinza "não quero" logo abaixo do CTA (só aparece com os dois props). */
+  declineHref?: string;
+  declineText?: string;
 }) {
   const isPremium = variant === "premium";
 
   const headerGradient = isPremium
     ? "linear-gradient(135deg, #5b21b6, #4c1d95, #3b0764)"
     : "linear-gradient(135deg, #334155, #0f172a)";
-  const ctaGradient = isPremium
-    ? "linear-gradient(to right, #8b5cf6, #9333ea)"
-    : "linear-gradient(to right, #475569, #1e293b)";
+  const isGreenCta = ctaTone === "green";
+  const ctaGradient = isGreenCta
+    ? "linear-gradient(180deg, #2fe677, #1fb959)"
+    : isPremium
+      ? "linear-gradient(to right, #8b5cf6, #9333ea)"
+      : "linear-gradient(to right, #475569, #1e293b)";
 
   return (
     <div
       className="w-full rounded-[28px] border bg-[#170f2b] shadow-[0_20px_45px_-15px_rgba(0,0,0,0.65)]"
       style={{ borderColor: "#8b5cf633" }}
     >
-      <div className="relative rounded-t-[28px] rounded-b-[50%] pb-10 pt-8 text-center">
+      <div className={`relative rounded-t-[28px] rounded-b-[50%] pt-8 text-center ${bonus ? "pb-16" : "pb-10"}`}>
         <div
           aria-hidden
           className="absolute inset-0 overflow-hidden rounded-t-[28px] rounded-b-[50%]"
@@ -81,6 +97,7 @@ export function PlanBanner({
         <p className="relative mt-1 text-4xl font-extrabold text-white sm:text-5xl">
           <span className="align-top text-lg">R$</span> {price}
         </p>
+        {bonus}
       </div>
 
       <ul className="flex flex-col gap-3 px-5 py-5 text-left">
@@ -108,9 +125,11 @@ export function PlanBanner({
           className="flex w-full flex-col items-center gap-0.5 rounded-full py-3.5 text-sm font-bold text-white active:opacity-90"
           style={{
             background: ctaGradient,
-            boxShadow: isPremium
-              ? "0 12px 28px -8px rgba(124,58,237,0.75)"
-              : "0 12px 28px -8px rgba(15,23,42,0.6)",
+            boxShadow: isGreenCta
+              ? "0 6px 18px rgba(37,211,102,0.4), inset 0 1px 0 rgba(255,255,255,0.3)"
+              : isPremium
+                ? "0 12px 28px -8px rgba(124,58,237,0.75)"
+                : "0 12px 28px -8px rgba(15,23,42,0.6)",
           }}
         >
           <span className="flex items-center gap-1.5">
@@ -118,6 +137,19 @@ export function PlanBanner({
           </span>
           {ctaSubtext && <span className="text-[11px] font-normal text-white/80">{ctaSubtext}</span>}
         </a>
+
+        {declineHref && declineText && (
+          <Link
+            href={declineHref}
+            className="mt-3 flex w-full items-center justify-center rounded-full py-3.5 text-sm font-bold text-white active:opacity-90"
+            style={{
+              background: "linear-gradient(180deg, #6b7280, #4b5563)",
+              boxShadow: "0 6px 18px rgba(75,85,99,0.35), inset 0 1px 0 rgba(255,255,255,0.2)",
+            }}
+          >
+            {declineText}
+          </Link>
+        )}
       </div>
     </div>
   );

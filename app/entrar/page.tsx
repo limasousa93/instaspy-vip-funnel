@@ -1,4 +1,5 @@
 import { OnboardingBackdrop, OnboardingBadges, OnboardingCard, OnboardingLogo } from "@/components/onboarding/onboarding-card";
+import { WhatsAppSupportButton } from "@/components/upsell/whatsapp-support-button";
 import { VerifyAccessForm } from "./verify-access-form";
 
 export default function EntrarPage() {
@@ -15,6 +16,7 @@ export default function EntrarPage() {
         <VerifyAccessForm />
         <OnboardingBadges />
       </OnboardingCard>
+      <WhatsAppSupportButton />
     </OnboardingBackdrop>
   );
 }

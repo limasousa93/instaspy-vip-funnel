@@ -27,9 +27,21 @@ function buildFaqItems(priceLabel: string) {
   ];
 }
 
-export function UpsellFaqSection({ priceLabel = "19,90" }: { priceLabel?: string }) {
+export function UpsellFaqSection({
+  priceLabel = "19,90",
+  answers = {},
+  omit = [],
+}: {
+  priceLabel?: string;
+  /** Substitui a resposta de perguntas específicas (chave = texto da pergunta). */
+  answers?: Record<string, string>;
+  /** Perguntas a esconder (texto exato da pergunta). */
+  omit?: string[];
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const faqItems = buildFaqItems(priceLabel);
+  const faqItems = buildFaqItems(priceLabel)
+    .filter((item) => !omit.includes(item.question))
+    .map((item) => ({ ...item, answer: answers[item.question] ?? item.answer }));
 
   return (
     <div className="flex w-full max-w-md flex-col gap-3">

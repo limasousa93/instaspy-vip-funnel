@@ -42,7 +42,8 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
-    secure: true,
+    // Só em produção (https): navegadores recusam cookie Secure em http://<IP-da-rede>, o que quebra o teste no celular.
+    secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
     maxAge: SESSION_MAX_AGE_SECONDS,

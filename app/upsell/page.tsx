@@ -1,8 +1,7 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { OnboardingTopBanner } from "@/components/onboarding/onboarding-card";
-import { DeclineOfferLink } from "@/components/upsell/decline-offer-link";
 import { UpsellBackdrop } from "@/components/upsell/upsell-backdrop";
+import { UpsellCountdownBanner } from "@/components/upsell/upsell-countdown-banner";
 import { UpsellFunnel } from "@/components/upsell/upsell-funnel";
 import { SESSION_COOKIE_NAME, verifySession } from "@/lib/session/session";
 
@@ -17,11 +16,10 @@ export default async function UpsellPage() {
 
   return (
     <>
-      <OnboardingTopBanner>Seu pagamento foi confirmado.</OnboardingTopBanner>
+      <UpsellCountdownBanner />
 
       <UpsellBackdrop>
         <UpsellFunnel checkoutUrl={upsellCheckoutUrl} />
-        <DeclineOfferLink href="/downsell">Não quero esse benefício</DeclineOfferLink>
       </UpsellBackdrop>
     </>
   );

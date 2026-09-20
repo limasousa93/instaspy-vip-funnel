@@ -1,7 +1,5 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { OnboardingTopBanner } from "@/components/onboarding/onboarding-card";
-import { DeclineOfferLink } from "@/components/upsell/decline-offer-link";
 import { UpsellBackdrop } from "@/components/upsell/upsell-backdrop";
 import { UpsellFunnel } from "@/components/upsell/upsell-funnel";
 import { CROSSELL_OFFER } from "@/components/upsell/upsell-offer";
@@ -18,11 +16,8 @@ export default async function CrossellPage() {
 
   return (
     <>
-      <OnboardingTopBanner>Seu pagamento foi confirmado.</OnboardingTopBanner>
-
       <UpsellBackdrop>
         <UpsellFunnel checkoutUrl={crossellCheckoutUrl} offer={CROSSELL_OFFER} />
-        <DeclineOfferLink href="/feed">Não quero</DeclineOfferLink>
       </UpsellBackdrop>
     </>
   );

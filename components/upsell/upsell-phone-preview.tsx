@@ -67,7 +67,7 @@ const CONTACTS: Contact[] = [
   },
   {
     id: "livia",
-    name: "Apaix*****",
+    name: "Jul****❤️",
     preview: "Oi boa tarde",
     time: "09:08",
     clickable: true,

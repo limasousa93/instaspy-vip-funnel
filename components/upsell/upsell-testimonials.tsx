@@ -43,7 +43,7 @@ const TESTIMONIALS: Testimonial[] = [
 const SLIDE_INTERVAL_MS = 5000;
 
 /** Carrossel de depoimentos: avança automaticamente a cada 5s e volta pro início ao chegar no último. */
-export function UpsellTestimonials() {
+export function UpsellTestimonials({ title = "Resultados de quem já usou." }: { title?: string }) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export function UpsellTestimonials() {
   return (
     <div className="flex w-full max-w-md flex-col items-center gap-4">
       <p className="text-center text-2xl font-extrabold leading-tight text-white sm:text-3xl">
-        Resultados de quem já usou.
+        {title}
       </p>
 
       <div className="w-full overflow-hidden">
