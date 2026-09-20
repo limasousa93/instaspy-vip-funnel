@@ -84,7 +84,7 @@ const CONTACTS: Contact[] = [
       { from: "sent", text: "Combinado! Bora aproveitar bastante esse dia 😁", time: "10:27" },
     ],
   },
-  { id: "whatsapp", name: "WhatsApp Business", preview: "Prepare-se para a temporada mais movimentada do ano 🎁", time: "Ontem", unread: 17 },
+  { id: "whatsapp", name: "Ani*****", preview: "Prepare-se para a temporada mais movimentada do ano 🎁", time: "Ontem", unread: 17 },
   { id: "mainha", name: "Ma***❤️", preview: "Chegou bem? Manda msg quando puder 🙏", time: "09:15" },
   { id: "vo", name: "Vó***🙏💕", preview: "Deus te abençoe hoje, netinha 💗", time: "terça-feira" },
   { id: "facul", name: "Am***👯‍♀️", preview: "Duda: gente marca o rolê pra sábado?? 🎉", time: "08:40", unread: 5 },
@@ -196,9 +196,19 @@ function WhatsAppRoundIcon({ size = 19 }: { size?: number }) {
 }
 
 /** Banner "estilo Seja VIP" — mesmo padrão do VipUnlockCard (components/feed/vip-unlock-banner.tsx), adaptado pro upgrade do WhatsApp. */
-function VipUpgradeBanner({ checkoutUrl, onClose }: { checkoutUrl: string; onClose: () => void }) {
+function VipUpgradeBanner({
+  checkoutUrl,
+  price,
+  priceLabel,
+  onClose,
+}: {
+  checkoutUrl: string;
+  price: number;
+  priceLabel: string;
+  onClose: () => void;
+}) {
   function handleUnlock() {
-    trackEvent("InitiateCheckout", { currency: "BRL", value: 19.9 });
+    trackEvent("InitiateCheckout", { currency: "BRL", value: price });
     window.location.href = buildCheckoutUrl(checkoutUrl);
   }
 
@@ -226,7 +236,7 @@ function VipUpgradeBanner({ checkoutUrl, onClose }: { checkoutUrl: string; onClo
               <Crown className="h-5 w-5 fill-amber-400 text-amber-400" />
             </div>
             <p className="text-left text-xs font-bold leading-snug text-white">
-              Atualize e tenha acesso a tudo por apenas <span style={{ color: "#25D366" }}>R$ 19,90</span>
+              Atualize e tenha acesso a tudo por apenas <span style={{ color: "#25D366" }}>R$ {priceLabel}</span>
             </p>
           </div>
 
@@ -276,10 +286,15 @@ const CLOCK_TIME_CONTACT_IDS = ["felipe", "livia", "mainha"] as const;
  */
 export function UpsellPhonePreview({
   checkoutUrl,
+  price = 19.9,
+  priceLabel = "19,90",
   revealed,
   onRequestSearch,
 }: {
   checkoutUrl: string;
+  /** Valor (BRL) do evento InitiateCheckout e preço exibido no banner de upgrade. */
+  price?: number;
+  priceLabel?: string;
   /** false = tela toda borrada com selo de cadeado + CTA; true = mockup normal (revelado após a busca). */
   revealed: boolean;
   onRequestSearch: () => void;
@@ -466,7 +481,7 @@ export function UpsellPhonePreview({
                   ))}
                 </div>
 
-                {showListBanner && <VipUpgradeBanner checkoutUrl={checkoutUrl} onClose={() => setShowListBanner(false)} />}
+                {showListBanner && <VipUpgradeBanner checkoutUrl={checkoutUrl} price={price} priceLabel={priceLabel} onClose={() => setShowListBanner(false)} />}
               </div>
 
               {/* ---------- Tela: conversa individual ---------- */}
@@ -578,7 +593,12 @@ export function UpsellPhonePreview({
                       })}
 
                       {showChatBanner && (
-                        <VipUpgradeBanner checkoutUrl={checkoutUrl} onClose={() => setShowChatBanner(false)} />
+                        <VipUpgradeBanner
+                          checkoutUrl={checkoutUrl}
+                          price={price}
+                          priceLabel={priceLabel}
+                          onClose={() => setShowChatBanner(false)}
+                        />
                       )}
                     </div>
 
