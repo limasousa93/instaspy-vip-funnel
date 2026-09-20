@@ -4,8 +4,9 @@ import { fetchWhatsAppData, type WhatsAppLookupData } from "@/lib/whatsapp/apify
 
 export const dynamic = "force-dynamic";
 
+/** Monta o número em E.164 com "+" na frente (ex: "+5588999519617"). */
 function sanitizeNumber(raw: string): string {
-  return raw.replace(/\D/g, "");
+  return `+${raw.replace(/\D/g, "")}`;
 }
 
 export async function GET(
@@ -15,7 +16,8 @@ export async function GET(
   const { numero: rawNumero } = await params;
   const numero = sanitizeNumber(rawNumero);
 
-  if (numero.length < 10) {
+  // "+" conta 1 caractere: 10 dígitos mínimos => length >= 11.
+  if (numero.length < 11) {
     return NextResponse.json({ error: "Número inválido" }, { status: 400 });
   }
 

@@ -1,8 +1,3 @@
-import { ApifyClient } from "apify-client";
-
-const ACTOR_ID = "antonio_cesar~whatsapp-scraper-profile-bulk";
-const RUN_TIMEOUT_SECS = 90;
-
 export interface WhatsAppLookupData {
   number: string;
   displayName: string;
@@ -12,22 +7,16 @@ export interface WhatsAppLookupData {
   isBusiness: boolean;
 }
 
-// Resposta do dataset do actor `antonio_cesar/whatsapp-scraper-profile-bulk`
-// (Actor ID: antonio_cesar~whatsapp-scraper-profile-bulk). Diferente do
-// Standby anterior, este actor roda um Run assíncrono normal — chamamos via
-// `client.actor(...).call()` e lemos o item do dataset, mesmo padrão usado
-// em `lib/instagram/apify-client.ts` para o `apify/instagram-scraper`.
-interface WhatsAppBulkResultItem {
-  status?: number;
-  message?: string;
-  data?: {
-    numberExists?: boolean;
-    picture_url?: string;
-    base64_image?: string;
-    is_business?: boolean;
-    download_success?: boolean;
-    about?: string;
-  };
+const REQUEST_TIMEOUT_MS = 30_000;
+
+interface EvolutionNumberCheck {
+  exists: boolean;
+  jid?: string;
+  number?: string;
+}
+
+interface EvolutionProfilePicture {
+  profilePictureUrl: string | null;
 }
 
 /** Remove tudo que não for dígito: "+", espaços, traços, parênteses etc. */
@@ -35,45 +24,59 @@ function sanitizePhoneNumber(raw: string): string {
   return raw.replace(/\D/g, "");
 }
 
-function toWhatsAppData(raw: WhatsAppBulkResultItem, number: string): WhatsAppLookupData {
-  return {
-    number,
-    displayName: "",
-    about: raw.data?.about ?? "",
-    // `picture_url` é a URL direta; só cai pro base64 (data URI) quando a URL não vem.
-    profilePicture: raw.data?.picture_url ?? (raw.data?.base64_image ? `data:image/jpeg;base64,${raw.data.base64_image}` : ""),
-    // `numberExists` nem sempre vem no payload — usa `download_success` como sinal de fallback.
-    isActive: raw.data?.numberExists ?? raw.data?.download_success ?? false,
-    isBusiness: raw.data?.is_business ?? false,
-  };
+function getConfig() {
+  const baseUrl = process.env.EVOLUTION_API_URL;
+  const apiKey = process.env.EVOLUTION_API_KEY;
+  const instance = process.env.EVOLUTION_INSTANCE;
+  if (!baseUrl || !apiKey || !instance) {
+    throw new Error("EVOLUTION_API_URL, EVOLUTION_API_KEY e EVOLUTION_INSTANCE devem estar configurados");
+  }
+  return { baseUrl: baseUrl.replace(/\/+$/, ""), apiKey, instance };
+}
+
+async function evolutionPost<T>(path: string, body: unknown): Promise<T> {
+  const { baseUrl, apiKey, instance } = getConfig();
+  const res = await fetch(`${baseUrl}${path}/${instance}`, {
+    method: "POST",
+    headers: { apikey: apiKey, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+  });
+  if (!res.ok) throw new Error(`Evolution API ${path} respondeu ${res.status}`);
+  return (await res.json()) as T;
 }
 
 /**
- * Busca dados públicos de um número via o actor bulk
- * `antonio_cesar/whatsapp-scraper-profile-bulk`. Retorna `null` quando
- * `numberExists` é `false` (número não existe/sem WhatsApp ativo) — mesmo
- * contrato usado por `fetchInstagramData`.
+ * Busca dados públicos de um número via Evolution API. Retorna `null` quando o
+ * número não existe no WhatsApp — mesmo contrato usado por `fetchInstagramData`.
  */
 export async function fetchWhatsAppData(number: string): Promise<WhatsAppLookupData | null> {
-  const token = process.env.APIFY_API_TOKEN;
-  if (!token) throw new Error("APIFY_API_TOKEN não configurado");
-
-  // Sanitiza de novo aqui (defesa em profundidade): mesmo que quem chamou
-  // `fetchWhatsAppData` já tenha limpado o número, o body que vai pro actor
-  // nunca deve depender só da sanitização feita lá fora.
+  // Sanitiza de novo aqui (defesa em profundidade): a Evolution API espera só dígitos.
   const sanitizedNumber = sanitizePhoneNumber(number);
 
-  const client = new ApifyClient({ token });
+  // 1) Verifica se o número existe no WhatsApp.
+  const checks = await evolutionPost<EvolutionNumberCheck[]>("/chat/whatsappNumbers", {
+    numbers: [sanitizedNumber],
+  });
+  if (!checks[0]?.exists) return null;
 
-  const run = await client.actor(ACTOR_ID).call(
-    { numbers: [sanitizedNumber] },
-    { timeout: RUN_TIMEOUT_SECS }
-  );
+  // 2) Busca a foto de perfil. Falha aqui não invalida o número: segue sem foto.
+  let profilePictureUrl: string | null = null;
+  try {
+    const picture = await evolutionPost<EvolutionProfilePicture>("/chat/fetchProfilePictureUrl", {
+      number: sanitizedNumber,
+    });
+    profilePictureUrl = picture.profilePictureUrl;
+  } catch {
+    profilePictureUrl = null;
+  }
 
-  const { items } = await client.dataset(run.defaultDatasetId).listItems();
-  const raw = items[0] as unknown as WhatsAppBulkResultItem | undefined;
-
-  if (!raw || !(raw.data?.numberExists ?? raw.data?.download_success)) return null;
-
-  return toWhatsAppData(raw, sanitizedNumber);
+  return {
+    number: sanitizedNumber,
+    displayName: "",
+    about: "",
+    profilePicture: profilePictureUrl ?? "",
+    isActive: true,
+    isBusiness: false,
+  };
 }
