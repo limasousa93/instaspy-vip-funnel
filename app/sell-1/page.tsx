@@ -9,8 +9,9 @@ export default async function UpsellPage() {
   const cookieStore = await cookies();
   const session = await verifySession(cookieStore.get(SESSION_COOKIE_NAME)?.value);
 
-  if (!session?.vip) redirect("/entrar");
-  if (session.upsell) redirect("/feed");
+  // Sem guard de login: o comprador chega aqui direto do pagamento, antes de ter sessão.
+  // Quem já tem o upsell (sessão existente) vai direto pro app.
+  if (session?.upsell) redirect("/feed");
 
   const upsellCheckoutUrl = process.env.NEXT_PUBLIC_CAKTO_CHECKOUT_URL_UPSELL ?? "#";
 

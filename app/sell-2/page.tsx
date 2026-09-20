@@ -10,8 +10,8 @@ export default async function DownsellPage() {
   const cookieStore = await cookies();
   const session = await verifySession(cookieStore.get(SESSION_COOKIE_NAME)?.value);
 
-  if (!session?.vip) redirect("/entrar");
-  if (session.upsell || session.downsell) redirect("/feed");
+  // Sem guard de login: chega aqui vindo da /sell-1, antes de o comprador ter sessão.
+  if (session?.upsell || session?.downsell) redirect("/feed");
 
   const downsellCheckoutUrl = process.env.NEXT_PUBLIC_CAKTO_CHECKOUT_URL_DOWNSELL ?? "#";
 
