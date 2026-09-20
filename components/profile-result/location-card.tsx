@@ -4,7 +4,7 @@ import { buildCheckoutUrl } from "@/lib/tracking/checkout-url";
 import Image from "next/image";
 import { MapPin } from "lucide-react";
 import type { ProfileResultData } from "@/lib/profile-result/use-profile-result";
-import { ProfileAvatar, ResultCard, SectionHeading, VIP_CHECKOUT_URL } from "./shared";
+import { CHECKOUT_URL_MAIN, ProfileAvatar, ResultCard, SectionHeading } from "./shared";
 
 export function LocationCard({ profile }: { profile: ProfileResultData }) {
   return (
@@ -35,10 +35,10 @@ export function LocationCard({ profile }: { profile: ProfileResultData }) {
           <p className="truncate text-xs text-white/50">@{profile.username}</p>
         </div>
         <a
-          href={VIP_CHECKOUT_URL()}
+          href={CHECKOUT_URL_MAIN}
           onClick={(e) => {
             e.preventDefault();
-            window.location.href = buildCheckoutUrl(VIP_CHECKOUT_URL());
+            window.location.href = buildCheckoutUrl(CHECKOUT_URL_MAIN);
           }}
           className="spy-cta-button shrink-0 rounded-full px-5 py-2 text-xs font-bold text-white active:opacity-90"
         >
