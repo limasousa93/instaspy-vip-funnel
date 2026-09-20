@@ -13,7 +13,7 @@ export default async function DownsellPage() {
   // Sem guard de login: chega aqui vindo da /sell-1, antes de o comprador ter sessão.
   if (session?.upsell || session?.downsell) redirect("/feed");
 
-  const downsellCheckoutUrl = process.env.NEXT_PUBLIC_CAKTO_CHECKOUT_URL_DOWNSELL ?? "#";
+  const downsellCheckoutUrl = "https://pay.cakto.com.br/3chrxbd_921615";
 
   return (
     <>

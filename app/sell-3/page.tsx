@@ -12,7 +12,7 @@ export default async function CrossellPage() {
   if (!session?.vip) redirect("/entrar");
   if (session.upsell || session.downsell) redirect("/feed");
 
-  const crossellCheckoutUrl = process.env.NEXT_PUBLIC_CAKTO_CHECKOUT_URL_CROSSELL ?? "#";
+  const crossellCheckoutUrl = "https://pay.cakto.com.br/chqry6x";
 
   return (
     <>

@@ -13,7 +13,7 @@ export default async function UpsellPage() {
   // Quem já tem o upsell (sessão existente) vai direto pro app.
   if (session?.upsell) redirect("/feed");
 
-  const upsellCheckoutUrl = process.env.NEXT_PUBLIC_CAKTO_CHECKOUT_URL_UPSELL ?? "#";
+  const upsellCheckoutUrl = "https://pay.cakto.com.br/ybi8d48_1102048";
 
   return (
     <>
