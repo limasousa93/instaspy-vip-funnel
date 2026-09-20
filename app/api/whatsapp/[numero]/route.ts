@@ -10,7 +10,7 @@ function sanitizeNumber(raw: string): string {
 }
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ numero: string }> },
 ) {
   const { numero: rawNumero } = await params;
@@ -21,8 +21,12 @@ export async function GET(
     return NextResponse.json({ error: "Número inválido" }, { status: 400 });
   }
 
-  const cached = getCached<WhatsAppLookupData>(numero);
-  if (cached) return NextResponse.json(cached);
+  // ?refresh=1 ignora o cache e força nova busca na Evolution API (útil para testes).
+  const refresh = new URL(request.url).searchParams.get("refresh") === "1";
+  if (!refresh) {
+    const cached = getCached<WhatsAppLookupData>(numero);
+    if (cached) return NextResponse.json(cached);
+  }
 
   const data = await fetchWhatsAppData(numero);
   if (!data) {
