@@ -49,6 +49,6 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
     maxAge: SESSION_MAX_AGE_SECONDS,
   });
 
-  // Quem já comprou upsell ou downsell vai direto pro app; o resto cai no crossell.
-  redirect(hasUpsell || hasDownsell ? "/feed" : "/crossell");
+  // Quem já comprou upsell ou downsell vai direto pro app; o resto cai no /sell3 (antigo crossell).
+  redirect(hasUpsell || hasDownsell ? "/feed" : "/sell3");
 }

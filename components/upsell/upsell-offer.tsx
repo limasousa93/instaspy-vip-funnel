@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { InstagramPlusWhatsApp } from "@/components/upsell/instagram-plus-whatsapp";
 
-/** Conteúdo que muda entre as telas de oferta (/upsell, /downsell, /crossell); o resto do funil é idêntico. */
+/** Conteúdo que muda entre as telas de oferta (/sell-1, /sell-2, /sell3); o resto do funil é idêntico. */
 export interface UpsellOffer {
   headline: ReactNode;
   /** "Faça o teste grátis." em verde e maiúsculo. */
@@ -59,7 +59,7 @@ export const UPSELL_OFFER: UpsellOffer = {
     },
     omit: ["Por que preciso atualizar?"],
   },
-  decline: { text: "Não Quero", href: "/downsell" },
+  decline: { text: "Não Quero", href: "/sell-2" },
   greenPlanCta: true,
   planTitle: <InstagramPlusWhatsApp />,
   testimonialsTitle: "Resultados de quem atualizou para o completo",
@@ -73,7 +73,7 @@ export const UPSELL_OFFER: UpsellOffer = {
   originalPriceLabel: "R$ 87,90",
 };
 
-// /downsell e /crossell compartilham a mesma página (visual e textos); só mudam
+// /sell-2 e /sell3 compartilham a mesma página (visual e textos); só mudam
 // o preço e o destino do botão "Não Quero".
 function buildDownsellLayout(priceLabel: string): UpsellOffer {
   return {
