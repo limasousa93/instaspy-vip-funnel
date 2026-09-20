@@ -5,6 +5,7 @@ export interface SessionPayload {
   contact: string;
   vip: boolean;
   upsell: boolean;
+  downsell: boolean;
   iat: number;
 }
 
@@ -64,7 +65,8 @@ export async function verifySession(token: string | undefined | null): Promise<S
     const payload = JSON.parse(new TextDecoder().decode(base64UrlDecode(encodedPayload))) as SessionPayload;
     const ageSeconds = (Date.now() - payload.iat) / 1000;
     if (ageSeconds > SESSION_MAX_AGE_SECONDS) return null;
-    return payload;
+    // Sessões antigas (emitidas antes do downsell existir) não têm o campo.
+    return { ...payload, downsell: payload.downsell ?? false };
   } catch {
     return null;
   }

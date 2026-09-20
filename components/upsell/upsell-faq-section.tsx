@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-const FAQ_ITEMS = [
+function buildFaqItems(priceLabel: string) {
+  return [
   {
     question: "O que muda com a nova atualização?",
     answer:
@@ -16,23 +17,25 @@ const FAQ_ITEMS = [
   },
   {
     question: "Quanto custa para ativar a nova versão?",
-    answer: "Para liberar a atualização completa, basta pagar uma taxa única de R$ 19,90.",
+    answer: `Para liberar a atualização completa, basta pagar uma taxa única de R$ ${priceLabel}.`,
   },
   {
     question: "O acesso é liberado imediatamente?",
     answer:
       "Sim. Após a confirmação do pagamento, a atualização é ativada automaticamente e você recebe acesso imediato à nova versão da plataforma.",
   },
-];
+  ];
+}
 
-export function UpsellFaqSection() {
+export function UpsellFaqSection({ priceLabel = "19,90" }: { priceLabel?: string }) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const faqItems = buildFaqItems(priceLabel);
 
   return (
     <div className="flex w-full max-w-md flex-col gap-3">
       <h2 className="text-center text-lg font-extrabold text-white sm:text-xl">Perguntas Frequentes</h2>
       <div className="flex flex-col gap-2">
-        {FAQ_ITEMS.map((item, i) => {
+        {faqItems.map((item, i) => {
           const open = openIndex === i;
           return (
             <div key={item.question} className="overflow-hidden rounded-xl border border-white/10 bg-[#0b0b0f]/90">

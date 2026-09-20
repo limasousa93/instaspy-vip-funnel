@@ -15,6 +15,7 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
 
   let hasVip = false;
   let hasUpsell = false;
+  let hasDownsell = false;
 
   try {
     const response = await fetch(n8nUrl, {
@@ -28,6 +29,7 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
     }
     hasVip = data.hasVip ?? false;
     hasUpsell = data.hasUpsell ?? false;
+    hasDownsell = data.hasDownsell ?? false;
   } catch {
     return { error: "Erro ao verificar a compra. Tente novamente em instantes." };
   }
@@ -36,7 +38,7 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
     return { error: "Não encontramos nenhuma compra aprovada para esse contato. Confira o e-mail e tente de novo." };
   }
 
-  const token = await signSession({ contact, vip: true, upsell: hasUpsell });
+  const token = await signSession({ contact, vip: true, upsell: hasUpsell, downsell: hasDownsell });
   const cookieStore = await cookies();
   cookieStore.set(SESSION_COOKIE_NAME, token, {
     httpOnly: true,
@@ -46,5 +48,6 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
     maxAge: SESSION_MAX_AGE_SECONDS,
   });
 
-  redirect(hasUpsell ? "/" : "/upsell");
+  // Quem já comprou upsell ou downsell vai direto pro app; o resto cai no crossell.
+  redirect(hasUpsell || hasDownsell ? "/feed" : "/crossell");
 }

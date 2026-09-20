@@ -77,9 +77,12 @@ const GREEN_CTA_STYLE = {
  */
 export function UpsellWhatsAppCard({
   checkoutUrl,
+  price = 19.9,
   onResult,
 }: {
   checkoutUrl: string;
+  /** Valor (BRL) enviado no evento InitiateCheckout. */
+  price?: number;
   /** Chamado assim que os dados (reais ou placeholder) chegam — usado pra revelar o mockup do celular. */
   onResult?: () => void;
 }) {
@@ -181,7 +184,7 @@ export function UpsellWhatsAppCard({
   }
 
   function handleUnlock() {
-    trackEvent("InitiateCheckout", { currency: "BRL", value: 19.9 });
+    trackEvent("InitiateCheckout", { currency: "BRL", value: price });
     window.location.href = buildCheckoutUrl(checkoutUrl);
   }
 

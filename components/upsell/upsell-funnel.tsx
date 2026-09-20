@@ -10,6 +10,7 @@ import { UpsellPhonePreview } from "@/components/upsell/upsell-phone-preview";
 import { UpsellTestimonials } from "@/components/upsell/upsell-testimonials";
 import { UpsellUnlockButton } from "@/components/upsell/upsell-unlock-button";
 import { UpsellWhatsAppCard } from "@/components/upsell/upsell-whatsapp-card";
+import { UPSELL_OFFER, type UpsellOffer } from "@/components/upsell/upsell-offer";
 
 const MATRIX_PLAN_ITEMS = [
   "Acesso a fotos",
@@ -31,7 +32,7 @@ const MATRIX_PLAN_ITEMS = [
  * só revela a lista/chat de verdade depois que o card confirma uma busca
  * (real ou placeholder) — ver `onResult` em UpsellWhatsAppCard.
  */
-export function UpsellFunnel({ checkoutUrl }: { checkoutUrl: string }) {
+export function UpsellFunnel({ checkoutUrl, offer = UPSELL_OFFER }: { checkoutUrl: string; offer?: UpsellOffer }) {
   const [revealed, setRevealed] = useState(false);
 
   function handleRequestSearch() {
@@ -60,21 +61,16 @@ export function UpsellFunnel({ checkoutUrl }: { checkoutUrl: string }) {
           style={{ boxShadow: "0 0 60px -15px rgba(139,92,246,0.45)" }}
         >
           <h1 className="text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-            Falta apenas ativar a <span className="text-violet-400">nova versão do sistema</span>.
+            {offer.headline}
           </h1>
 
           <div className="mt-4 rounded-2xl border border-green-500/30 bg-green-500/10 px-4 py-3 text-center">
-            <p className="text-sm font-bold text-green-300">
-              Além das buscas por Instagram, com a nova atualização você terá acesso a uma tecnologia avançada de
-              análise por WhatsApp, capaz de puxar todas as conversas, áudios e vídeos de qualquer pessoa. Seu
-              acesso atual não inclui essa nova tecnologia. Para ativar a versão mais recente e desbloquear todos
-              os recursos disponíveis, basta pagar apenas a diferença de R$ 19,90.
-            </p>
+            <p className="text-sm font-bold text-green-300">{offer.notice}</p>
           </div>
 
           <p className="mt-3 text-xl font-extrabold text-violet-400">Faça o teste grátis.</p>
 
-          <UpsellWhatsAppCard checkoutUrl={checkoutUrl} onResult={() => setRevealed(true)} />
+          <UpsellWhatsAppCard checkoutUrl={checkoutUrl} price={offer.price} onResult={() => setRevealed(true)} />
         </div>
       </div>
 
@@ -82,7 +78,7 @@ export function UpsellFunnel({ checkoutUrl }: { checkoutUrl: string }) {
         Veja Algumas conversas desse perfil
       </p>
 
-      <UpsellPhonePreview checkoutUrl={checkoutUrl} revealed={revealed} onRequestSearch={handleRequestSearch} />
+      <UpsellPhonePreview checkoutUrl={checkoutUrl} price={offer.price} priceLabel={offer.priceLabel} revealed={revealed} onRequestSearch={handleRequestSearch} />
 
       <UpsellTestimonials />
 
@@ -90,18 +86,18 @@ export function UpsellFunnel({ checkoutUrl }: { checkoutUrl: string }) {
         variant="premium"
         badge="Acesso Completo"
         title="Atualização WhatsApp + Instagram"
-        price="19,90"
-        originalPrice="R$ 87,90"
+        price={offer.priceLabel}
+        originalPrice={offer.originalPriceLabel}
         items={MATRIX_PLAN_ITEMS}
         ctaHref={checkoutUrl}
         ctaText="Desbloquear tudo agora"
         ctaSubtext="Compra 100% segura"
-        onCtaClick={() => trackEvent("InitiateCheckout", { currency: "BRL", value: 19.9 })}
+        onCtaClick={() => trackEvent("InitiateCheckout", { currency: "BRL", value: offer.price })}
       />
 
-      <UpsellFaqSection />
+      <UpsellFaqSection priceLabel={offer.priceLabel} />
 
-      <UpsellUnlockButton checkoutUrl={checkoutUrl} />
+      <UpsellUnlockButton checkoutUrl={checkoutUrl} price={offer.price} />
     </div>
   );
 }

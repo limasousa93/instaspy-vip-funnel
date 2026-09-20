@@ -1,24 +1,10 @@
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import type { ReactNode } from "react";
 import { OnboardingTopBanner } from "@/components/onboarding/onboarding-card";
-import { LetterGlitch } from "@/components/ui/letter-glitch";
+import { DeclineOfferLink } from "@/components/upsell/decline-offer-link";
+import { UpsellBackdrop } from "@/components/upsell/upsell-backdrop";
 import { UpsellFunnel } from "@/components/upsell/upsell-funnel";
 import { SESSION_COOKIE_NAME, verifySession } from "@/lib/session/session";
-
-// Fundo exclusivo do /upsell: mesmo LetterGlitch verde do /resultado, em vez
-// do GatewayFlow roxo do OnboardingBackdrop compartilhado (que /entrar e as
-// outras telas do funil continuam usando normalmente).
-function UpsellBackdrop({ children }: { children: ReactNode }) {
-  return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-black px-4 py-10">
-      <div className="pointer-events-none absolute inset-0 opacity-[0.15]">
-        <LetterGlitch glitchSpeed={80} outerVignette smooth characters=". " />
-      </div>
-      <div className="relative w-full max-w-md">{children}</div>
-    </div>
-  );
-}
 
 export default async function UpsellPage() {
   const cookieStore = await cookies();
@@ -35,6 +21,7 @@ export default async function UpsellPage() {
 
       <UpsellBackdrop>
         <UpsellFunnel checkoutUrl={upsellCheckoutUrl} />
+        <DeclineOfferLink href="/downsell">Não quero esse benefício</DeclineOfferLink>
       </UpsellBackdrop>
     </>
   );

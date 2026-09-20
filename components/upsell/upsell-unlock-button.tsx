@@ -10,9 +10,9 @@ import { trackEvent } from "@/lib/tracking/track-event";
  * upsell-whatsapp-card.tsx (Safari antigo não parseia oklch/oklab do
  * Tailwind, mesmo motivo documentado em app/globals.css).
  */
-export function UpsellUnlockButton({ checkoutUrl }: { checkoutUrl: string }) {
+export function UpsellUnlockButton({ checkoutUrl, price = 19.9 }: { checkoutUrl: string; price?: number }) {
   function handleClick() {
-    trackEvent("InitiateCheckout", { currency: "BRL", value: 19.9 });
+    trackEvent("InitiateCheckout", { currency: "BRL", value: price });
     window.location.href = buildCheckoutUrl(checkoutUrl);
   }
 

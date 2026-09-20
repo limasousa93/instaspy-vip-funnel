@@ -38,7 +38,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full bg-background text-foreground" suppressHydrationWarning>
         <MetaPixel />
-        <SessionProvider value={{ hasVipAccess: session?.vip ?? false, hasUpsellAccess: session?.upsell ?? false }}>
+        <SessionProvider
+          value={{
+            hasVipAccess: session?.vip ?? false,
+            hasUpsellAccess: session?.upsell ?? false,
+            hasDownsellAccess: session?.downsell ?? false,
+          }}
+        >
           <AuthProvider>
             <InteractionsProvider>
               <VipModalProvider>{children}</VipModalProvider>
