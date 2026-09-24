@@ -1,8 +1,6 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { buildCheckoutUrl } from "@/lib/tracking/checkout-url";
-import { trackEvent } from "@/lib/tracking/track-event";
 
 /**
  * Botão verde "Atualizar e Desbloquear" abaixo do mockup do celular — mesmo
@@ -10,10 +8,9 @@ import { trackEvent } from "@/lib/tracking/track-event";
  * upsell-whatsapp-card.tsx (Safari antigo não parseia oklch/oklab do
  * Tailwind, mesmo motivo documentado em app/globals.css).
  */
-export function UpsellUnlockButton({ checkoutUrl, price = 19.9 }: { checkoutUrl: string; price?: number }) {
+export function UpsellUnlockButton() {
   function handleClick() {
-    trackEvent("InitiateCheckout", { currency: "BRL", value: price });
-    window.location.href = buildCheckoutUrl(checkoutUrl);
+    document.getElementById("planos")?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   return (

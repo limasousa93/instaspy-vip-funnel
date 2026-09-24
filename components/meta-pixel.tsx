@@ -1,7 +1,25 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 import { capture } from "@/lib/tracking/utm";
+
+/** PageView a cada troca de rota SPA; a primeira montagem é ignorada porque o `init` já dispara o primeiro PageView. */
+function RouteChangePageView() {
+  const pathname = usePathname();
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    const fbq = (window as unknown as { fbq?: (...args: unknown[]) => void }).fbq;
+    fbq?.("track", "PageView");
+  }, [pathname]);
+
+  return null;
+}
 
 export function MetaPixel() {
   useEffect(() => {
@@ -27,14 +45,19 @@ export function MetaPixel() {
   }, []);
 
   return (
-    <noscript>
-      <img
-        height="1"
-        width="1"
-        style={{ display: "none" }}
-        src="https://www.facebook.com/tr?id=1680283033733135&ev=PageView&noscript=1"
-        alt=""
-      />
-    </noscript>
+    <>
+      <Suspense fallback={null}>
+        <RouteChangePageView />
+      </Suspense>
+      <noscript>
+        <img
+          height="1"
+          width="1"
+          style={{ display: "none" }}
+          src="https://www.facebook.com/tr?id=1680283033733135&ev=PageView&noscript=1"
+          alt=""
+        />
+      </noscript>
+    </>
   );
 }

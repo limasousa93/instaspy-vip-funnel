@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const DEFAULT_TOTAL_SECONDS = 40 * 60;
+const DEFAULT_TOTAL_SECONDS = 30 * 60;
 
 function formatTime(totalSeconds: number): string {
   const minutes = Math.floor(totalSeconds / 60);
@@ -10,7 +10,7 @@ function formatTime(totalSeconds: number): string {
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
 }
 
-/** Faixa vermelha fixa no topo (sticky) das telas de oferta com timer regressivo (para em 00:00). Padrão: 40 min. */
+/** Faixa vermelha fixa no topo (sticky) das telas de oferta com timer regressivo (para em 00:00). Padrão: 30 min. */
 export function UpsellCountdownBanner({
   label = "Importante: essa página sairá do ar em",
   totalSeconds = DEFAULT_TOTAL_SECONDS,

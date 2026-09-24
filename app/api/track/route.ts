@@ -12,8 +12,15 @@ const RATE_LIMIT_WINDOW_MS = 60_000;
 const RATE_LIMIT_MAX_REQUESTS = 20;
 const rateLimitBuckets = new Map<string, { count: number; resetAt: number }>();
 
+const EVENT_ID_PATTERN = /^[A-Za-z0-9_-]{8,64}$/;
+const MAX_CONTENT_IDS = 10;
+
 type TrackRequestBody = {
   eventName: string;
+  eventId?: unknown;
+  contentType?: unknown;
+  contentIds?: unknown;
+  contentName?: unknown;
   value?: number;
   currency?: string;
   fbc?: string | null;
@@ -98,7 +105,9 @@ export async function POST(request: NextRequest) {
   }
 
   const userAgent = request.headers.get("user-agent") ?? undefined;
-  const eventId = crypto.randomUUID();
+  // Mesmo id enviado pelo Pixel no browser: é o que permite ao Meta deduplicar. Inválido/ausente → UUID novo.
+  const eventId =
+    typeof body.eventId === "string" && EVENT_ID_PATTERN.test(body.eventId) ? body.eventId : crypto.randomUUID();
 
   const userData: Record<string, string> = {};
   if (clientIp) userData.client_ip_address = clientIp;
@@ -109,6 +118,20 @@ export async function POST(request: NextRequest) {
   const customData: Record<string, unknown> = {};
   if (typeof body.value === "number" && Number.isFinite(body.value)) customData.value = body.value;
   if (body.currency) customData.currency = body.currency;
+  if (typeof body.contentType === "string" && body.contentType.length > 0 && body.contentType.length <= 50) {
+    customData.content_type = body.contentType;
+  }
+  if (typeof body.contentName === "string" && body.contentName.length > 0 && body.contentName.length <= 100) {
+    customData.content_name = body.contentName;
+  }
+  if (
+    Array.isArray(body.contentIds) &&
+    body.contentIds.length > 0 &&
+    body.contentIds.length <= MAX_CONTENT_IDS &&
+    body.contentIds.every((id) => typeof id === "string" && id.length > 0 && id.length <= 64)
+  ) {
+    customData.content_ids = body.contentIds;
+  }
 
   const payload = {
     access_token: META_CAPI_ACCESS_TOKEN,

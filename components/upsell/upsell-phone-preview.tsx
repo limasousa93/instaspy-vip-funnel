@@ -22,8 +22,6 @@ import {
   X,
 } from "lucide-react";
 import { photoUrl } from "@/lib/media";
-import { buildCheckoutUrl } from "@/lib/tracking/checkout-url";
-import { trackEvent } from "@/lib/tracking/track-event";
 
 interface ChatMessage {
   from: "received" | "sent";
@@ -197,19 +195,14 @@ function WhatsAppRoundIcon({ size = 19 }: { size?: number }) {
 
 /** Banner "estilo Seja VIP" — mesmo padrão do VipUnlockCard (components/feed/vip-unlock-banner.tsx), adaptado pro upgrade do WhatsApp. */
 function VipUpgradeBanner({
-  checkoutUrl,
-  price,
   priceLabel,
   onClose,
 }: {
-  checkoutUrl: string;
-  price: number;
   priceLabel: string;
   onClose: () => void;
 }) {
   function handleUnlock() {
-    trackEvent("InitiateCheckout", { currency: "BRL", value: price });
-    window.location.href = buildCheckoutUrl(checkoutUrl);
+    document.getElementById("planos")?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   return (
@@ -285,15 +278,11 @@ const CLOCK_TIME_CONTACT_IDS = ["felipe", "livia", "mainha"] as const;
  * bg-gradient-to-r/bg-violet-600 do Tailwind, que quebra em Safari antigo.
  */
 export function UpsellPhonePreview({
-  checkoutUrl,
-  price = 19.9,
   priceLabel = "19,90",
   revealed,
   onRequestSearch,
 }: {
-  checkoutUrl: string;
-  /** Valor (BRL) do evento InitiateCheckout e preço exibido no banner de upgrade. */
-  price?: number;
+  /** Preço exibido no banner de upgrade. */
   priceLabel?: string;
   /** false = tela toda borrada com selo de cadeado + CTA; true = mockup normal (revelado após a busca). */
   revealed: boolean;
@@ -481,7 +470,7 @@ export function UpsellPhonePreview({
                   ))}
                 </div>
 
-                {showListBanner && <VipUpgradeBanner checkoutUrl={checkoutUrl} price={price} priceLabel={priceLabel} onClose={() => setShowListBanner(false)} />}
+                {showListBanner && <VipUpgradeBanner priceLabel={priceLabel} onClose={() => setShowListBanner(false)} />}
               </div>
 
               {/* ---------- Tela: conversa individual ---------- */}
@@ -594,8 +583,6 @@ export function UpsellPhonePreview({
 
                       {showChatBanner && (
                         <VipUpgradeBanner
-                          checkoutUrl={checkoutUrl}
-                          price={price}
                           priceLabel={priceLabel}
                           onClose={() => setShowChatBanner(false)}
                         />

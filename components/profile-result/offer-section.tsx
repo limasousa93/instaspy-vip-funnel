@@ -25,7 +25,15 @@ export function OfferSection({ profile }: { profile: ProfileResultData }) {
           ctaHref={CHECKOUT_URL_MAIN}
           ctaText="Acessar tudo agora mesmo"
           ctaSubtext="Compra 100% segura"
-          onCtaClick={() => trackEvent("InitiateCheckout", { currency: "BRL", value: 37.9 })}
+          onCtaClick={() =>
+            trackEvent("InitiateCheckout", {
+              currency: "BRL",
+              value: 37.9,
+              content_type: "product",
+              content_ids: ["vip"],
+              content_name: "VIP",
+            })
+          }
         />
       </div>
     </ResultCard>

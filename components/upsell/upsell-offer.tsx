@@ -38,6 +38,10 @@ export interface UpsellOffer {
   notice?: string;
   /** Valor numérico (BRL) enviado no evento InitiateCheckout. */
   price: number;
+  /** content_ids do InitiateCheckout (ex: "sell-1"). */
+  contentId: string;
+  /** content_name do InitiateCheckout (ex: "Upsell"). */
+  contentName: string;
   /** Preço formatado, sem "R$" (ex: "19,90"). */
   priceLabel: string;
   /** Preço "de" já com "R$" (ex: "R$ 87,90"). */
@@ -69,6 +73,8 @@ export const UPSELL_OFFER: UpsellOffer = {
     "existe uma função avançada do instaspy que pode te dar acesso ao whatsapp de qualquer pessoa",
   ],
   price: 37.9,
+  contentId: "sell-1",
+  contentName: "Upsell",
   priceLabel: "37,90",
   originalPriceLabel: "R$ 87,90",
 };
@@ -94,13 +100,17 @@ function buildDownsellLayout(priceLabel: string): UpsellOffer {
 
 export const DOWNSELL_OFFER: UpsellOffer = {
   ...buildDownsellLayout("27,90"),
-  decline: { text: "Não Quero", href: "/obrigado" },
+  contentId: "sell-2",
+  contentName: "Downsell",
+  decline: { text: "Não Quero", href: "/sell-3" },
 };
 
 export const CROSSELL_OFFER: UpsellOffer = {
   ...buildDownsellLayout("19,90"),
   headline: <span style={{ color: "#ff4141" }}>SUA TERCEIRA E ÚLTIMA CHANCE:</span>,
-  subtext: ["Esse acesso completo nunca mais aparecerá para você."],
+  subtext: undefined,
+  contentId: "sell-3",
+  contentName: "Cross-sell",
   belowPhoneText: "Acesso completo ao Whatsapp e Instagram por apenas R$ 19,90.",
   bonusText: undefined,
   decline: { text: "Não Quero", href: "/feed" },

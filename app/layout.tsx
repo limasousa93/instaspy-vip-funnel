@@ -43,6 +43,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             hasVipAccess: session?.vip ?? false,
             hasUpsellAccess: session?.upsell ?? false,
             hasDownsellAccess: session?.downsell ?? false,
+            hasCrossellAccess: session?.crossell ?? false,
           }}
         >
           <AuthProvider>

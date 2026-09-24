@@ -64,6 +64,7 @@ export function PlanBanner({
 
   return (
     <div
+      id="planos"
       className="w-full rounded-[28px] border bg-[#170f2b] shadow-[0_20px_45px_-15px_rgba(0,0,0,0.65)]"
       style={{ borderColor: "#8b5cf633" }}
     >

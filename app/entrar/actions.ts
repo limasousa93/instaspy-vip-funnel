@@ -1,8 +1,8 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { signSession, SESSION_COOKIE_NAME, SESSION_MAX_AGE_SECONDS } from "@/lib/session/session";
+import { hasAnyUpgrade } from "@/lib/session/session";
+import { setSessionCookie } from "@/lib/session/session-cookie";
 
 export async function verifyAccessAction(_prevState: unknown, formData: FormData) {
   const contact = String(formData.get("contact") ?? "").trim();
@@ -16,6 +16,7 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
   let hasVip = false;
   let hasUpsell = false;
   let hasDownsell = false;
+  let hasCrossell = false;
 
   try {
     const response = await fetch(n8nUrl, {
@@ -30,6 +31,7 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
     hasVip = data.hasVip ?? false;
     hasUpsell = data.hasUpsell ?? false;
     hasDownsell = data.hasDownsell ?? false;
+    hasCrossell = data.hasCrossell ?? false;
   } catch {
     return { error: "Erro ao verificar a compra. Tente novamente em instantes." };
   }
@@ -38,17 +40,9 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
     return { error: "Não encontramos nenhuma compra aprovada para esse contato. Confira o e-mail e tente de novo." };
   }
 
-  const token = await signSession({ contact, vip: true, upsell: hasUpsell, downsell: hasDownsell });
-  const cookieStore = await cookies();
-  cookieStore.set(SESSION_COOKIE_NAME, token, {
-    httpOnly: true,
-    // Só em produção (https): navegadores recusam cookie Secure em http://<IP-da-rede>, o que quebra o teste no celular.
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    path: "/",
-    maxAge: SESSION_MAX_AGE_SECONDS,
-  });
+  const flags = { upsell: hasUpsell, downsell: hasDownsell, crossell: hasCrossell };
+  await setSessionCookie({ contact, vip: true, ...flags });
 
-  // Quem já comprou upsell ou downsell vai direto pro app; o resto cai no /sell-3 (antigo crossell).
-  redirect(hasUpsell || hasDownsell ? "/feed" : "/sell-3");
+  // Quem já comprou qualquer upgrade vai direto pro app; o resto começa a sequência de ofertas em /sell-1.
+  redirect(hasAnyUpgrade(flags) ? "/feed" : "/sell-1");
 }

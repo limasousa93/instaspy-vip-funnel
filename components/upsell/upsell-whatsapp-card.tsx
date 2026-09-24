@@ -3,8 +3,6 @@
 import { useState, type ChangeEvent } from "react";
 import Image from "next/image";
 import { Check, Loader2, Lock, Play } from "lucide-react";
-import { buildCheckoutUrl } from "@/lib/tracking/checkout-url";
-import { trackEvent } from "@/lib/tracking/track-event";
 import { photoUrl } from "@/lib/media";
 import type { WhatsAppLookupData } from "@/lib/whatsapp/apify-client";
 
@@ -76,13 +74,8 @@ const GREEN_CTA_STYLE = {
  * bg-gradient-to-r/bg-green-500 do Tailwind, que quebra em Safari antigo.
  */
 export function UpsellWhatsAppCard({
-  checkoutUrl,
-  price = 19.9,
   onResult,
 }: {
-  checkoutUrl: string;
-  /** Valor (BRL) enviado no evento InitiateCheckout. */
-  price?: number;
   /** Chamado assim que os dados (reais ou placeholder) chegam — usado pra revelar o mockup do celular. */
   onResult?: () => void;
 }) {
@@ -184,8 +177,7 @@ export function UpsellWhatsAppCard({
   }
 
   function handleUnlock() {
-    trackEvent("InitiateCheckout", { currency: "BRL", value: price });
-    window.location.href = buildCheckoutUrl(checkoutUrl);
+    document.getElementById("planos")?.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   return (

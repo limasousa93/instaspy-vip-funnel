@@ -107,7 +107,7 @@ export function UpsellFunnel({
           )}
 
           {!offer.hideWhatsAppTrial && (
-            <UpsellWhatsAppCard checkoutUrl={checkoutUrl} price={offer.price} onResult={() => setRevealed(true)} />
+            <UpsellWhatsAppCard onResult={() => setRevealed(true)} />
           )}
         </div>
       </div>
@@ -118,7 +118,7 @@ export function UpsellFunnel({
         </p>
       )}
 
-      <UpsellPhonePreview checkoutUrl={checkoutUrl} price={offer.price} priceLabel={offer.priceLabel} revealed={revealed} onRequestSearch={handleRequestSearch} />
+      <UpsellPhonePreview priceLabel={offer.priceLabel} revealed={revealed} onRequestSearch={handleRequestSearch} />
 
       {offer.belowPhoneText && (
         <p className="text-center text-2xl font-extrabold leading-tight sm:text-3xl" style={{ color: "#25D366" }}>
@@ -142,14 +142,22 @@ export function UpsellFunnel({
         declineText={offer.decline?.text}
         ctaText="Desbloquear tudo agora"
         ctaSubtext="Compra 100% segura"
-        onCtaClick={() => trackEvent("InitiateCheckout", { currency: "BRL", value: offer.price })}
+        onCtaClick={() =>
+          trackEvent("InitiateCheckout", {
+            currency: "BRL",
+            value: offer.price,
+            content_type: "product",
+            content_ids: [offer.contentId],
+            content_name: offer.contentName,
+          })
+        }
       />
 
       {!offer.hideFaq && (
         <UpsellFaqSection priceLabel={offer.priceLabel} answers={offer.faq?.answers} omit={offer.faq?.omit} />
       )}
 
-      {!offer.hideUnlockButton && <UpsellUnlockButton checkoutUrl={checkoutUrl} price={offer.price} />}
+      {!offer.hideUnlockButton && <UpsellUnlockButton />}
     </div>
   );
 }

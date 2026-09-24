@@ -6,6 +6,7 @@ export interface SessionPayload {
   vip: boolean;
   upsell: boolean;
   downsell: boolean;
+  crossell: boolean;
   iat: number;
 }
 
@@ -65,9 +66,14 @@ export async function verifySession(token: string | undefined | null): Promise<S
     const payload = JSON.parse(new TextDecoder().decode(base64UrlDecode(encodedPayload))) as SessionPayload;
     const ageSeconds = (Date.now() - payload.iat) / 1000;
     if (ageSeconds > SESSION_MAX_AGE_SECONDS) return null;
-    // Sessões antigas (emitidas antes do downsell existir) não têm o campo.
-    return { ...payload, downsell: payload.downsell ?? false };
+    // Sessões antigas (emitidas antes do downsell/crossell existirem) não têm os campos.
+    return { ...payload, downsell: payload.downsell ?? false, crossell: payload.crossell ?? false };
   } catch {
     return null;
   }
+}
+
+/** Upsell, downsell e cross-sell são o mesmo produto em preços decrescentes: qualquer um dispensa os demais. */
+export function hasAnyUpgrade(session: Pick<SessionPayload, "upsell" | "downsell" | "crossell"> | null | undefined): boolean {
+  return Boolean(session && (session.upsell || session.downsell || session.crossell));
 }
