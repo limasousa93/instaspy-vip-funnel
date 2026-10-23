@@ -227,8 +227,8 @@ Quando a migração pra n8n for implementada, este arquivo ganha algo como `N8N_
 ## 6. O que está preenchido no `.env.local`
 
 ```
-APIFY_API_TOKEN=apify_api_py8d33rsd9H8bc3jwim6ppb5gzWHvh4ohoFz
-SESSION_SECRET=683acff01c650de5bb4037234376b220b6486c83221bbc47d57b5b0fb970f330
+APIFY_API_TOKEN=[REDACTED]
+SESSION_SECRET=[REDACTED]
 ```
 
 Só essas duas. **Todas as outras 8 variáveis do `.env.example` estão faltando no `.env.local`:**

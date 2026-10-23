@@ -43,3 +43,6 @@ next-env.d.ts
 
 # reference assets (not needed in production)
 imagens referência/
+
+.vercel
+.env*
