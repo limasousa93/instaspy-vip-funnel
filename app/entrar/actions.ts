@@ -29,9 +29,9 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
       return { error: "Não encontramos nenhuma compra aprovada para esse contato. Confira o e-mail e tente de novo." };
     }
     hasVip = data.hasVip ?? false;
-    hasUpsell = data.hasUpsell ?? false;
-    hasDownsell = data.hasDownsell ?? false;
-    hasCrossell = data.hasCrossell ?? false;
+    hasUpsell = data.upsell ?? data.hasUpsell ?? false;
+    hasDownsell = data.downsell ?? data.hasDownsell ?? false;
+    hasCrossell = data.crossell ?? data.hasCrossell ?? false;
   } catch {
     return { error: "Erro ao verificar a compra. Tente novamente em instantes." };
   }

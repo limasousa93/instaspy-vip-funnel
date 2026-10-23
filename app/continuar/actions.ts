@@ -23,9 +23,9 @@ async function fetchFlags(url: string, contact: string): Promise<PurchaseFlags |
     const data = await response.json();
     if (!data.ok) return null;
     return {
-      upsell: data.hasUpsell ?? false,
-      downsell: data.hasDownsell ?? false,
-      crossell: data.hasCrossell ?? false,
+      upsell: data.upsell ?? data.hasUpsell ?? false,
+      downsell: data.downsell ?? data.hasDownsell ?? false,
+      crossell: data.crossell ?? data.hasCrossell ?? false,
     };
   } catch {
     return null;
