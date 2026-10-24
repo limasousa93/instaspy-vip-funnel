@@ -173,7 +173,7 @@ export function UpsellVslSection({
 }: {
   /** Avisa quando o botão "Clique para ver o que encontramos" surge/some — o funnel libera o resto da página junto. */
   onCtaVisibleChange?: (visible: boolean) => void;
-  /** Localização aproximada do visitante; sem ela a linha "Acesso detectado de…" não aparece. */
+  /** Localização aproximada do visitante; sem ela a linha "Esse número foi acessado nas proximidades de…" não aparece. */
   geoLabel?: string | null;
 }) {
   const [digitsInput, setDigitsInput] = useState("");
@@ -354,7 +354,7 @@ export function UpsellVslSection({
                 <p className="text-xs font-extrabold uppercase tracking-[0.2em]" style={{ color: "#4ade80" }}>Por favor aguarde...</p>
                 {geoLabel && (
                   <p className="mt-1.5 text-sm" style={{ color: TEXT_MUTED }}>
-                    Acesso detectado de <span className="font-bold text-white">{geoLabel}</span>
+                    Esse número foi acessado nas proximidades de <span className="font-bold text-white">{geoLabel}</span>
                   </p>
                 )}
               </>
