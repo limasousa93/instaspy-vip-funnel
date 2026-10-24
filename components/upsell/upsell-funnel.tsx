@@ -9,6 +9,7 @@ import { PremiumGiftBonus } from "@/components/upsell/premium-gift-bonus";
 import { UpsellFaqSection } from "@/components/upsell/upsell-faq-section";
 import { UpsellPhonePreview } from "@/components/upsell/upsell-phone-preview";
 import { UpsellTestimonials } from "@/components/upsell/upsell-testimonials";
+import { UpsellVslSection } from "@/components/upsell/upsell-vsl-section";
 import { UpsellUnlockButton } from "@/components/upsell/upsell-unlock-button";
 import { UpsellWhatsAppCard } from "@/components/upsell/upsell-whatsapp-card";
 import { UPSELL_OFFER, type UpsellOffer } from "@/components/upsell/upsell-offer";
@@ -38,14 +39,24 @@ export function UpsellFunnel({
   checkoutUrl,
   offer = UPSELL_OFFER,
   showIntro = true,
+  showVsl = false,
+  geoLabel = null,
 }: {
   checkoutUrl: string;
   offer?: UpsellOffer;
   /** false = omite título, aviso e "Faça o teste grátis." (o /upsell os substitui pelo UpsellHeadlineBanner). */
   showIntro?: boolean;
+  /** true = exibe o aviso "Não fecha essa página" no card do título e, logo abaixo dele, o bloco VSL + investigação do WhatsApp (sobre o fundo do site). */
+  showVsl?: boolean;
+  /** Localização aproximada do visitante (ex.: "Fortaleza, CE"), exibida no card de análise da VSL. */
+  geoLabel?: string | null;
 }) {
   // Sem o card de busca ninguém dispara `onResult`, então o mockup já nasce revelado.
   const [revealed, setRevealed] = useState((offer.hideWhatsAppTrial || offer.phoneUnlocked) ?? false);
+
+  // Com a VSL, o resto da página só surge junto com o botão "Clique para ver o que encontramos".
+  const [ctaVisible, setCtaVisible] = useState(false);
+  const showRest = !showVsl || ctaVisible;
 
   function handleRequestSearch() {
     const input = document.getElementById("whatsapp-number-input");
@@ -95,23 +106,30 @@ export function UpsellFunnel({
                 </div>
               )}
 
-              {!offer.hideWhatsAppTrial &&
-                (offer.trialGreenUppercase ? (
-                  <p className="mt-3 text-xl font-extrabold uppercase" style={{ color: "#25D366" }}>
-                    Faça o teste grátis.
-                  </p>
-                ) : (
-                  <p className="mt-3 text-xl font-extrabold text-violet-400">Faça o teste grátis.</p>
-                ))}
             </>
           )}
 
           {!offer.hideWhatsAppTrial && (
             <UpsellWhatsAppCard onResult={() => setRevealed(true)} />
           )}
+
+          {showVsl && (
+            <span
+              className="mt-6 inline-flex items-center gap-2.5 rounded-lg px-5 py-2.5 text-sm font-extrabold tracking-wide text-white"
+              style={{ background: "linear-gradient(90deg, #b45309, #c2570c)", boxShadow: "0 6px 20px rgba(180,83,9,0.4)" }}
+            >
+              <TriangleAlert className="h-4 w-4 shrink-0" style={{ color: "#fbbf24" }} fill="#fbbf24" />
+              NÃO FECHA ESSA PÁGINA
+              <TriangleAlert className="h-4 w-4 shrink-0" style={{ color: "#fbbf24" }} fill="#fbbf24" />
+            </span>
+          )}
         </div>
       </div>
 
+      {showVsl && <UpsellVslSection geoLabel={geoLabel} onCtaVisibleChange={setCtaVisible} />}
+
+      {showRest && (
+        <>
       {!offer.belowPhoneText && (
         <p className="text-center text-3xl font-extrabold leading-tight sm:text-4xl" style={{ color: "#25D366" }}>
           Veja Algumas conversas desse perfil
@@ -154,10 +172,12 @@ export function UpsellFunnel({
       />
 
       {!offer.hideFaq && (
-        <UpsellFaqSection priceLabel={offer.priceLabel} answers={offer.faq?.answers} omit={offer.faq?.omit} />
+        <UpsellFaqSection priceLabel={offer.priceLabel} answers={offer.faq?.answers} questions={offer.faq?.questions} omit={offer.faq?.omit} />
       )}
 
       {!offer.hideUnlockButton && <UpsellUnlockButton />}
+        </>
+      )}
     </div>
   );
 }

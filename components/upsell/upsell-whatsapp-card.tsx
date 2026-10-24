@@ -24,7 +24,7 @@ function waveformBars(phase: number): number[] {
  * Formata até 11 dígitos (DDD + 9 + número) como "11 9 9999-9999".
  * Recebe só dígitos — a extração de dígitos é responsabilidade de quem chama.
  */
-function formatBrazilianDigits(digits: string): string {
+export function formatBrazilianDigits(digits: string): string {
   let formatted = digits.slice(0, 2);
   if (digits.length > 2) formatted += ` ${digits.slice(2, 3)}`;
   if (digits.length > 3) formatted += ` ${digits.slice(3, 7)}`;
@@ -33,12 +33,12 @@ function formatBrazilianDigits(digits: string): string {
 }
 
 /** Conta quantos dígitos existem em `text` antes da posição `caretIndex`. */
-function countDigitsBefore(text: string, caretIndex: number): number {
+export function countDigitsBefore(text: string, caretIndex: number): number {
   return text.slice(0, caretIndex).replace(/\D/g, "").length;
 }
 
 /** Acha, no texto já formatado, a posição do caractere logo após o N-ésimo dígito. */
-function caretPositionAfterDigit(formatted: string, digitCount: number): number {
+export function caretPositionAfterDigit(formatted: string, digitCount: number): number {
   if (digitCount <= 0) return 0;
   let seen = 0;
   for (let i = 0; i < formatted.length; i++) {
@@ -57,6 +57,95 @@ const GREEN_CTA_STYLE = {
   background: "linear-gradient(180deg, #2fe677, #1fb959)",
   boxShadow: "0 6px 18px rgba(37,211,102,0.4), inset 0 1px 0 rgba(255,255,255,0.3)",
 };
+
+/** Grids borrados de fotos, vídeos e áudios "enviados" — mostrados no resultado da consulta e direto na página. */
+export function UpsellWhatsAppMediaPreview({ seed, className = "" }: { seed: string; className?: string }) {
+  return (
+        <div className={`flex w-full flex-col gap-5 ${className}`}>
+          <div>
+            <p className="mb-2 text-center text-base font-extrabold text-white">Últimas fotos enviadas 🔒</p>
+            <div className="grid grid-cols-3 gap-2">
+              {["/fot1.png", "/fot2.png", "/fot3.png"].map((src) => (
+                <div
+                  key={src}
+                  className="relative aspect-square overflow-hidden rounded-lg bg-white/5"
+                  style={{ transform: "translateZ(0)", WebkitTransform: "translateZ(0)" }}
+                >
+                  <Image
+                    src={src}
+                    alt=""
+                    fill
+                    sizes="100px"
+                    className="object-cover"
+                    style={{ filter: "blur(10px)", WebkitFilter: "blur(10px)" }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+  
+          <div>
+            <p className="mb-2 text-center text-base font-extrabold text-white">Últimos vídeos enviados 🔒</p>
+            <div className="grid grid-cols-3 gap-2">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="relative aspect-square overflow-hidden rounded-lg bg-white/5"
+                  style={{ transform: "translateZ(0)", WebkitTransform: "translateZ(0)" }}
+                >
+                  <Image
+                    src={photoUrl(`${seed}-video-${i}`, 200, 200)}
+                    alt=""
+                    fill
+                    sizes="100px"
+                    className="object-cover"
+                    style={{ filter: "blur(10px)", WebkitFilter: "blur(10px)" }}
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div
+                      className="flex h-7 w-7 items-center justify-center rounded-full"
+                      style={{ background: "rgba(0,0,0,0.55)" }}
+                    >
+                      <Play className="h-3.5 w-3.5 text-white" fill="white" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+  
+          <div>
+            <p className="mb-2 text-center text-base font-extrabold text-white">Últimos áudios enviados 🔒</p>
+            <div className="flex flex-col gap-2">
+              {AUDIO_SAMPLES.map((audio) => (
+                <div
+                  key={audio.duration}
+                  className="flex items-center gap-2 rounded-xl px-3 py-2 blur-[2px] select-none"
+                  style={{ backgroundColor: "#1f2c34" }}
+                >
+                  <div
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
+                    style={{ backgroundColor: "rgba(255,255,255,0.15)" }}
+                  >
+                    <Play className="h-3.5 w-3.5 text-white" fill="white" />
+                  </div>
+                  <span className="flex h-6 flex-1 items-center gap-[2px]">
+                    {waveformBars(audio.phase).map((h, i) => (
+                      <span
+                        key={i}
+                        className="w-[2px] shrink-0 rounded-full"
+                        style={{ height: `${h}px`, backgroundColor: "rgba(255,255,255,0.5)" }}
+                      />
+                    ))}
+                  </span>
+                  <span className="shrink-0 text-xs text-white/60">{audio.duration}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+  );
+}
 
 /**
  * Card "Digite o número do WhatsApp" — mesmo modelo premium verde/vidro do
@@ -278,89 +367,7 @@ export function UpsellWhatsAppCard({
 
           {result.about && <p className="mt-4 text-center text-sm text-white/80">{result.about}</p>}
 
-          <div className="mt-5 flex w-full flex-col gap-5">
-            <div>
-              <p className="mb-2 text-left text-sm font-semibold text-white/70">Últimas fotos enviadas 🔒</p>
-              <div className="grid grid-cols-3 gap-2">
-                {["/fot1.png", "/fot2.png", "/fot3.png"].map((src) => (
-                  <div
-                    key={src}
-                    className="relative aspect-square overflow-hidden rounded-lg bg-white/5"
-                    style={{ transform: "translateZ(0)", WebkitTransform: "translateZ(0)" }}
-                  >
-                    <Image
-                      src={src}
-                      alt=""
-                      fill
-                      sizes="100px"
-                      className="object-cover"
-                      style={{ filter: "blur(10px)", WebkitFilter: "blur(10px)" }}
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <p className="mb-2 text-left text-sm font-semibold text-white/70">Últimos vídeos enviados 🔒</p>
-              <div className="grid grid-cols-3 gap-2">
-                {[0, 1, 2].map((i) => (
-                  <div
-                    key={i}
-                    className="relative aspect-square overflow-hidden rounded-lg bg-white/5"
-                    style={{ transform: "translateZ(0)", WebkitTransform: "translateZ(0)" }}
-                  >
-                    <Image
-                      src={photoUrl(`${result.number}-video-${i}`, 200, 200)}
-                      alt=""
-                      fill
-                      sizes="100px"
-                      className="object-cover"
-                      style={{ filter: "blur(10px)", WebkitFilter: "blur(10px)" }}
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div
-                        className="flex h-7 w-7 items-center justify-center rounded-full"
-                        style={{ background: "rgba(0,0,0,0.55)" }}
-                      >
-                        <Play className="h-3.5 w-3.5 text-white" fill="white" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <p className="mb-2 text-left text-sm font-semibold text-white/70">Últimos áudios enviados 🔒</p>
-              <div className="flex flex-col gap-2">
-                {AUDIO_SAMPLES.map((audio) => (
-                  <div
-                    key={audio.duration}
-                    className="flex items-center gap-2 rounded-xl px-3 py-2 blur-[2px] select-none"
-                    style={{ backgroundColor: "#1f2c34" }}
-                  >
-                    <div
-                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
-                      style={{ backgroundColor: "rgba(255,255,255,0.15)" }}
-                    >
-                      <Play className="h-3.5 w-3.5 text-white" fill="white" />
-                    </div>
-                    <span className="flex h-6 flex-1 items-center gap-[2px]">
-                      {waveformBars(audio.phase).map((h, i) => (
-                        <span
-                          key={i}
-                          className="w-[2px] shrink-0 rounded-full"
-                          style={{ height: `${h}px`, backgroundColor: "rgba(255,255,255,0.5)" }}
-                        />
-                      ))}
-                    </span>
-                    <span className="shrink-0 text-xs text-white/60">{audio.duration}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <UpsellWhatsAppMediaPreview seed={result.number} className="mt-5" />
 
           <button type="button" onClick={handleUnlock} className="mt-5 flex w-full items-center justify-center gap-2 rounded-full py-3.5 text-base font-bold text-white active:opacity-90" style={GREEN_CTA_STYLE}>
             <Check className="h-5 w-5" /> Desbloquear tudo agora

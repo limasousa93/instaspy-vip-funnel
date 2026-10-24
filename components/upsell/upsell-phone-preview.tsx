@@ -272,7 +272,7 @@ const CLOCK_TIME_CONTACT_IDS = ["felipe", "livia", "mainha"] as const;
  * busca, arquivadas, lista com scroll e barra de abas embaixo) — fotos de
  * perfil e mensagens sempre borradas (só os emojis aparecem). Só os 2
  * primeiros contatos abrem o chat (também borrado, tela cheia); qualquer
- * outro clique mostra o banner "Seja VIP" de upgrade por R$ 19,90.
+ * outro clique mostra o banner "Seja VIP" de upgrade pelo preço da oferta (priceLabel).
  *
  * Cores em hex puro (mesmo motivo documentado em app/globals.css): nada de
  * bg-gradient-to-r/bg-violet-600 do Tailwind, que quebra em Safari antigo.

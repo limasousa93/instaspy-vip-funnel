@@ -30,9 +30,12 @@ function buildFaqItems(priceLabel: string) {
 export function UpsellFaqSection({
   priceLabel = "19,90",
   answers = {},
+  questions = {},
   omit = [],
 }: {
   priceLabel?: string;
+  /** Troca o texto de perguntas específicas (chave = texto original da pergunta). */
+  questions?: Record<string, string>;
   /** Substitui a resposta de perguntas específicas (chave = texto da pergunta). */
   answers?: Record<string, string>;
   /** Perguntas a esconder (texto exato da pergunta). */
@@ -41,7 +44,11 @@ export function UpsellFaqSection({
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const faqItems = buildFaqItems(priceLabel)
     .filter((item) => !omit.includes(item.question))
-    .map((item) => ({ ...item, answer: answers[item.question] ?? item.answer }));
+    .map((item) => ({
+      ...item,
+      answer: answers[item.question] ?? item.answer,
+      question: questions[item.question] ?? item.question,
+    }));
 
   return (
     <div className="flex w-full max-w-md flex-col gap-3">

@@ -4,8 +4,6 @@ import { InstagramPlusWhatsApp } from "@/components/upsell/instagram-plus-whatsa
 /** Conteúdo que muda entre as telas de oferta (/sell-1, /sell-2, /sell-3); o resto do funil é idêntico. */
 export interface UpsellOffer {
   headline: ReactNode;
-  /** "Faça o teste grátis." em verde e maiúsculo. */
-  trialGreenUppercase?: boolean;
   /** Título do carrossel de depoimentos (padrão: "Resultados de quem já usou."). */
   testimonialsTitle?: string;
   /** Título do PlanBanner (padrão: "Atualização WhatsApp + Instagram"). */
@@ -15,7 +13,7 @@ export interface UpsellOffer {
   /** Botão cinza "Não quero" abaixo do CTA do PlanBanner: texto e destino. */
   decline?: { text: string; href: string };
   /** Ajustes do FAQ: respostas trocadas e perguntas removidas (chave = texto da pergunta). */
-  faq?: { answers?: Record<string, string>; omit?: string[] };
+  faq?: { answers?: Record<string, string>; questions?: Record<string, string>; omit?: string[] };
   /** Oculta o "Faça o teste grátis." e o card de busca de WhatsApp (o mockup do celular já nasce revelado). */
   hideWhatsAppTrial?: boolean;
   /** Troca o título verde de cima do mockup por este texto, exibido abaixo dele. */
@@ -51,15 +49,19 @@ export interface UpsellOffer {
 export const UPSELL_OFFER: UpsellOffer = {
   headline: (
     <>
-      <span style={{ color: "#ff4141" }}>SUA COMPRA AINDA NÃO ESTÁ COMPLETA...</span>
+      <span style={{ color: "#ff4141" }}>SUA COMPRA ESTÁ QUASE COMPLETA...</span>
     </>
   ),
   badgeIcon: "alert",
+  hideWhatsAppTrial: true,
   hideUnlockButton: true,
   faq: {
+    questions: {
+      "O que muda com a nova atualização?": "Qual o benefício desse aplicativo do WhatsApp?",
+    },
     answers: {
       "O que muda com a nova atualização?":
-        "Você terá acesso completo a todas as informações do whatsapp e do instagram do seu parceiro e ver tudo o que está fazendo em tempo real.",
+        "Você adquiriu o acesso ao Instagram. Agora você também pode acessar todas as conversas, vídeos e áudios desse número.",
     },
     omit: ["Por que preciso atualizar?"],
   },
@@ -67,16 +69,11 @@ export const UPSELL_OFFER: UpsellOffer = {
   greenPlanCta: true,
   planTitle: <InstagramPlusWhatsApp />,
   testimonialsTitle: "Resultados de quem atualizou para o completo",
-  trialGreenUppercase: true,
-  subtext: [
-    "o que você acabou de ativar é apenas metade do sistema. a parte mais poderosa começa no próximo passo...",
-    "existe uma função avançada do instaspy que pode te dar acesso ao whatsapp de qualquer pessoa",
-  ],
-  price: 37.9,
+  price: 137,
   contentId: "sell-1",
   contentName: "Upsell",
-  priceLabel: "37,90",
-  originalPriceLabel: "R$ 87,90",
+  priceLabel: "137,00",
+  originalPriceLabel: "R$ 197,00",
 };
 
 // /sell-2 e /sell-3 compartilham a mesma página (visual e textos); só mudam
@@ -99,19 +96,19 @@ function buildDownsellLayout(priceLabel: string): UpsellOffer {
 }
 
 export const DOWNSELL_OFFER: UpsellOffer = {
-  ...buildDownsellLayout("27,90"),
+  ...buildDownsellLayout("97,00"),
   contentId: "sell-2",
   contentName: "Downsell",
   decline: { text: "Não Quero", href: "/sell-3" },
 };
 
 export const CROSSELL_OFFER: UpsellOffer = {
-  ...buildDownsellLayout("19,90"),
+  ...buildDownsellLayout("77,00"),
   headline: <span style={{ color: "#ff4141" }}>SUA TERCEIRA E ÚLTIMA CHANCE:</span>,
   subtext: undefined,
   contentId: "sell-3",
   contentName: "Cross-sell",
-  belowPhoneText: "Acesso completo ao Whatsapp e Instagram por apenas R$ 19,90.",
+  belowPhoneText: "Acesso completo ao Whatsapp e Instagram por apenas R$ 77,00.",
   bonusText: undefined,
   decline: { text: "Não Quero", href: "/feed" },
 };

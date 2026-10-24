@@ -20,7 +20,7 @@ export function OfferSection({ profile }: { profile: ProfileResultData }) {
           badge="Mais Escolhido"
           title="Completo"
           originalPrice="De R$ 197,00"
-          price="37,90"
+          price="47,90"
           items={PREMIUM_BENEFITS}
           ctaHref={CHECKOUT_URL_MAIN}
           ctaText="Acessar tudo agora mesmo"
@@ -28,7 +28,7 @@ export function OfferSection({ profile }: { profile: ProfileResultData }) {
           onCtaClick={() =>
             trackEvent("InitiateCheckout", {
               currency: "BRL",
-              value: 37.9,
+              value: 47.9,
               content_type: "product",
               content_ids: ["vip"],
               content_name: "VIP",

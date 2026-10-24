@@ -17,7 +17,7 @@ export function VipUnlockCard() {
         </div>
         <div className="shrink-0 border-l border-white/20 pl-3 text-right">
           <p className="whitespace-nowrap text-sm font-bold text-white">
-            R$ 37,90
+            R$ 47,90
           </p>
         </div>
       </div>

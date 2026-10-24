@@ -1,6 +1,8 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { readGeoFromHeaders, setGeoCookie } from "@/lib/geo/geo";
 import { hasAnyUpgrade } from "@/lib/session/session";
 import { setSessionCookie } from "@/lib/session/session-cookie";
 
@@ -42,6 +44,10 @@ export async function verifyAccessAction(_prevState: unknown, formData: FormData
 
   const flags = { upsell: hasUpsell, downsell: hasDownsell, crossell: hasCrossell };
   await setSessionCookie({ contact, vip: true, ...flags });
+
+  // Localização aproximada (cidade/UF/país) dos headers da Vercel, guardada uma vez no ig_geo. O IP não é lido nem persistido.
+  const geo = readGeoFromHeaders(await headers());
+  if (geo) await setGeoCookie(geo);
 
   // Quem já comprou qualquer upgrade vai direto pro app; o resto começa a sequência de ofertas em /sell-1.
   redirect(hasAnyUpgrade(flags) ? "/feed" : "/sell-1");

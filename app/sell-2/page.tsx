@@ -17,7 +17,7 @@ export default async function DownsellPage() {
 
   return (
     <>
-      <UpsellCountdownBanner label="Oferta especial acaba em" totalSeconds={10 * 60} />
+      <UpsellCountdownBanner label="Oferta especial acaba em" totalSeconds={40 * 60} />
 
       <UpsellBackdrop>
         <UpsellFunnel checkoutUrl={downsellCheckoutUrl} offer={DOWNSELL_OFFER} />
