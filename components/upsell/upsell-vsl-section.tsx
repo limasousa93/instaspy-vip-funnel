@@ -108,7 +108,7 @@ function VslVideoPlayer({
   return (
     <div className="flex flex-col items-center gap-2.5">
       <div
-        className="relative aspect-video w-full overflow-hidden rounded-2xl"
+        className="relative isolate aspect-video w-full overflow-hidden rounded-2xl"
         style={{ background: "#000", border: "1px solid rgba(255,255,255,0.14)", boxShadow: "0 10px 30px rgba(0,0,0,0.5)" }}
       >
         <video
@@ -140,7 +140,8 @@ function VslVideoPlayer({
           type="button"
           onClick={onTogglePlay}
           aria-label={playing ? "Pausar vídeo" : "Reproduzir vídeo"}
-          className="absolute bottom-4 left-3 flex h-8 w-8 items-center justify-center text-white active:opacity-80"
+          className="absolute bottom-4 left-3 z-10 flex h-8 w-8 items-center justify-center text-white active:opacity-80"
+          style={{ transform: "translateZ(0)", WebkitTransform: "translateZ(0)" }}
         >
           {playing ? <Pause className="h-6 w-6" fill="white" /> : <Play className="h-6 w-6" fill="white" />}
         </button>
@@ -150,8 +151,8 @@ function VslVideoPlayer({
           aria-valuemin={0}
           aria-valuemax={Math.floor(duration)}
           aria-valuenow={Math.floor(currentTime)}
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-2"
-          style={{ background: "rgba(255,255,255,0.22)" }}
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-2"
+          style={{ background: "rgba(255,255,255,0.22)", transform: "translateZ(0)", WebkitTransform: "translateZ(0)" }}
         >
           <div className="h-full" style={{ width: `${progress}%`, background: GREEN }} />
         </div>
